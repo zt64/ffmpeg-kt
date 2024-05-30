@@ -1,0 +1,38 @@
+[versions]
+kotlin = "2.0.0"
+android = "8.2.2"
+ffmpeg = "6.1.1-1.5.10"
+appcompat = "1.6.1"
+nokee = "0.4.0"
+
+# Maintenance
+compatibility = "0.14.0"
+kover = "0.7.6"
+publish = "0.28.0"
+ktlintPlugin = "12.1.1"
+ktlint = "1.2.1"
+
+[libraries]
+ffmpeg = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpeg" }
+
+# Sample
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+
+# Test
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-cocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+
+android-library = { id = "com.android.library", version.ref = "android" }
+android-application = { id = "com.android.application", version.ref = "android" }
+
+nokee-jni = { id = "dev.nokee.jni-library", version.ref = "nokee" }
+nokee-cpp = { id = "dev.nokee.cpp-language", version.ref = "nokee" }
+
+compatibility = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "compatibility" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
