@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.0.0"
-android = "8.2.2"
+android = "8.4.1"
 ffmpeg = "6.1.1-1.5.10"
 appcompat = "1.6.1"
 nokee = "0.4.0"
