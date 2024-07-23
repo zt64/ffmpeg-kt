@@ -3,7 +3,6 @@ kotlin = "2.0.0"
 android = "8.5.0"
 ffmpeg = "6.1.1-1.5.10"
 appcompat = "1.7.0"
-nokee = "0.4.0"
 
 # Maintenance
 compatibility = "0.14.0"
@@ -28,9 +27,6 @@ kotlin-cocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref =
 
 android-library = { id = "com.android.library", version.ref = "android" }
 android-application = { id = "com.android.application", version.ref = "android" }
-
-nokee-jni = { id = "dev.nokee.jni-library", version.ref = "nokee" }
-nokee-cpp = { id = "dev.nokee.cpp-language", version.ref = "nokee" }
 
 compatibility = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "compatibility" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
