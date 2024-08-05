@@ -1,5 +1,6 @@
 package dev.zt64.ffmpegkt.avutil
 
 import ffmpeg.AVClass
+import kotlinx.cinterop.CPointer
 
-public actual typealias AVClass = AVClass
+public actual class AVClass(internal val native: CPointer<AVClass>)

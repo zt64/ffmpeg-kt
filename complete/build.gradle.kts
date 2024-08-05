@@ -6,10 +6,11 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(projects.avcodec)
-                api(projects.avformat)
-                api(projects.avfilter)
                 api(projects.avutil)
+                api(projects.avcodec)
+                api(projects.avdevice)
+                api(projects.avfilter)
+                api(projects.avformat)
                 api(projects.postproc)
                 api(projects.swresample)
                 api(projects.swscale)
@@ -19,6 +20,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
+                implementation(libs.coroutines.test)
             }
         }
     }

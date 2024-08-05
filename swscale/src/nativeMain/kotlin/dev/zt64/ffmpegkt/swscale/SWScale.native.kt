@@ -1,14 +1,14 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.Library
+import dev.zt64.ffmpegkt.FfmpegLibrary
 import dev.zt64.ffmpegkt.avutil.AVPixelFormat
-import dev.zt64.ffmpegkt.checkTrue
+import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 
-public actual object SWScale : Library {
+public actual object SwScale : FfmpegLibrary {
     override fun version(): Int {
         return swscale_version().toInt()
     }

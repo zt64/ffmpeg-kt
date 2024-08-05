@@ -1,5 +1,5 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.Library
+import dev.zt64.ffmpegkt.FfmpegLibrary
 
-public expect object AVCodecVersion : Library
+public expect object AVCodecVersion : FfmpegLibrary

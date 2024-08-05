@@ -3,22 +3,26 @@ kotlin = "2.0.0"
 android = "8.5.0"
 ffmpeg = "6.1.1-1.5.10"
 appcompat = "1.7.0"
+coroutines = "1.8.1"
 
 # Maintenance
 compatibility = "0.14.0"
 kover = "0.8.2"
 publish = "0.29.0"
 ktlintPlugin = "12.1.1"
-ktlint = "1.2.1"
+ktlint = "1.3.1"
 
 [libraries]
 ffmpeg = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpeg" }
+okio = { module = "com.squareup.okio:okio", version = "3.9.0" }
+okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version = "3.9.0" }
 
 # Sample
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 
 # Test
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

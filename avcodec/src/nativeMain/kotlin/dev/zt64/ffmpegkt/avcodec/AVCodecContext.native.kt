@@ -1,8 +1,8 @@
 package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.AVFrame
-import dev.zt64.ffmpegkt.checkError
-import dev.zt64.ffmpegkt.checkTrue
+import dev.zt64.ffmpegkt.avutil.util.checkError
+import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -11,7 +11,7 @@ import kotlinx.cinterop.ptr
 public actual typealias AVCodecContext = ffmpeg.AVCodecContext
 
 public actual fun AVCodecContext.sendPacket(packet: AVPacket) {
-    return avcodec_send_packet(ptr, packet.ptr).checkError()
+    avcodec_send_packet(ptr, packet.ptr).checkError()
 }
 
 public actual fun AVCodecContext.receiveFrame(): AVFrame {
@@ -25,7 +25,7 @@ public actual fun AVCodecContext.receiveFrame(): AVFrame {
 }
 
 public actual fun AVCodecContext.sendFrame(frame: AVFrame) {
-    return avcodec_send_frame(ptr, frame.ptr).checkError()
+    avcodec_send_frame(ptr, frame.ptr).checkError()
 }
 
 public actual fun AVCodecContext.receivePacket(): AVPacket {

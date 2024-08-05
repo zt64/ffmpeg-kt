@@ -1,8 +1,8 @@
 package dev.zt64.ffmpegkt.avfilter
 
-import dev.zt64.ffmpegkt.Library
+import dev.zt64.ffmpegkt.FfmpegLibrary
 
-public actual object AVFilter : Library {
+public actual object AVFilter : FfmpegLibrary {
     override fun version(): Int {
         TODO()
     }

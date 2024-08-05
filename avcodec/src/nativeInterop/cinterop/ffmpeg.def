@@ -1,14 +1,12 @@
-headers = libavcodec/avcodec.h libavformat/avformat.h libavdevice/avdevice.h libavutil/pixfmt.h \
-    libavutil/avutil.h libswscale/swscale.h libswresample/swresample.h libpostproc/postprocess.h
-headerFilter = libavcodec/** libavformat/** libavdevice/** libavutil/** libswscale/** \
-    libswresample/** libpostproc/**
+headers = libavcodec/avcodec.h
+headerFilter = libavcodec/**
 package = ffmpeg
 
 compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/ffmpeg
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavcodec -lavformat -lavutil \
     -lavfilter -lavdevice -lswscale -lswresample -lpostproc
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavcodec -lavformat -lavutil \
-    -lavfilter -lavdevice -lswscale -lswresample -lpostproc
+    -lavfilter -lavdevice -lswresample -lpostproc
 
 ---
 

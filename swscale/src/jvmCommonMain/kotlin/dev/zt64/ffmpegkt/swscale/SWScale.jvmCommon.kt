@@ -1,11 +1,11 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.Library
+import dev.zt64.ffmpegkt.FfmpegLibrary
 import dev.zt64.ffmpegkt.avutil.AVPixelFormat
-import dev.zt64.ffmpegkt.checkTrue
+import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import org.bytedeco.ffmpeg.global.swscale.*
 
-public actual object SWScale : Library {
+public actual object SwScale : FfmpegLibrary {
     public override fun version(): Int = swscale_version()
 
     override fun configuration(): String = swscale_configuration().string
@@ -17,19 +17,19 @@ public actual object SWScale : Library {
     }
 
     public actual fun isSupportedInput(pixFmt: AVPixelFormat): Boolean {
-        return sws_isSupportedInput(pixFmt.value).checkTrue()
+        return sws_isSupportedInput(pixFmt.num).checkTrue()
     }
 
     public actual fun isSupportedOutput(pixFmt: AVPixelFormat): Boolean {
-        return sws_isSupportedOutput(pixFmt.value).checkTrue()
+        return sws_isSupportedOutput(pixFmt.num).checkTrue()
     }
 
     public actual fun isSupportedEndianness(pixFmt: AVPixelFormat): Boolean {
-        return sws_isSupportedEndiannessConversion(pixFmt.value).checkTrue()
+        return sws_isSupportedEndiannessConversion(pixFmt.num).checkTrue()
     }
 
     public actual fun allocContext(): SwsContext {
-        TODO("Not yet implemented")
+        return sws_alloc_context()
     }
 
     public actual fun initContext(
@@ -37,8 +37,10 @@ public actual object SWScale : Library {
         srcFilter: SwsFilter,
         dstFilter: SwsFilter
     ) {
+        sws_init_context(context, srcFilter, dstFilter)
     }
 
     public actual fun freeContext(swsContext: SwsContext) {
+        sws_freeContext(swsContext)
     }
 }

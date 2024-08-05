@@ -4,9 +4,9 @@ package = ffmpeg
 
 compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/ffmpeg
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavcodec -lavformat -lavutil \
-    -lavfilter -lavdevice -lswscale -lswresample -lpostproc
+    -lavfilter -lavdevice -lswresample -lpostproc
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavcodec -lavformat -lavutil \
-    -lavfilter -lavdevice -lswscale -lswresample -lpostproc
+    -lavfilter -lavdevice -lswresample -lpostproc
 
 ---
 

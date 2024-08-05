@@ -1,10 +1,10 @@
 package dev.zt64.ffmpegkt.avdevice
 
-import dev.zt64.ffmpegkt.Library
+import dev.zt64.ffmpegkt.FfmpegLibrary
 import ffmpeg.*
 import kotlinx.cinterop.toKString
 
-public actual object AVDevice : Library {
+public actual object AVDevice : FfmpegLibrary {
     override fun version(): Int = avdevice_version().toInt()
 
     override fun configuration(): String = avdevice_configuration()?.toKString().orEmpty()

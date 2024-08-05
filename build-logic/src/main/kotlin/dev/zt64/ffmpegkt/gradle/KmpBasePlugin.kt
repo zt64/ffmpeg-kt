@@ -1,5 +1,6 @@
 package dev.zt64.ffmpegkt.gradle
 
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -9,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KmpBasePlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        setupAndroid(target)
         setupKmp(target)
     }
 
@@ -22,13 +24,14 @@ class KmpBasePlugin : Plugin<Project> {
             applyDefaultHierarchyTemplate {
                 common {
                     group("jvmCommon") {
-                        // withAndroidTarget()
+                        withAndroidTarget()
                         withJvm()
                     }
                 }
             }
 
             jvm()
+            androidTarget()
 
             native()
 
@@ -37,6 +40,18 @@ class KmpBasePlugin : Plugin<Project> {
             }
 
             sourceSets.apply {
+            }
+        }
+    }
+
+    private fun setupAndroid(target: Project) {
+        target.apply(plugin = "android-library")
+
+        target.configure<LibraryExtension> {
+            namespace = "dev.zt64.ffmpegkt"
+            compileSdk = 33
+            defaultConfig {
+                minSdk = 21
             }
         }
     }

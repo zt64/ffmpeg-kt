@@ -1,5 +1,5 @@
 package dev.zt64.ffmpegkt.avfilter
 
-import dev.zt64.ffmpegkt.Library
+import dev.zt64.ffmpegkt.FfmpegLibrary
 
-public expect object AVFilter : Library
+public expect object AVFilter : FfmpegLibrary

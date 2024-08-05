@@ -12,6 +12,7 @@ fun DependencyHandler.compileOnly(dependency: Provider<PluginDependency>) {
 
 dependencies {
     compileOnly(libs.plugins.kotlin.multiplatform)
+    compileOnly(libs.plugins.android.library)
     implementation(libs.plugins.publish)
 }
 

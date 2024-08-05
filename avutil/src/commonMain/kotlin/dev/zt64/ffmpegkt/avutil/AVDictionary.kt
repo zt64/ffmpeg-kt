@@ -1,31 +1,9 @@
 package dev.zt64.ffmpegkt.avutil
 
-public expect class AVDictionary
+public typealias AVDictionary = Map<String, String>
 
-public fun AVDictionary.iterate(prev: AVDictionaryEntry? = null): AVDictionaryEntry? {
-    return AVUtil.dictIterate(this, prev)
-}
+public expect class AVDictionaryNative
 
-public expect fun AVDictionary.count(): Int
+public expect fun AVDictionaryNative(dict: AVDictionary): AVDictionaryNative
 
-public expect operator fun AVDictionary.get(key: String, flags: Int = 0): String?
-
-public expect fun AVDictionary.set(
-    key: String,
-    value: String,
-    flags: Int
-)
-
-public expect fun AVDictionary.set(
-    key: String,
-    value: Long,
-    flags: Int
-)
-
-public operator fun AVDictionary.set(key: String, value: String) {
-    set(key, value, 0)
-}
-
-public operator fun AVDictionary.set(key: String, value: Long) {
-    set(key, value, 0)
-}
+public expect fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary

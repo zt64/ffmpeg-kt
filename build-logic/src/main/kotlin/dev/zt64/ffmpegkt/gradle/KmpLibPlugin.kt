@@ -51,7 +51,7 @@ class KmpLibPlugin : Plugin<Project> {
 
                 named("jvmCommonMain") {
                     dependencies {
-                        implementation(target.versionCatalog().findLibrary("ffmpeg").get())
+                        // implementation(target.versionCatalog().findLibrary("ffmpeg").get())
                     }
                 }
             }

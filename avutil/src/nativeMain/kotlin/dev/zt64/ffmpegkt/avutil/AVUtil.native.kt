@@ -1,10 +1,12 @@
 package dev.zt64.ffmpegkt.avutil
 
-import dev.zt64.ffmpegkt.Library
+import dev.zt64.ffmpegkt.FfmpegLibrary
 import ffmpeg.*
-import kotlinx.cinterop.*
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.pointed
+import kotlinx.cinterop.toKString
 
-public actual object AVUtil : Library {
+public actual object AVUtil : FfmpegLibrary {
     override fun version(): Int = avutil_version().toInt()
 
     override fun configuration(): String {
@@ -31,12 +33,5 @@ public actual object AVUtil : Library {
         return memScoped {
             av_get_time_base_q().ptr.pointed
         }
-    }
-
-    public actual fun dictIterate(
-        dict: AVDictionary,
-        prev: AVDictionaryEntry?
-    ): AVDictionaryEntry? {
-        return av_dict_iterate(dict, prev?.ptr)?.pointed
     }
 }

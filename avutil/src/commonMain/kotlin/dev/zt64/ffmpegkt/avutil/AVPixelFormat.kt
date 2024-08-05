@@ -1,471 +1,241 @@
 package dev.zt64.ffmpegkt.avutil
 
-public enum class AVPixelFormat(public val value: Int) {
-    AV_PIX_FMT_NONE(-1),
-
-    AV_PIX_FMT_YUV420P(0),
-
-    AV_PIX_FMT_YUYV422(1),
-
-    AV_PIX_FMT_RGB24(2),
-
-    AV_PIX_FMT_BGR24(3),
-
-    AV_PIX_FMT_YUV422P(4),
-
-    AV_PIX_FMT_YUV444P(5),
-
-    AV_PIX_FMT_YUV410P(6),
-
-    AV_PIX_FMT_YUV411P(7),
-
-    AV_PIX_FMT_GRAY8(8),
-
-    AV_PIX_FMT_MONOWHITE(9),
-
-    AV_PIX_FMT_MONOBLACK(10),
-
-    AV_PIX_FMT_PAL8(11),
-
-    AV_PIX_FMT_YUVJ420P(12),
-
-    AV_PIX_FMT_YUVJ422P(13),
-
-    AV_PIX_FMT_YUVJ444P(14),
-
-    AV_PIX_FMT_UYVY422(15),
-
-    AV_PIX_FMT_UYYVYY411(16),
-
-    AV_PIX_FMT_BGR8(17),
-
-    AV_PIX_FMT_BGR4(18),
-
-    AV_PIX_FMT_BGR4_BYTE(19),
-
-    AV_PIX_FMT_RGB8(20),
-
-    AV_PIX_FMT_RGB4(21),
-
-    AV_PIX_FMT_RGB4_BYTE(22),
-
-    AV_PIX_FMT_NV12(23),
-
-    AV_PIX_FMT_NV21(24),
-
-    AV_PIX_FMT_ARGB(25),
-
-    AV_PIX_FMT_RGBA(26),
-
-    AV_PIX_FMT_ABGR(27),
-
-    AV_PIX_FMT_BGRA(28),
-
-    AV_PIX_FMT_GRAY16BE(29),
-
-    AV_PIX_FMT_GRAY16LE(30),
-
-    AV_PIX_FMT_YUV440P(31),
-
-    AV_PIX_FMT_YUVJ440P(32),
-
-    AV_PIX_FMT_YUVA420P(33),
-
-    AV_PIX_FMT_RGB48BE(34),
-
-    AV_PIX_FMT_RGB48LE(35),
-
-    AV_PIX_FMT_RGB565BE(36),
-
-    AV_PIX_FMT_RGB565LE(37),
-
-    AV_PIX_FMT_RGB555BE(38),
-
-    AV_PIX_FMT_RGB555LE(39),
-
-    AV_PIX_FMT_BGR565BE(40),
-
-    AV_PIX_FMT_BGR565LE(41),
-
-    AV_PIX_FMT_BGR555BE(42),
-
-    AV_PIX_FMT_BGR555LE(43),
-
-    AV_PIX_FMT_VAAPI(44),
-
-    AV_PIX_FMT_YUV420P16LE(45),
-
-    AV_PIX_FMT_YUV420P16BE(46),
-
-    AV_PIX_FMT_YUV422P16LE(47),
-
-    AV_PIX_FMT_YUV422P16BE(48),
-
-    AV_PIX_FMT_YUV444P16LE(49),
-
-    AV_PIX_FMT_YUV444P16BE(50),
-
-    AV_PIX_FMT_DXVA2_VLD(51),
-
-    AV_PIX_FMT_RGB444LE(52),
-
-    AV_PIX_FMT_RGB444BE(53),
-
-    AV_PIX_FMT_BGR444LE(54),
-
-    AV_PIX_FMT_BGR444BE(55),
-
-    AV_PIX_FMT_YA8(56),
-
-    AV_PIX_FMT_Y400A(AV_PIX_FMT_YA8.value),
-
-    AV_PIX_FMT_GRAY8A(AV_PIX_FMT_YA8.value),
-
-    AV_PIX_FMT_BGR48BE(AV_PIX_FMT_YA8.value + 1),
-
-    AV_PIX_FMT_BGR48LE(AV_PIX_FMT_YA8.value + 2),
-
-    AV_PIX_FMT_YUV420P9BE(AV_PIX_FMT_YA8.value + 3),
-
-    AV_PIX_FMT_YUV420P9LE(AV_PIX_FMT_YA8.value + 4),
-
-    AV_PIX_FMT_YUV420P10BE(AV_PIX_FMT_YA8.value + 5),
-
-    AV_PIX_FMT_YUV420P10LE(AV_PIX_FMT_YA8.value + 6),
-
-    AV_PIX_FMT_YUV422P10BE(AV_PIX_FMT_YA8.value + 7),
-
-    AV_PIX_FMT_YUV422P10LE(AV_PIX_FMT_YA8.value + 8),
-
-    AV_PIX_FMT_YUV444P9BE(AV_PIX_FMT_YA8.value + 9),
-
-    AV_PIX_FMT_YUV444P9LE(AV_PIX_FMT_YA8.value + 10),
-
-    AV_PIX_FMT_YUV444P10BE(AV_PIX_FMT_YA8.value + 11),
-
-    AV_PIX_FMT_YUV444P10LE(AV_PIX_FMT_YA8.value + 12),
-
-    AV_PIX_FMT_YUV422P9BE(AV_PIX_FMT_YA8.value + 13),
-
-    AV_PIX_FMT_YUV422P9LE(AV_PIX_FMT_YA8.value + 14),
-
-    AV_PIX_FMT_GBRP(AV_PIX_FMT_YA8.value + 15),
-
-    AV_PIX_FMT_GBR24P(AV_PIX_FMT_GBRP.value),
-
-    AV_PIX_FMT_GBRP9BE(AV_PIX_FMT_GBRP.value + 1),
-
-    AV_PIX_FMT_GBRP9LE(AV_PIX_FMT_GBRP.value + 2),
-
-    AV_PIX_FMT_GBRP10BE(AV_PIX_FMT_GBRP.value + 3),
-
-    AV_PIX_FMT_GBRP10LE(AV_PIX_FMT_GBRP.value + 4),
-
-    AV_PIX_FMT_GBRP16BE(AV_PIX_FMT_GBRP.value + 5),
-
-    AV_PIX_FMT_GBRP16LE(AV_PIX_FMT_GBRP.value + 6),
-
-    AV_PIX_FMT_YUVA422P(AV_PIX_FMT_GBRP.value + 7),
-
-    AV_PIX_FMT_YUVA444P(AV_PIX_FMT_GBRP.value + 8),
-
-    AV_PIX_FMT_YUVA420P9BE(AV_PIX_FMT_GBRP.value + 9),
-
-    AV_PIX_FMT_YUVA420P9LE(AV_PIX_FMT_GBRP.value + 10),
-
-    AV_PIX_FMT_YUVA422P9BE(AV_PIX_FMT_GBRP.value + 11),
-
-    AV_PIX_FMT_YUVA422P9LE(AV_PIX_FMT_GBRP.value + 12),
-
-    AV_PIX_FMT_YUVA444P9BE(AV_PIX_FMT_GBRP.value + 13),
-
-    AV_PIX_FMT_YUVA444P9LE(AV_PIX_FMT_GBRP.value + 14),
-
-    AV_PIX_FMT_YUVA420P10BE(AV_PIX_FMT_GBRP.value + 15),
-
-    AV_PIX_FMT_YUVA420P10LE(AV_PIX_FMT_GBRP.value + 16),
-
-    AV_PIX_FMT_YUVA422P10BE(AV_PIX_FMT_GBRP.value + 17),
-
-    AV_PIX_FMT_YUVA422P10LE(AV_PIX_FMT_GBRP.value + 18),
-
-    AV_PIX_FMT_YUVA444P10BE(AV_PIX_FMT_GBRP.value + 19),
-
-    AV_PIX_FMT_YUVA444P10LE(AV_PIX_FMT_GBRP.value + 20),
-
-    AV_PIX_FMT_YUVA420P16BE(AV_PIX_FMT_GBRP.value + 21),
-
-    AV_PIX_FMT_YUVA420P16LE(AV_PIX_FMT_GBRP.value + 22),
-
-    AV_PIX_FMT_YUVA422P16BE(AV_PIX_FMT_GBRP.value + 23),
-
-    AV_PIX_FMT_YUVA422P16LE(AV_PIX_FMT_GBRP.value + 24),
-
-    AV_PIX_FMT_YUVA444P16BE(AV_PIX_FMT_GBRP.value + 25),
-
-    AV_PIX_FMT_YUVA444P16LE(AV_PIX_FMT_GBRP.value + 26),
-
-    AV_PIX_FMT_VDPAU(AV_PIX_FMT_GBRP.value + 27),
-
-    AV_PIX_FMT_XYZ12LE(AV_PIX_FMT_GBRP.value + 28),
-
-    AV_PIX_FMT_XYZ12BE(AV_PIX_FMT_GBRP.value + 29),
-
-    AV_PIX_FMT_NV16(AV_PIX_FMT_GBRP.value + 30),
-
-    AV_PIX_FMT_NV20LE(AV_PIX_FMT_GBRP.value + 31),
-
-    AV_PIX_FMT_NV20BE(AV_PIX_FMT_GBRP.value + 32),
-
-    AV_PIX_FMT_RGBA64BE(AV_PIX_FMT_GBRP.value + 33),
-
-    AV_PIX_FMT_RGBA64LE(AV_PIX_FMT_GBRP.value + 34),
-
-    AV_PIX_FMT_BGRA64BE(AV_PIX_FMT_GBRP.value + 35),
-
-    AV_PIX_FMT_BGRA64LE(AV_PIX_FMT_GBRP.value + 36),
-
-    AV_PIX_FMT_YVYU422(AV_PIX_FMT_GBRP.value + 37),
-
-    AV_PIX_FMT_YA16BE(AV_PIX_FMT_GBRP.value + 38),
-
-    AV_PIX_FMT_YA16LE(AV_PIX_FMT_GBRP.value + 39),
-
-    AV_PIX_FMT_GBRAP(AV_PIX_FMT_GBRP.value + 40),
-
-    AV_PIX_FMT_GBRAP16BE(AV_PIX_FMT_GBRP.value + 41),
-
-    AV_PIX_FMT_GBRAP16LE(AV_PIX_FMT_GBRP.value + 42),
-
-    AV_PIX_FMT_QSV(AV_PIX_FMT_GBRP.value + 43),
-
-    AV_PIX_FMT_MMAL(AV_PIX_FMT_GBRP.value + 44),
-
-    AV_PIX_FMT_D3D11VA_VLD(AV_PIX_FMT_GBRP.value + 45),
-
-    AV_PIX_FMT_CUDA(AV_PIX_FMT_GBRP.value + 46),
-
-    AV_PIX_FMT_0RGB(AV_PIX_FMT_GBRP.value + 47),
-
-    AV_PIX_FMT_RGB0(AV_PIX_FMT_GBRP.value + 48),
-
-    AV_PIX_FMT_0BGR(AV_PIX_FMT_GBRP.value + 49),
-
-    AV_PIX_FMT_BGR0(AV_PIX_FMT_GBRP.value + 50),
-
-    AV_PIX_FMT_YUV420P12BE(AV_PIX_FMT_GBRP.value + 51),
-
-    AV_PIX_FMT_YUV420P12LE(AV_PIX_FMT_GBRP.value + 52),
-
-    AV_PIX_FMT_YUV420P14BE(AV_PIX_FMT_GBRP.value + 53),
-
-    AV_PIX_FMT_YUV420P14LE(AV_PIX_FMT_GBRP.value + 54),
-
-    AV_PIX_FMT_YUV422P12BE(AV_PIX_FMT_GBRP.value + 55),
-
-    AV_PIX_FMT_YUV422P12LE(AV_PIX_FMT_GBRP.value + 56),
-
-    AV_PIX_FMT_YUV422P14BE(AV_PIX_FMT_GBRP.value + 57),
-
-    AV_PIX_FMT_YUV422P14LE(AV_PIX_FMT_GBRP.value + 58),
-
-    AV_PIX_FMT_YUV444P12BE(AV_PIX_FMT_GBRP.value + 59),
-
-    AV_PIX_FMT_YUV444P12LE(AV_PIX_FMT_GBRP.value + 60),
-
-    AV_PIX_FMT_YUV444P14BE(AV_PIX_FMT_GBRP.value + 61),
-
-    AV_PIX_FMT_YUV444P14LE(AV_PIX_FMT_GBRP.value + 62),
-
-    AV_PIX_FMT_GBRP12BE(AV_PIX_FMT_GBRP.value + 63),
-
-    AV_PIX_FMT_GBRP12LE(AV_PIX_FMT_GBRP.value + 64),
-
-    AV_PIX_FMT_GBRP14BE(AV_PIX_FMT_GBRP.value + 65),
-
-    AV_PIX_FMT_GBRP14LE(AV_PIX_FMT_GBRP.value + 66),
-
-    AV_PIX_FMT_YUVJ411P(AV_PIX_FMT_GBRP.value + 67),
-
-    AV_PIX_FMT_BAYER_BGGR8(AV_PIX_FMT_GBRP.value + 68),
-
-    AV_PIX_FMT_BAYER_RGGB8(AV_PIX_FMT_GBRP.value + 69),
-
-    AV_PIX_FMT_BAYER_GBRG8(AV_PIX_FMT_GBRP.value + 70),
-
-    AV_PIX_FMT_BAYER_GRBG8(AV_PIX_FMT_GBRP.value + 71),
-
-    AV_PIX_FMT_BAYER_BGGR16LE(AV_PIX_FMT_GBRP.value + 72),
-
-    AV_PIX_FMT_BAYER_BGGR16BE(AV_PIX_FMT_GBRP.value + 73),
-
-    AV_PIX_FMT_BAYER_RGGB16LE(AV_PIX_FMT_GBRP.value + 74),
-
-    AV_PIX_FMT_BAYER_RGGB16BE(AV_PIX_FMT_GBRP.value + 75),
-
-    AV_PIX_FMT_BAYER_GBRG16LE(AV_PIX_FMT_GBRP.value + 76),
-
-    AV_PIX_FMT_BAYER_GBRG16BE(AV_PIX_FMT_GBRP.value + 77),
-
-    AV_PIX_FMT_BAYER_GRBG16LE(AV_PIX_FMT_GBRP.value + 78),
-
-    AV_PIX_FMT_BAYER_GRBG16BE(AV_PIX_FMT_GBRP.value + 79),
-
-    AV_PIX_FMT_XVMC(AV_PIX_FMT_GBRP.value + 80),
-
-    AV_PIX_FMT_YUV440P10LE(AV_PIX_FMT_GBRP.value + 81),
-
-    AV_PIX_FMT_YUV440P10BE(AV_PIX_FMT_GBRP.value + 82),
-
-    AV_PIX_FMT_YUV440P12LE(AV_PIX_FMT_GBRP.value + 83),
-
-    AV_PIX_FMT_YUV440P12BE(AV_PIX_FMT_GBRP.value + 84),
-
-    AV_PIX_FMT_AYUV64LE(AV_PIX_FMT_GBRP.value + 85),
-
-    AV_PIX_FMT_AYUV64BE(AV_PIX_FMT_GBRP.value + 86),
-
-    AV_PIX_FMT_VIDEOTOOLBOX(AV_PIX_FMT_GBRP.value + 87),
-
-    AV_PIX_FMT_P010LE(AV_PIX_FMT_GBRP.value + 88),
-
-    AV_PIX_FMT_P010BE(AV_PIX_FMT_GBRP.value + 89),
-
-    AV_PIX_FMT_GBRAP12BE(AV_PIX_FMT_GBRP.value + 90),
-
-    AV_PIX_FMT_GBRAP12LE(AV_PIX_FMT_GBRP.value + 91),
-
-    AV_PIX_FMT_GBRAP10BE(AV_PIX_FMT_GBRP.value + 92),
-
-    AV_PIX_FMT_GBRAP10LE(AV_PIX_FMT_GBRP.value + 93),
-
-    AV_PIX_FMT_MEDIACODEC(AV_PIX_FMT_GBRP.value + 94),
-
-    AV_PIX_FMT_GRAY12BE(AV_PIX_FMT_GBRP.value + 95),
-
-    AV_PIX_FMT_GRAY12LE(AV_PIX_FMT_GBRP.value + 96),
-
-    AV_PIX_FMT_GRAY10BE(AV_PIX_FMT_GBRP.value + 97),
-
-    AV_PIX_FMT_GRAY10LE(AV_PIX_FMT_GBRP.value + 98),
-
-    AV_PIX_FMT_P016LE(AV_PIX_FMT_GBRP.value + 99),
-
-    AV_PIX_FMT_P016BE(AV_PIX_FMT_GBRP.value + 100),
-
-    AV_PIX_FMT_D3D11(AV_PIX_FMT_GBRP.value + 101),
-
-    AV_PIX_FMT_GRAY9BE(AV_PIX_FMT_GBRP.value + 102),
-
-    AV_PIX_FMT_GRAY9LE(AV_PIX_FMT_GBRP.value + 103),
-
-    AV_PIX_FMT_GBRPF32BE(AV_PIX_FMT_GBRP.value + 104),
-
-    AV_PIX_FMT_GBRPF32LE(AV_PIX_FMT_GBRP.value + 105),
-
-    AV_PIX_FMT_GBRAPF32BE(AV_PIX_FMT_GBRP.value + 106),
-
-    AV_PIX_FMT_GBRAPF32LE(AV_PIX_FMT_GBRP.value + 107),
-
-    AV_PIX_FMT_DRM_PRIME(AV_PIX_FMT_GBRP.value + 108),
-
-    AV_PIX_FMT_OPENCL(AV_PIX_FMT_GBRP.value + 109),
-
-    AV_PIX_FMT_GRAY14BE(AV_PIX_FMT_GBRP.value + 110),
-
-    AV_PIX_FMT_GRAY14LE(AV_PIX_FMT_GBRP.value + 111),
-
-    AV_PIX_FMT_GRAYF32BE(AV_PIX_FMT_GBRP.value + 112),
-
-    AV_PIX_FMT_GRAYF32LE(AV_PIX_FMT_GBRP.value + 113),
-
-    AV_PIX_FMT_YUVA422P12BE(AV_PIX_FMT_GBRP.value + 114),
-
-    AV_PIX_FMT_YUVA422P12LE(AV_PIX_FMT_GBRP.value + 115),
-
-    AV_PIX_FMT_YUVA444P12BE(AV_PIX_FMT_GBRP.value + 116),
-
-    AV_PIX_FMT_YUVA444P12LE(AV_PIX_FMT_GBRP.value + 117),
-
-    AV_PIX_FMT_NV24(AV_PIX_FMT_GBRP.value + 118),
-
-    AV_PIX_FMT_NV42(AV_PIX_FMT_GBRP.value + 119),
-
-    AV_PIX_FMT_VULKAN(AV_PIX_FMT_GBRP.value + 120),
-
-    AV_PIX_FMT_Y210BE(AV_PIX_FMT_GBRP.value + 121),
-
-    AV_PIX_FMT_Y210LE(AV_PIX_FMT_GBRP.value + 122),
-
-    AV_PIX_FMT_X2RGB10LE(AV_PIX_FMT_GBRP.value + 123),
-
-    AV_PIX_FMT_X2RGB10BE(AV_PIX_FMT_GBRP.value + 124),
-
-    AV_PIX_FMT_X2BGR10LE(AV_PIX_FMT_GBRP.value + 125),
-
-    AV_PIX_FMT_X2BGR10BE(AV_PIX_FMT_GBRP.value + 126),
-
-    AV_PIX_FMT_P210BE(AV_PIX_FMT_GBRP.value + 127),
-
-    AV_PIX_FMT_P210LE(AV_PIX_FMT_GBRP.value + 128),
-
-    AV_PIX_FMT_P410BE(AV_PIX_FMT_GBRP.value + 129),
-
-    AV_PIX_FMT_P410LE(AV_PIX_FMT_GBRP.value + 130),
-
-    AV_PIX_FMT_P216BE(AV_PIX_FMT_GBRP.value + 131),
-
-    AV_PIX_FMT_P216LE(AV_PIX_FMT_GBRP.value + 132),
-
-    AV_PIX_FMT_P416BE(AV_PIX_FMT_GBRP.value + 133),
-
-    AV_PIX_FMT_P416LE(AV_PIX_FMT_GBRP.value + 134),
-
-    AV_PIX_FMT_VUYA(AV_PIX_FMT_GBRP.value + 135),
-
-    AV_PIX_FMT_RGBAF16BE(AV_PIX_FMT_GBRP.value + 136),
-
-    AV_PIX_FMT_RGBAF16LE(AV_PIX_FMT_GBRP.value + 137),
-
-    AV_PIX_FMT_VUYX(AV_PIX_FMT_GBRP.value + 138),
-
-    AV_PIX_FMT_P012LE(AV_PIX_FMT_GBRP.value + 139),
-
-    AV_PIX_FMT_P012BE(AV_PIX_FMT_GBRP.value + 140),
-
-    AV_PIX_FMT_Y212BE(AV_PIX_FMT_GBRP.value + 141),
-
-    AV_PIX_FMT_Y212LE(AV_PIX_FMT_GBRP.value + 142),
-
-    AV_PIX_FMT_XV30BE(AV_PIX_FMT_GBRP.value + 143),
-
-    AV_PIX_FMT_XV30LE(AV_PIX_FMT_GBRP.value + 144),
-
-    AV_PIX_FMT_XV36BE(AV_PIX_FMT_GBRP.value + 145),
-
-    AV_PIX_FMT_XV36LE(AV_PIX_FMT_GBRP.value + 146),
-
-    AV_PIX_FMT_RGBF32BE(AV_PIX_FMT_GBRP.value + 147),
-
-    AV_PIX_FMT_RGBF32LE(AV_PIX_FMT_GBRP.value + 148),
-
-    AV_PIX_FMT_RGBAF32BE(AV_PIX_FMT_GBRP.value + 149),
-
-    AV_PIX_FMT_RGBAF32LE(AV_PIX_FMT_GBRP.value + 150),
-
-    AV_PIX_FMT_P212BE(AV_PIX_FMT_GBRP.value + 151),
-
-    AV_PIX_FMT_P212LE(AV_PIX_FMT_GBRP.value + 152),
-
-    AV_PIX_FMT_P412BE(AV_PIX_FMT_GBRP.value + 153),
-
-    AV_PIX_FMT_P412LE(AV_PIX_FMT_GBRP.value + 154),
-
-    AV_PIX_FMT_GBRAP14BE(AV_PIX_FMT_GBRP.value + 155),
-
-    AV_PIX_FMT_GBRAP14LE(AV_PIX_FMT_GBRP.value + 156),
-
-    AV_PIX_FMT_NB(AV_PIX_FMT_GBRP.value + 157)
+import kotlin.jvm.JvmInline
+
+@JvmInline
+public value class AVPixelFormat(public val num: Int) {
+    public companion object {
+        public val NONE: AVPixelFormat = AVPixelFormat(-1)
+        public val YUV420P: AVPixelFormat = AVPixelFormat(0)
+        public val YUYV422: AVPixelFormat = AVPixelFormat(1)
+        public val RGB24: AVPixelFormat = AVPixelFormat(2)
+        public val BGR24: AVPixelFormat = AVPixelFormat(3)
+        public val YUV422P: AVPixelFormat = AVPixelFormat(4)
+        public val YUV444P: AVPixelFormat = AVPixelFormat(5)
+        public val YUV410P: AVPixelFormat = AVPixelFormat(6)
+        public val GRAY8: AVPixelFormat = AVPixelFormat(8)
+        public val MONOWHITE: AVPixelFormat = AVPixelFormat(9)
+        public val MONOBLACK: AVPixelFormat = AVPixelFormat(10)
+        public val PAL8: AVPixelFormat = AVPixelFormat(11)
+        public val YUVJ420P: AVPixelFormat = AVPixelFormat(12)
+        public val YUVJ422P: AVPixelFormat = AVPixelFormat(13)
+        public val YUVJ444P: AVPixelFormat = AVPixelFormat(14)
+        public val UYVY422: AVPixelFormat = AVPixelFormat(15)
+        public val UYYVYY411: AVPixelFormat = AVPixelFormat(16)
+        public val BGR8: AVPixelFormat = AVPixelFormat(17)
+        public val BGR4: AVPixelFormat = AVPixelFormat(18)
+        public val BGR4_BYTE: AVPixelFormat = AVPixelFormat(19)
+        public val RGB8: AVPixelFormat = AVPixelFormat(20)
+        public val RGB4: AVPixelFormat = AVPixelFormat(21)
+        public val RGB4_BYTE: AVPixelFormat = AVPixelFormat(22)
+        public val NV12: AVPixelFormat = AVPixelFormat(23)
+        public val NV21: AVPixelFormat = AVPixelFormat(24)
+        public val ARGB: AVPixelFormat = AVPixelFormat(25)
+        public val RGBA: AVPixelFormat = AVPixelFormat(26)
+        public val ABGR: AVPixelFormat = AVPixelFormat(27)
+        public val BGRA: AVPixelFormat = AVPixelFormat(28)
+        public val GRAY16BE: AVPixelFormat = AVPixelFormat(29)
+        public val GRAY16LE: AVPixelFormat = AVPixelFormat(30)
+        public val YUV440P: AVPixelFormat = AVPixelFormat(31)
+        public val YUVJ440P: AVPixelFormat = AVPixelFormat(32)
+        public val YUVA420P: AVPixelFormat = AVPixelFormat(33)
+        public val RGB48BE: AVPixelFormat = AVPixelFormat(34)
+        public val RGB48LE: AVPixelFormat = AVPixelFormat(35)
+        public val RGB565BE: AVPixelFormat = AVPixelFormat(36)
+        public val RGB565LE: AVPixelFormat = AVPixelFormat(37)
+        public val RGB555BE: AVPixelFormat = AVPixelFormat(38)
+        public val RGB555LE: AVPixelFormat = AVPixelFormat(39)
+        public val BGR565BE: AVPixelFormat = AVPixelFormat(40)
+        public val BGR565LE: AVPixelFormat = AVPixelFormat(41)
+        public val BGR555BE: AVPixelFormat = AVPixelFormat(42)
+        public val BGR555LE: AVPixelFormat = AVPixelFormat(43)
+        public val VAAPI: AVPixelFormat = AVPixelFormat(44)
+        public val YUV420P16LE: AVPixelFormat = AVPixelFormat(45)
+        public val YUV420P16BE: AVPixelFormat = AVPixelFormat(46)
+        public val YUV422P16LE: AVPixelFormat = AVPixelFormat(47)
+        public val YUV422P16BE: AVPixelFormat = AVPixelFormat(48)
+        public val YUV444P16LE: AVPixelFormat = AVPixelFormat(49)
+        public val YUV444P16BE: AVPixelFormat = AVPixelFormat(50)
+        public val DXVA2_VLD: AVPixelFormat = AVPixelFormat(51)
+        public val RGB444LE: AVPixelFormat = AVPixelFormat(52)
+        public val RGB444BE: AVPixelFormat = AVPixelFormat(53)
+        public val BGR444LE: AVPixelFormat = AVPixelFormat(54)
+        public val BGR444BE: AVPixelFormat = AVPixelFormat(55)
+        public val YA8: AVPixelFormat = AVPixelFormat(56)
+        public val Y400A: AVPixelFormat = AVPixelFormat(YA8.num)
+        public val GRAY8A: AVPixelFormat = AVPixelFormat(YA8.num)
+        public val BGR48BE: AVPixelFormat = AVPixelFormat(YA8.num + 1)
+        public val BGR48LE: AVPixelFormat = AVPixelFormat(YA8.num + 2)
+        public val YUV420P9BE: AVPixelFormat = AVPixelFormat(YA8.num + 3)
+        public val YUV420P9LE: AVPixelFormat = AVPixelFormat(YA8.num + 4)
+        public val YUV420P10BE: AVPixelFormat = AVPixelFormat(YA8.num + 5)
+        public val YUV420P10LE: AVPixelFormat = AVPixelFormat(YA8.num + 6)
+        public val YUV422P10BE: AVPixelFormat = AVPixelFormat(YA8.num + 7)
+        public val YUV422P10LE: AVPixelFormat = AVPixelFormat(YA8.num + 8)
+        public val YUV444P9BE: AVPixelFormat = AVPixelFormat(YA8.num + 9)
+        public val YUV444P9LE: AVPixelFormat = AVPixelFormat(YA8.num + 10)
+        public val YUV444P10BE: AVPixelFormat = AVPixelFormat(YA8.num + 11)
+        public val YUV444P10LE: AVPixelFormat = AVPixelFormat(YA8.num + 12)
+        public val YUV422P9BE: AVPixelFormat = AVPixelFormat(YA8.num + 13)
+        public val YUV422P9LE: AVPixelFormat = AVPixelFormat(YA8.num + 14)
+        public val GBRP: AVPixelFormat = AVPixelFormat(YA8.num + 15)
+        public val GBR24P: AVPixelFormat = AVPixelFormat(GBRP.num)
+        public val GBRP9BE: AVPixelFormat = AVPixelFormat(GBRP.num + 1)
+        public val GBRP9LE: AVPixelFormat = AVPixelFormat(GBRP.num + 2)
+        public val GBRP10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 3)
+        public val GBRP10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 4)
+        public val GBRP16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 5)
+        public val GBRP16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 6)
+        public val YUVA422P: AVPixelFormat = AVPixelFormat(GBRP.num + 7)
+        public val YUVA444P: AVPixelFormat = AVPixelFormat(GBRP.num + 8)
+        public val YUVA420P9BE: AVPixelFormat = AVPixelFormat(GBRP.num + 9)
+        public val YUVA420P9LE: AVPixelFormat = AVPixelFormat(GBRP.num + 10)
+        public val YUVA422P9BE: AVPixelFormat = AVPixelFormat(GBRP.num + 11)
+        public val YUVA422P9LE: AVPixelFormat = AVPixelFormat(GBRP.num + 12)
+        public val YUVA444P9BE: AVPixelFormat = AVPixelFormat(GBRP.num + 13)
+        public val YUVA444P9LE: AVPixelFormat = AVPixelFormat(GBRP.num + 14)
+        public val YUVA420P10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 15)
+        public val YUVA420P10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 16)
+        public val YUVA422P10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 17)
+        public val YUVA422P10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 18)
+        public val YUVA444P10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 19)
+        public val YUVA444P10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 20)
+        public val YUVA420P16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 21)
+        public val YUVA420P16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 22)
+        public val YUVA422P16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 23)
+        public val YUVA422P16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 24)
+        public val YUVA444P16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 25)
+        public val YUVA444P16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 26)
+        public val VDPAU: AVPixelFormat = AVPixelFormat(GBRP.num + 27)
+        public val XYZ12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 28)
+        public val XYZ12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 29)
+        public val NV16: AVPixelFormat = AVPixelFormat(GBRP.num + 30)
+        public val NV20LE: AVPixelFormat = AVPixelFormat(GBRP.num + 31)
+        public val NV20BE: AVPixelFormat = AVPixelFormat(GBRP.num + 32)
+        public val RGBA64BE: AVPixelFormat = AVPixelFormat(GBRP.num + 33)
+        public val RGBA64LE: AVPixelFormat = AVPixelFormat(GBRP.num + 34)
+        public val BGRA64BE: AVPixelFormat = AVPixelFormat(GBRP.num + 35)
+        public val BGRA64LE: AVPixelFormat = AVPixelFormat(GBRP.num + 36)
+        public val YVYU422: AVPixelFormat = AVPixelFormat(GBRP.num + 37)
+        public val YA16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 38)
+        public val YA16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 39)
+        public val GBRAP: AVPixelFormat = AVPixelFormat(GBRP.num + 40)
+        public val GBRAP16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 41)
+        public val GBRAP16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 42)
+        public val QSV: AVPixelFormat = AVPixelFormat(GBRP.num + 43)
+        public val MMAL: AVPixelFormat = AVPixelFormat(GBRP.num + 44)
+        public val D3D11VA_VLD: AVPixelFormat = AVPixelFormat(GBRP.num + 45)
+        public val CUDA: AVPixelFormat = AVPixelFormat(GBRP.num + 46)
+        public val PIX_FMT_0RGB: AVPixelFormat = AVPixelFormat(GBRP.num + 47)
+        public val RGB0: AVPixelFormat = AVPixelFormat(GBRP.num + 48)
+        public val PIX_FMT_0BGR: AVPixelFormat = AVPixelFormat(GBRP.num + 49)
+        public val BGR0: AVPixelFormat = AVPixelFormat(GBRP.num + 50)
+        public val YUV420P12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 51)
+        public val YUV420P12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 52)
+        public val YUV420P14BE: AVPixelFormat = AVPixelFormat(GBRP.num + 53)
+        public val YUV420P14LE: AVPixelFormat = AVPixelFormat(GBRP.num + 54)
+        public val YUV422P12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 55)
+        public val YUV422P12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 56)
+        public val YUV422P14BE: AVPixelFormat = AVPixelFormat(GBRP.num + 57)
+        public val YUV422P14LE: AVPixelFormat = AVPixelFormat(GBRP.num + 58)
+        public val YUV444P12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 59)
+        public val YUV444P12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 60)
+        public val YUV444P14BE: AVPixelFormat = AVPixelFormat(GBRP.num + 61)
+        public val YUV444P14LE: AVPixelFormat = AVPixelFormat(GBRP.num + 62)
+        public val GBRP12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 63)
+        public val GBRP12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 64)
+        public val GBRP14BE: AVPixelFormat = AVPixelFormat(GBRP.num + 65)
+        public val GBRP14LE: AVPixelFormat = AVPixelFormat(GBRP.num + 66)
+        public val YUVJ411P: AVPixelFormat = AVPixelFormat(GBRP.num + 67)
+        public val BAYER_BGGR8: AVPixelFormat = AVPixelFormat(GBRP.num + 68)
+        public val BAYER_RGGB8: AVPixelFormat = AVPixelFormat(GBRP.num + 69)
+        public val BAYER_GBRG8: AVPixelFormat = AVPixelFormat(GBRP.num + 70)
+        public val BAYER_GRBG8: AVPixelFormat = AVPixelFormat(GBRP.num + 71)
+        public val BAYER_BGGR16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 72)
+        public val BAYER_BGGR16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 73)
+        public val BAYER_RGGB16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 74)
+        public val BAYER_RGGB16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 75)
+        public val BAYER_GBRG16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 76)
+        public val BAYER_GBRG16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 77)
+        public val BAYER_GRBG16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 78)
+        public val BAYER_GRBG16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 79)
+        public val XVMC: AVPixelFormat = AVPixelFormat(GBRP.num + 80)
+        public val YUV440P10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 81)
+        public val YUV440P10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 82)
+        public val YUV440P12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 83)
+        public val YUV440P12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 84)
+        public val AYUV64LE: AVPixelFormat = AVPixelFormat(GBRP.num + 85)
+        public val AYUV64BE: AVPixelFormat = AVPixelFormat(GBRP.num + 86)
+        public val VIDEOTOOLBOX: AVPixelFormat = AVPixelFormat(GBRP.num + 87)
+        public val P010LE: AVPixelFormat = AVPixelFormat(GBRP.num + 88)
+        public val P010BE: AVPixelFormat = AVPixelFormat(GBRP.num + 89)
+        public val GBRAP12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 90)
+        public val GBRAP12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 91)
+        public val GBRAP10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 92)
+        public val GBRAP10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 93)
+        public val MEDIACODEC: AVPixelFormat = AVPixelFormat(GBRP.num + 94)
+        public val GRAY12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 95)
+        public val GRAY12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 96)
+        public val GRAY10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 97)
+        public val GRAY10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 98)
+        public val P016LE: AVPixelFormat = AVPixelFormat(GBRP.num + 99)
+        public val P016BE: AVPixelFormat = AVPixelFormat(GBRP.num + 100)
+        public val D3D11: AVPixelFormat = AVPixelFormat(GBRP.num + 101)
+        public val GRAY9BE: AVPixelFormat = AVPixelFormat(GBRP.num + 102)
+        public val GRAY9LE: AVPixelFormat = AVPixelFormat(GBRP.num + 103)
+        public val GBRPF32BE: AVPixelFormat = AVPixelFormat(GBRP.num + 104)
+        public val GBRPF32LE: AVPixelFormat = AVPixelFormat(GBRP.num + 105)
+        public val GBRAPF32BE: AVPixelFormat = AVPixelFormat(GBRP.num + 106)
+        public val GBRAPF32LE: AVPixelFormat = AVPixelFormat(GBRP.num + 107)
+        public val DRM_PRIME: AVPixelFormat = AVPixelFormat(GBRP.num + 108)
+        public val OPENCL: AVPixelFormat = AVPixelFormat(GBRP.num + 109)
+        public val GRAY14BE: AVPixelFormat = AVPixelFormat(GBRP.num + 110)
+        public val GRAY14LE: AVPixelFormat = AVPixelFormat(GBRP.num + 111)
+        public val GRAYF32BE: AVPixelFormat = AVPixelFormat(GBRP.num + 112)
+        public val GRAYF32LE: AVPixelFormat = AVPixelFormat(GBRP.num + 113)
+        public val YUVA422P12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 114)
+        public val YUVA422P12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 115)
+        public val YUVA444P12BE: AVPixelFormat = AVPixelFormat(GBRP.num + 116)
+        public val YUVA444P12LE: AVPixelFormat = AVPixelFormat(GBRP.num + 117)
+        public val NV24: AVPixelFormat = AVPixelFormat(GBRP.num + 118)
+        public val NV42: AVPixelFormat = AVPixelFormat(GBRP.num + 119)
+        public val VULKAN: AVPixelFormat = AVPixelFormat(GBRP.num + 120)
+        public val Y210BE: AVPixelFormat = AVPixelFormat(GBRP.num + 121)
+        public val Y210LE: AVPixelFormat = AVPixelFormat(GBRP.num + 122)
+        public val X2RGB10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 123)
+        public val X2RGB10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 124)
+        public val X2BGR10LE: AVPixelFormat = AVPixelFormat(GBRP.num + 125)
+        public val X2BGR10BE: AVPixelFormat = AVPixelFormat(GBRP.num + 126)
+        public val P210BE: AVPixelFormat = AVPixelFormat(GBRP.num + 127)
+        public val P210LE: AVPixelFormat = AVPixelFormat(GBRP.num + 128)
+        public val P410BE: AVPixelFormat = AVPixelFormat(GBRP.num + 129)
+        public val P410LE: AVPixelFormat = AVPixelFormat(GBRP.num + 130)
+        public val P216BE: AVPixelFormat = AVPixelFormat(GBRP.num + 131)
+        public val P216LE: AVPixelFormat = AVPixelFormat(GBRP.num + 132)
+        public val P416BE: AVPixelFormat = AVPixelFormat(GBRP.num + 133)
+        public val P416LE: AVPixelFormat = AVPixelFormat(GBRP.num + 134)
+        public val VUYA: AVPixelFormat = AVPixelFormat(GBRP.num + 135)
+        public val RGBAF16BE: AVPixelFormat = AVPixelFormat(GBRP.num + 136)
+        public val RGBAF16LE: AVPixelFormat = AVPixelFormat(GBRP.num + 137)
+        public val VUYX: AVPixelFormat = AVPixelFormat(GBRP.num + 138)
+        public val P012LE: AVPixelFormat = AVPixelFormat(GBRP.num + 139)
+        public val P012BE: AVPixelFormat = AVPixelFormat(GBRP.num + 140)
+        public val Y212BE: AVPixelFormat = AVPixelFormat(GBRP.num + 141)
+        public val Y212LE: AVPixelFormat = AVPixelFormat(GBRP.num + 142)
+        public val XV30BE: AVPixelFormat = AVPixelFormat(GBRP.num + 143)
+        public val XV30LE: AVPixelFormat = AVPixelFormat(GBRP.num + 144)
+        public val XV36BE: AVPixelFormat = AVPixelFormat(GBRP.num + 145)
+        public val XV36LE: AVPixelFormat = AVPixelFormat(GBRP.num + 146)
+        public val RGBF32BE: AVPixelFormat = AVPixelFormat(GBRP.num + 147)
+        public val RGBF32LE: AVPixelFormat = AVPixelFormat(GBRP.num + 148)
+        public val RGBAF32BE: AVPixelFormat = AVPixelFormat(GBRP.num + 149)
+        public val RGBAF32LE: AVPixelFormat = AVPixelFormat(GBRP.num + 150)
+        public val P212BE: AVPixelFormat = AVPixelFormat(GBRP.num + 151)
+        public val P212LE: AVPixelFormat = AVPixelFormat(GBRP.num + 152)
+        public val P412BE: AVPixelFormat = AVPixelFormat(GBRP.num + 153)
+        public val P412LE: AVPixelFormat = AVPixelFormat(GBRP.num + 154)
+        public val GBRAP14BE: AVPixelFormat = AVPixelFormat(GBRP.num + 155)
+        public val GBRAP14LE: AVPixelFormat = AVPixelFormat(GBRP.num + 156)
+        public val NB: AVPixelFormat = AVPixelFormat(GBRP.num + 157)
+    }
 }
-
-public expect val AVPixelFormat.descriptor: AVPixelFormatDescriptor?

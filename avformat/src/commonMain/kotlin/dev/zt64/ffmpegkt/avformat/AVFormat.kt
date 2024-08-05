@@ -1,16 +1,9 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.Library
-import dev.zt64.ffmpegkt.avutil.AVDictionary
+import dev.zt64.ffmpegkt.FfmpegLibrary
 
-public expect object AVFormat : Library {
+public expect object AVFormat : FfmpegLibrary {
     public fun networkInit(): Int
 
     public fun networkDeinit(): Int
-
-    public fun openInput(
-        url: String,
-        format: AVInputFormat? = null,
-        options: AVDictionary? = null
-    ): AVFormatContext
 }

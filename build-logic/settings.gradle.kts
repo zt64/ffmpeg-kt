@@ -9,6 +9,7 @@ dependencyResolutionManagement {
 
     repositories {
         gradlePluginPortal()
+        google()
     }
 }
 

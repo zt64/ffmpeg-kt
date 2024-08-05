@@ -1,3 +1,3 @@
-package dev.zt64.ffmpegkt
+package dev.zt64.ffmpegkt.avformat
 
 class AVFormatTest
