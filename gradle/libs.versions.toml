@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.0.10"
-android = "8.5.1"
+android = "8.5.2"
 ffmpeg = "6.1.1-1.5.10"
 appcompat = "1.7.0"
 coroutines = "1.8.1"
