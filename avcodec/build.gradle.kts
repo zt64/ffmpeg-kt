@@ -11,7 +11,7 @@ kotlin {
                 implementation(libs.coroutines.test)
                 implementation(libs.okio)
                 implementation(libs.okio.fakefilesystem)
-                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.5.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.5.3")
             }
         }
     }
