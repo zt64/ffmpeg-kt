@@ -1,18 +1,7 @@
-headers = libavcodec/avcodec.h libavformat/avformat.h libavdevice/avdevice.h libavutil/pixfmt.h \
-    libavutil/avutil.h libswscale/swscale.h libswresample/swresample.h libpostproc/postprocess.h
-headerFilter = libavcodec/** libavformat/** libavdevice/** libavutil/** libswscale/** \
-    libswresample/** libpostproc/**
+headers = libavfilter/avfilter.h libavfilter/buffersink.h libavfilter/buffersrc.h
+headerFilter = libavfilter/**
 package = ffmpeg
 
 compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/ffmpeg
-linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavcodec -lavformat -lavutil \
-    -lavfilter -lavdevice -lpostproc
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavcodec -lavformat -lavutil \
-    -lavfilter -lavdevice -lswresample -lpostproc
-
----
-
-struct AVDictionary {
-    int count;
-    AVDictionaryEntry *elems;
-};
+linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavfilter
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavfilter
