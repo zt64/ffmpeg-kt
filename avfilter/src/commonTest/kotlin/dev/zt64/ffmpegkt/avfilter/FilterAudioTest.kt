@@ -2,8 +2,8 @@ package dev.zt64.ffmpegkt.avfilter
 
 import kotlin.test.Test
 
-class AVFilterTest {
+class FilterAudioTest {
     @Test
-    fun testAudioFilter() {
+    fun filterAudio() {
     }
 }

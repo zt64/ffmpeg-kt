@@ -5,8 +5,7 @@ import kotlinx.coroutines.test.runTest
 import okio.*
 import okio.Path.Companion.toPath
 import kotlin.test.Test
-
-expect fun setup()
+import kotlin.test.fail
 
 class EncodeVideoTest {
     @Test
@@ -14,29 +13,31 @@ class EncodeVideoTest {
         val frameRate = 25
         val frames = 250 // 10 seconds of video
 
-        setup()
-
         val filename = "output.mp4"
 
-        AVUtil.setLogLevel(40)
+        LibAVUtil.setLogLevel(LogLevel.VERBOSE)
 
         val codec = AVCodec.findEncoder(AVCodecID.MPEG4)!!
-        val c = AVCodecContext(codec).apply {
-            bitRate = 50000
-            width = 256
-            height = 256
-            timeBase = AVRational(1, frameRate)
-            framerate = AVRational(frames, 1)
-            gopSize = 10
-            maxBFrames = 1
-            pixFmt = AVPixelFormat.YUV420P
+        val c = try {
+            VideoCodecContext(codec).apply {
+                bitRate = 50000
+                width = 256
+                height = 256
+                timeBase = AVRational(1, frameRate)
+                framerate = AVRational(frames, 1)
+                gopSize = 10
+                maxBFrames = 1
+                pixFmt = AVPixelFormat.YUV420P
+            }
+        } catch (e: Exception) {
+            fail("Failed to allocate codec context", e)
         }
         val pkt = AVPacket()
 
         c.open(codec)
 
         val buffer = Buffer()
-        val frame = AVFrame().apply {
+        val frame = VideoFrame().apply {
             width = c.width
             height = c.height
             format = c.pixFmt
@@ -56,15 +57,15 @@ class EncodeVideoTest {
             // Y
             for (y in 0 until c.height) {
                 for (x in 0 until c.width) {
-                    frameData[0][y * linesize0 + x] = (x + y + i * 3).toByte()
+                    frameData[0][y * linesize0 + x] = (x + y + i * 3).toUByte()
                 }
             }
 
             // Cb and Cr
             for (y in 0 until c.height / 2) {
                 for (x in 0 until c.width / 2) {
-                    frameData[1][y * linesize1 + x] = (128 + y + i * 2).toByte()
-                    frameData[2][y * linesize2 + x] = (64 + x + i * 5).toByte()
+                    frameData[1][y * linesize1 + x] = (128 + y + i * 2).toUByte()
+                    frameData[2][y * linesize2 + x] = (64 + x + i * 5).toUByte()
                 }
             }
             frame.pts = i.toLong()
@@ -92,8 +93,8 @@ class EncodeVideoTest {
 }
 
 private fun encode(
-    c: AVCodecContext,
-    frame: AVFrame?,
+    c: VideoCodecContext,
+    frame: VideoFrame?,
     pkt: AVPacket,
     outputStream: Buffer
 ) {
@@ -105,6 +106,7 @@ private fun encode(
         try {
             c.receivePacket(pkt)
         } catch (e: Exception) {
+            e.printStackTrace()
             break
         }
 

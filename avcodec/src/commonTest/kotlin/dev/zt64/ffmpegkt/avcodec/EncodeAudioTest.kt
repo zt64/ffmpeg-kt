@@ -1,6 +1,8 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.AVChannelLayout
+import dev.zt64.ffmpegkt.avutil.AVSampleFormat
+import dev.zt64.ffmpegkt.avutil.AudioFrame
 import okio.*
 import okio.Path.Companion.toPath
 import kotlin.math.PI
@@ -10,11 +12,8 @@ import kotlin.test.Test
 class EncodeAudioTest {
     @Test
     fun encodeAudio() {
-        AVCodecParserContext(AVCodecID.MP3).use {
-            println("Codec: ${it.frameOffset}")
-        }
         val codec = AVCodec.findEncoder(AVCodecID.MP3)!!
-        val codecContext = AVCodecContext(codec).apply {
+        val codecContext = AudioCodecContext(codec).apply {
             bitRate = 64000
             sampleFmt = AVSampleFormat.S16
             sampleRate = selectSampleRate(codec)
@@ -24,9 +23,9 @@ class EncodeAudioTest {
         codecContext.open(codec)
 
         val packet = AVPacket()
-        val frame = AVFrame().apply {
+        val frame = AudioFrame().apply {
             nbSamples = codecContext.frameSize
-            format = AVPixelFormat(codecContext.sampleFmt.num)
+            format = AVSampleFormat(codecContext.sampleFmt.num)
         }
         codecContext.channelLayout.copyTo(frame.channelLayout)
 
@@ -42,7 +41,7 @@ class EncodeAudioTest {
             val samples = frame.data[0]
 
             for (j in 0 until codecContext.frameSize) {
-                samples[2 * j] = (sin(t) * 10000).toInt().toByte()
+                samples[2 * j] = (sin(t) * 10000).toInt().toUByte()
                 for (k in 1 until codecContext.channelLayout.nbChannels) {
                     samples[2 * j + 1] = samples[2 * j]
                 }
@@ -81,8 +80,8 @@ fun selectChannelLayout(codec: AVCodec): AVChannelLayout {
 }
 
 private fun encode(
-    c: AVCodecContext,
-    frame: AVFrame?,
+    c: AudioCodecContext,
+    frame: AudioFrame?,
     pkt: AVPacket,
     outputStream: Buffer
 ) {

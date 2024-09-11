@@ -5,12 +5,13 @@ import dev.zt64.ffmpegkt.avformat.AVFormatContext
 import dev.zt64.ffmpegkt.avformat.AVIOContext
 import dev.zt64.ffmpegkt.avutil.AVMediaType
 import dev.zt64.ffmpegkt.avutil.AVUtil
+import dev.zt64.ffmpegkt.avutil.LogLevel
 import dev.zt64.ffmpegkt.avutil.util.FfmpegException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-val URL =
+const val URL =
     "/mnt/Backup/code/ffmpeg-kt/complete/src/commonTest/resources/SampleVideo_1280x720_5mb.mp4"
 
 class RemuxTest {
@@ -19,7 +20,7 @@ class RemuxTest {
         setProperty()
         delay(50)
 
-        AVUtil.setLogLevel(40)
+        AVUtil.setLogLevel(LogLevel.VERBOSE)
 
         autoClose {
             val inputFormat = try {

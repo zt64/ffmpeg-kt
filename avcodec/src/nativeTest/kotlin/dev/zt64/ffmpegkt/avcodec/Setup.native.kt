@@ -1,4 +1,4 @@
 package dev.zt64.ffmpegkt.avcodec
 
-actual fun setup() {
+actual fun platformSetup() {
 }
