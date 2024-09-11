@@ -5,7 +5,7 @@ import dev.zt64.ffmpegkt.avformat.AVInputFormat
 import dev.zt64.ffmpegkt.avformat.AVOutputFormat
 import org.bytedeco.ffmpeg.global.avdevice.*
 
-public actual object AVDevice : FfmpegLibrary {
+public actual object LibAVDevice : FfmpegLibrary {
     override fun version(): Int = avdevice_version()
 
     override fun configuration(): String = avdevice_configuration().string

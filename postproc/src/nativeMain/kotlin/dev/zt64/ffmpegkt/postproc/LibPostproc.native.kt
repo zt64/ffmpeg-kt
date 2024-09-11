@@ -6,7 +6,7 @@ import ffmpeg.postproc_license
 import ffmpeg.postproc_version
 import kotlinx.cinterop.toKString
 
-public actual object Postproc : FfmpegLibrary {
+public actual object LibPostproc : FfmpegLibrary {
     override fun version(): Int {
         return postproc_version().toInt()
     }

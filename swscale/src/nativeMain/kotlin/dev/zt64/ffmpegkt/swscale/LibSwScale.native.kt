@@ -8,7 +8,7 @@ import kotlinx.cinterop.pointed
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 
-public actual object SwScale : FfmpegLibrary {
+public actual object LibSwScale : FfmpegLibrary {
     override fun version(): Int {
         return swscale_version().toInt()
     }

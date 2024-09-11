@@ -5,7 +5,7 @@ import dev.zt64.ffmpegkt.avutil.AVPixelFormat
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import org.bytedeco.ffmpeg.global.swscale.*
 
-public actual object SwScale : FfmpegLibrary {
+public actual object LibSwScale : FfmpegLibrary {
     public override fun version(): Int = swscale_version()
 
     override fun configuration(): String = swscale_configuration().string

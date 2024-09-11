@@ -3,7 +3,7 @@ package dev.zt64.ffmpegkt.postproc
 import dev.zt64.ffmpegkt.FfmpegLibrary
 import org.bytedeco.ffmpeg.global.postproc.*
 
-public actual object Postproc : FfmpegLibrary {
+public actual object LibPostproc : FfmpegLibrary {
     override fun version(): Int {
         return postproc_version()
     }

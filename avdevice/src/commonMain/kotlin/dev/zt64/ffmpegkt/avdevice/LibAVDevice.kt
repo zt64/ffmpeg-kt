@@ -4,7 +4,7 @@ import dev.zt64.ffmpegkt.FfmpegLibrary
 import dev.zt64.ffmpegkt.avformat.AVInputFormat
 import dev.zt64.ffmpegkt.avformat.AVOutputFormat
 
-public expect object AVDevice : FfmpegLibrary {
+public expect object LibAVDevice : FfmpegLibrary {
     public fun registerAll()
 
     public fun inputAudioDeviceNext(d: AVInputFormat): AVInputFormat

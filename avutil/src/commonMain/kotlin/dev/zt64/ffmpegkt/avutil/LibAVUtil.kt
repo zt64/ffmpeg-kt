@@ -2,17 +2,24 @@ package dev.zt64.ffmpegkt.avutil
 
 import dev.zt64.ffmpegkt.FfmpegLibrary
 
-public expect object AVUtil : FfmpegLibrary {
+public expect object LibAVUtil : FfmpegLibrary {
     public fun versionInfo(): String
-
-    public fun getMediaTypeString(type: AVMediaType): String?
-
-    public fun getPictureTypeChar(type: AVPictureType): Char
 
     public fun getTimeBaseQ(): AVRational
 
-    public fun setLogLevel(level: Int)
+    /**
+     * Set the log level.
+     *
+     * @param level
+     */
+    public fun setLogLevel(level: LogLevel)
 
+    /**
+     * Convert an error code into a string.
+     *
+     * @param error
+     * @return error string
+     */
     public fun errorToString(error: Int): String
 
     /* Samples */
@@ -36,7 +43,7 @@ public expect object AVUtil : FfmpegLibrary {
     ): Int
 
     public fun samplesAllocArrayAndSamples(
-        audioData: ByteArray,
+        audioData: Array<Array<ByteArray>>,
         linesizes: IntArray,
         nbChannels: Int,
         nbSamples: Int,
@@ -62,6 +69,17 @@ public expect object AVUtil : FfmpegLibrary {
         sampleFmt: AVSampleFormat
     ): Int
 
+    /**
+     * Allocate a new image.
+     *
+     * @param pointers
+     * @param linesizes
+     * @param width
+     * @param height
+     * @param pixFmt
+     * @param align
+     * @return
+     */
     public fun imageAlloc(
         pointers: ByteArray,
         linesizes: IntArray,

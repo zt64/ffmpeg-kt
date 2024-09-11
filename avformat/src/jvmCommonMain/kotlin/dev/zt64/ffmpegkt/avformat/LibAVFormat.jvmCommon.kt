@@ -3,7 +3,7 @@ package dev.zt64.ffmpegkt.avformat
 import dev.zt64.ffmpegkt.FfmpegLibrary
 import org.bytedeco.ffmpeg.global.avformat.*
 
-public actual object AVFormat : FfmpegLibrary {
+public actual object LibAVFormat : FfmpegLibrary {
     override fun version(): Int = avformat_version()
 
     override fun configuration(): String = avformat_configuration().string

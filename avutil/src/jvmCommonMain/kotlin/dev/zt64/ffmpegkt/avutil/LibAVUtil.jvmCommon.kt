@@ -3,15 +3,13 @@ package dev.zt64.ffmpegkt.avutil
 import dev.zt64.ffmpegkt.FfmpegLibrary
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import org.bytedeco.ffmpeg.global.avutil.*
-import org.bytedeco.javacpp.Pointer
+import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.PointerPointer
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 
-public actual object AVUtil : FfmpegLibrary {
-    public override fun version(): Int {
-        return avutil_version()
-    }
+public actual object LibAVUtil : FfmpegLibrary {
+    public override fun version(): Int = avutil_version()
 
     public override fun configuration(): String {
         return avutil_configuration()?.string.orEmpty()
@@ -21,18 +19,10 @@ public actual object AVUtil : FfmpegLibrary {
 
     public actual fun versionInfo(): String = av_version_info().string
 
-    public actual fun getMediaTypeString(type: AVMediaType): String? {
-        return av_get_media_type_string(type.num)?.string
-    }
-
-    public actual fun getPictureTypeChar(type: AVPictureType): Char {
-        return av_get_picture_type_char(type.value).toInt().toChar()
-    }
-
     public actual fun getTimeBaseQ(): AVRational = AVRational(av_get_time_base_q())
 
-    public actual fun setLogLevel(level: Int) {
-        av_log_set_level(level)
+    public actual fun setLogLevel(level: LogLevel) {
+        av_log_set_level(level.value)
     }
 
     public actual fun errorToString(error: Int): String {
@@ -78,14 +68,24 @@ public actual object AVUtil : FfmpegLibrary {
     ).checkError()
 
     public actual fun samplesAllocArrayAndSamples(
-        audioData: ByteArray,
+        audioData: Array<Array<ByteArray>>,
         linesizes: IntArray,
         nbChannels: Int,
         nbSamples: Int,
         sampleFmt: AVSampleFormat,
         align: Int
     ): Int = av_samples_alloc_array_and_samples(
-        PointerPointer<Pointer>(audioData),
+        PointerPointer<PointerPointer<BytePointer>>(
+            audioData.map { ba ->
+                ba.map {
+                    BytePointer(*it)
+                }.let { pp ->
+                    PointerPointer(*pp.toTypedArray())
+                }
+            }.let { pp ->
+                PointerPointer(*pp.toTypedArray())
+            }
+        ),
         linesizes,
         nbChannels,
         nbSamples,
