@@ -3,7 +3,7 @@ kotlin = "2.0.20"
 android = "8.6.1"
 ffmpeg = "6.1.1-1.5.10"
 appcompat = "1.7.0"
-coroutines = "1.8.1"
+coroutines = "1.9.0"
 
 # Maintenance
 compatibility = "0.16.3"
