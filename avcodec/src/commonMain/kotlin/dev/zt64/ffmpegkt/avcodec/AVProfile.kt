@@ -2,10 +2,15 @@ package dev.zt64.ffmpegkt.avcodec
 
 import kotlin.jvm.JvmInline
 
-public data class AVProfile(public val profile: Int, public val name: String)
+public data class AVProfile(
+    public val profile: Int,
+    public val name: String
+)
 
 @JvmInline
-public value class AVProfileType(public val value: Int) {
+public value class AVProfileType(
+    public val value: Int
+) {
     public companion object {
         public val UNKNOWN: Int = -99
         public val RESERVED: Int = -100

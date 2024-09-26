@@ -5,13 +5,15 @@ import kotlinx.cinterop.*
 
 public actual typealias NativeAVFrame = AVFrame
 
-public actual value class AudioFrame actual constructor(override val native: NativeAVFrame) : Frame {
+public actual value class AudioFrame actual constructor(
+    override val native: NativeAVFrame
+) : Frame {
     public actual constructor() : this(av_frame_alloc()!!.pointed)
 
     override val linesize: IntArray
         get() = IntArray(AV_NUM_DATA_POINTERS) { native.linesize[it] }
     override val data: FrameData
-        get() = FrameData(native.data)
+        get() = FrameData(native.data, linesize)
 
     override var pts: Long
         get() = native.pts
@@ -53,13 +55,15 @@ public actual value class AudioFrame actual constructor(override val native: Nat
     }
 }
 
-public actual value class VideoFrame(override val native: NativeAVFrame) : Frame {
+public actual value class VideoFrame(
+    override val native: NativeAVFrame
+) : Frame {
     public actual constructor() : this(av_frame_alloc()!!.pointed)
 
     override val linesize: IntArray
         get() = IntArray(AV_NUM_DATA_POINTERS) { native.linesize[it] }
     override val data: FrameData
-        get() = FrameData(native.data)
+        get() = FrameData(native.data, linesize)
 
     public actual inline var width: Int
         get() = native.width
@@ -96,24 +100,26 @@ public actual value class VideoFrame(override val native: NativeAVFrame) : Frame
     }
 }
 
-public actual class FrameData(private val array: CArrayPointer<CPointerVar<UByteVar>>) : AbstractList<FrameData.FrameDataSegment>() {
+public actual class FrameData internal constructor(
+    private val array: CArrayPointer<CPointerVar<UByteVar>>,
+    private val linesize: IntArray
+) : AbstractList<FrameData.FrameDataSegment>() {
     override val size: Int = AV_NUM_DATA_POINTERS
 
     override fun get(index: Int): FrameDataSegment {
-        return FrameDataSegment(array[index]!!)
+        return FrameDataSegment(array[index]!!, linesize[index])
     }
 
-    public actual inner class FrameDataSegment(private val cPointer: CPointer<UByteVar>) : Iterable<UByte> {
+    public actual inner class FrameDataSegment(
+        private val cPointer: CPointer<UByteVar>,
+        override val size: Int
+    ) : AbstractList<UByte>() {
         public actual operator fun set(index: Int, value: UByte) {
             cPointer[index] = value
         }
 
-        public actual operator fun get(index: Int): UByte {
+        public override operator fun get(index: Int): UByte {
             return cPointer[index]
-        }
-
-        override fun iterator(): Iterator<UByte> {
-            TODO()
         }
     }
 }

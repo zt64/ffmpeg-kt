@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class AVUtilTest {
     @Test
     fun testVersionInfo() {
-        println(AVUtil.versionInfo())
+        println(LibAVUtil.versionInfo())
     }
 
     @Test

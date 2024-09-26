@@ -1,6 +1,34 @@
 package dev.zt64.ffmpegkt.avfilter
 
-public class AVFilterContext
+import dev.zt64.ffmpegkt.avutil.AVBufferRef
+import dev.zt64.ffmpegkt.avutil.AVClass
+import dev.zt64.ffmpegkt.avutil.Frame
 
-public fun AVFilterContext.listFilters() {
+public expect class NativeAVFilterContext
+
+public expect value class AVFilterContext(internal val native: NativeAVFilterContext) :
+    AutoCloseable {
+    public val avClass: AVClass
+    public val name: String
+    public val width: Int
+    public val height: Int
+
+    public val filter: AVFilter
+    public val graph: AVFilterGraph
+
+    public val inputPads: List<AVFilterPad>
+    public val inputs: List<AVFilterLink>
+    public val outputs: List<AVFilterLink>
+
+    public var hwDeviceCtx: AVBufferRef?
+    public var extraHwFrames: Int
+
+    public var threads: Int
+    public var threadType: Int
+
+    public fun getFrame(): Frame
+    public fun getFrame(flags: Int): Frame
+    public fun getSamples(samples: Int): Frame
+
+    public fun setFrameSize(size: Int)
 }

@@ -1,12 +1,23 @@
 package dev.zt64.ffmpegkt.avcodec
 
+import dev.zt64.ffmpegkt.avcodec.AVCodec.Companion.findDecoder
+import dev.zt64.ffmpegkt.avcodec.AVCodec.Companion.findEncoder
 import dev.zt64.ffmpegkt.avutil.*
-import kotlin.jvm.JvmInline
 
 public expect class NativeAVCodec
 
-@JvmInline
-public expect value class AVCodec(internal val native: NativeAVCodec) : AutoCloseable {
+/**
+ * A codec used for encoding or decoding audio or video.
+ *
+ * Get a codec by calling [findEncoder] or [findDecoder] with the name of the codec.
+ *
+ * Or get a codec by calling [findEncoder] or [findDecoder] with the [AVCodecID] of the codec.
+ *
+ * @property native
+ */
+public expect value class AVCodec(
+    internal val native: NativeAVCodec
+) : AutoCloseable {
     public val name: String
     public val longName: String
     public val type: AVMediaType

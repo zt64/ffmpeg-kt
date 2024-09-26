@@ -16,7 +16,7 @@ public actual fun AVDictionaryNative(dict: AVDictionary): AVDictionaryNative {
 }
 
 public actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
-    val dict: AVDictionary = buildMap {
+    val dict: AVDictionary = LinkedHashMap<String, String>(av_dict_count(nativeDict)).apply {
         var entry: AVDictionaryEntry? = null
         while (true) {
             entry = av_dict_iterate(nativeDict, entry) ?: break

@@ -3,6 +3,9 @@ package dev.zt64.ffmpegkt.avutil
 public expect class NativeAVFrame
 
 public interface Frame : AutoCloseable {
+    /**
+     * The native instance of the frame.
+     */
     public val native: NativeAVFrame
 
     /**
@@ -22,7 +25,18 @@ public interface Frame : AutoCloseable {
      */
     public var pts: Long
 
+    /**
+     * Allocates a buffer for the frame.
+     *
+     * @param align
+     */
     public fun getBuffer(align: Int = 0)
+
+    /**
+     * Ensure that the frame data is writable, avoiding data copy if possible.
+     * Do nothing if the frame is writable, allocate new buffers and copy the data if it is not.
+     * Non-refcounted frames behave as non-writable, i.e. a copy is always made.
+     */
     public fun makeWritable()
 }
 
@@ -31,7 +45,12 @@ public interface Frame : AutoCloseable {
  *
  * @property native
  */
-public expect value class AudioFrame(override val native: NativeAVFrame) : Frame {
+public expect value class AudioFrame(
+    override val native: NativeAVFrame
+) : Frame {
+    /**
+     * Create a new blank audio frame for encoding.
+     */
     public constructor()
 
     public var nbSamples: Int
@@ -45,7 +64,9 @@ public expect value class AudioFrame(override val native: NativeAVFrame) : Frame
  *
  * @property native
  */
-public expect value class VideoFrame(override val native: NativeAVFrame) : Frame {
+public expect value class VideoFrame(
+    override val native: NativeAVFrame
+) : Frame {
     public constructor()
 
     public var width: Int
@@ -56,15 +77,14 @@ public expect value class VideoFrame(override val native: NativeAVFrame) : Frame
 /**
  * Frame data.
  *
- * 2D array of bytes, where the outer array is the planes of the frame, while the inner arrays is the data of each plane.
- *
+ * 2D array of bytes, where the outer array is the planes of the frame,
+ * while the inner arrays are the data of each plane.
  */
 public expect class FrameData : AbstractList<FrameData.FrameDataSegment> {
     /**
-     * A plane of the frame.
+     * A single plane of the frame, represented as a list of bytes.
      */
-    public inner class FrameDataSegment {
+    public inner class FrameDataSegment : AbstractList<UByte> {
         public operator fun set(index: Int, value: UByte)
-        public operator fun get(index: Int): UByte
     }
 }

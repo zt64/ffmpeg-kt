@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.swscale
 
 import dev.zt64.ffmpegkt.avutil.AVPixelFormat
-import dev.zt64.ffmpegkt.avutil.AVUtil
+import dev.zt64.ffmpegkt.avutil.LibAVUtil
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
@@ -34,7 +34,7 @@ class ScaleTest {
 
         val file = FileSystem.SYSTEM.appendingSink("scaleVideo.rgb".toPath())
 
-        AVUtil.imageAlloc(
+        LibAVUtil.imageAlloc(
             srcData,
             srcLinesize,
             srcW,
@@ -43,7 +43,7 @@ class ScaleTest {
             16
         )
 
-        AVUtil.imageAlloc(
+        LibAVUtil.imageAlloc(
             dstData,
             dstLinesize,
             dstW,

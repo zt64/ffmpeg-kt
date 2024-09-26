@@ -1,5 +1,5 @@
 headers = libavutil/avutil.h libavutil/pixfmt.h libavutil/pixdesc.h libavutil/dict.h libavutil/crc.h \
-    libavutil/hwcontext.h
+    libavutil/hwcontext.h libavutil/imgutils.h libavutil/rational.h
 headerFilter = libavutil/**
 package = ffmpeg
 
@@ -7,4 +7,11 @@ compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/inclu
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavutil
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavutil
 
-nonStrictEnums = AVCRCID
+nonStrictEnums = AVCRCId AVHWDeviceType
+
+---
+
+struct AVDictionary {
+    int count;
+    AVDictionaryEntry *elems;
+};

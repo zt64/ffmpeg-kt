@@ -8,14 +8,16 @@ import org.bytedeco.javacpp.PointerPointer
 public actual typealias NativeAVFrame = org.bytedeco.ffmpeg.avutil.AVFrame
 
 @JvmInline
-public actual value class AudioFrame(override val native: NativeAVFrame) : Frame {
+public actual value class AudioFrame(
+    override val native: NativeAVFrame
+) : Frame {
     public actual constructor() : this(av_frame_alloc())
 
     override val linesize: IntArray
-        get() = IntArray(8) { native.linesize(it) }
+        get() = IntArray(AV_NUM_DATA_POINTERS) { native.linesize(it) }
 
     override val data: FrameData
-        get() = FrameData(native.data())
+        get() = FrameData(native.data(), linesize)
 
     override var pts: Long
         get() = native.pts()
@@ -61,14 +63,16 @@ public actual value class AudioFrame(override val native: NativeAVFrame) : Frame
 }
 
 @JvmInline
-public actual value class VideoFrame(override val native: NativeAVFrame) : Frame {
+public actual value class VideoFrame(
+    override val native: NativeAVFrame
+) : Frame {
     public actual constructor() : this(av_frame_alloc())
 
     override val linesize: IntArray
-        get() = IntArray(8) { native.linesize(it) }
+        get() = IntArray(AV_NUM_DATA_POINTERS) { native.linesize(it) }
 
     override val data: FrameData
-        get() = FrameData(native.data())
+        get() = FrameData(native.data(), linesize)
 
     override var pts: Long
         get() = native.pts()
@@ -106,16 +110,22 @@ public actual value class VideoFrame(override val native: NativeAVFrame) : Frame
     }
 }
 
-public actual class FrameData(private val native: PointerPointer<*>) : AbstractList<FrameData.FrameDataSegment>() {
+public actual class FrameData(
+    private val native: PointerPointer<*>,
+    private val linesizes: IntArray
+) : AbstractList<FrameData.FrameDataSegment>() {
     override val size: Int = AV_NUM_DATA_POINTERS
 
     public override operator fun get(index: Int): FrameDataSegment {
-        return FrameDataSegment(BytePointer(native.get(index.toLong())))
+        return FrameDataSegment(BytePointer(native.get(index.toLong())), linesizes[index])
     }
 
-    public actual inner class FrameDataSegment(private val pointer: BytePointer) {
-        public actual operator fun get(index: Int): UByte {
-            return pointer.get(index.toLong()).toUByte()
+    public actual inner class FrameDataSegment(
+        private val pointer: BytePointer,
+        override val size: Int
+    ) : AbstractList<UByte>() {
+        public override operator fun get(index: Int): UByte {
+            return pointer[index.toLong()].toUByte()
         }
 
         public actual operator fun set(index: Int, value: UByte) {

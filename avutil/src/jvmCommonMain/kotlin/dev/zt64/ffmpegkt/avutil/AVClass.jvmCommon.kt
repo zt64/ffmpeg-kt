@@ -1,12 +1,11 @@
 package dev.zt64.ffmpegkt.avutil
 
-internal typealias AVClassNative = org.bytedeco.ffmpeg.avutil.AVClass
+public actual typealias NativeAVClass = org.bytedeco.ffmpeg.avutil.AVClass
 
-public actual class AVClass(internal val native: AVClassNative) {
-    public actual val className: String = native.class_name().string
-    public actual val version: Int = native.version()
-
-    override fun toString(): String {
-        return "AVClass(className='$className', version=$version)"
-    }
+@JvmInline
+public actual value class AVClass(@PublishedApi internal val native: NativeAVClass) {
+    public actual inline val className: String
+        get() = native.class_name().string
+    public actual inline val version: Int
+        get() = native.version()
 }

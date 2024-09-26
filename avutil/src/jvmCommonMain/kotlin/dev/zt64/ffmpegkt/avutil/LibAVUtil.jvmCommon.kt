@@ -9,6 +9,13 @@ import java.nio.ByteBuffer
 import java.nio.IntBuffer
 
 public actual object LibAVUtil : FfmpegLibrary {
+    init {
+        // Disable pointer garbage collection
+        // This is necessary because the JVM does not know how to handle the pointers allocated by FFmpeg
+        // As all the libraries depend on avutil, this is the best place to set this property
+        System.setProperty("org.bytedeco.javacpp.nopointergc", "true")
+    }
+
     public override fun version(): Int = avutil_version()
 
     public override fun configuration(): String {
@@ -26,11 +33,13 @@ public actual object LibAVUtil : FfmpegLibrary {
     }
 
     public actual fun errorToString(error: Int): String {
-        return av_make_error_string(
-            ByteArray(AV_ERROR_MAX_STRING_SIZE),
+        val ba = ByteArray(AV_ERROR_MAX_STRING_SIZE)
+        av_make_error_string(
+            ba,
             AV_ERROR_MAX_STRING_SIZE.toLong(),
             error
-        ).decodeToString().trimEnd('\u0000')
+        )
+        return ba.decodeToString().trimEnd('\u0000')
     }
 
     public actual fun samplesFillArrays(

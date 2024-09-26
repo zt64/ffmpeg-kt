@@ -4,27 +4,29 @@ import dev.zt64.ffmpegkt.avformat.AVFMT
 import dev.zt64.ffmpegkt.avformat.AVFormatContext
 import dev.zt64.ffmpegkt.avformat.AVIOContext
 import dev.zt64.ffmpegkt.avutil.AVMediaType
-import dev.zt64.ffmpegkt.avutil.AVUtil
+import dev.zt64.ffmpegkt.avutil.LibAVUtil
 import dev.zt64.ffmpegkt.avutil.LogLevel
 import dev.zt64.ffmpegkt.avutil.util.FfmpegException
+import dev.zt64.ffmpegkt.test.TestResources
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-const val URL =
-    "/mnt/Backup/code/ffmpeg-kt/complete/src/commonTest/resources/SampleVideo_1280x720_5mb.mp4"
-
 class RemuxTest {
+    /**
+     * Remuxes a video file to another container format.
+     * This is a simple example of using the libavformat API to remux a media file from one container format to another.
+     *
+     */
     @Test
     fun testRemux() = runTest {
-        setProperty()
         delay(50)
 
-        AVUtil.setLogLevel(LogLevel.VERBOSE)
+        LibAVUtil.setLogLevel(LogLevel.VERBOSE)
 
         autoClose {
             val inputFormat = try {
-                AVFormatContext.openInput(URL)
+                AVFormatContext.openInput(TestResources.RESOURCE_1.readBytes())
             } catch (e: Exception) {
                 throw IllegalStateException("Failed to open input", e)
             }.using()
@@ -33,7 +35,7 @@ class RemuxTest {
                 throw IllegalStateException("Failed to find stream info")
             }
 
-            inputFormat.dumpFormat(0, URL, false)
+            inputFormat.dumpFormat(0, "", false)
 
             val OUTPUT_FILE = "output.mp4"
 
@@ -60,7 +62,7 @@ class RemuxTest {
                 streamMapping[i] = streamIndex++
 
                 val outStream = outputFormat.newStream()
-                inCodecpar.copyTo(outStream.codecParameters)
+                outStream.codecParameters = inCodecpar
                 outStream.codecParameters.codecTag = 0
             }
 
@@ -101,8 +103,6 @@ class RemuxTest {
         }
     }
 }
-
-expect fun setProperty()
 
 class UsingScope : AutoCloseable {
     private val closeables: MutableList<AutoCloseable> = mutableListOf()

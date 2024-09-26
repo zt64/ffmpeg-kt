@@ -1,17 +1,15 @@
 package dev.zt64.ffmpegkt.avutil
 
-internal typealias NativeAVRational = org.bytedeco.ffmpeg.avutil.AVRational
+public actual typealias AVRational = org.bytedeco.ffmpeg.avutil.AVRational
 
-public fun AVRational(native: NativeAVRational): AVRational {
-    return AVRational(native.num(), native.den())
-}
+public actual inline val AVRational.num: Int
+    get() = num()
 
-public fun NativeAVRational(rational: AVRational): NativeAVRational {
-    return NativeAVRational(rational.first, rational.second)
-}
+public actual inline val AVRational.den: Int
+    get() = den()
 
-public fun NativeAVRational(num: Int, den: Int): NativeAVRational {
-    return NativeAVRational().apply {
+public actual fun AVRational(num: Int, den: Int): AVRational {
+    return AVRational().apply {
         num(num)
         den(den)
     }

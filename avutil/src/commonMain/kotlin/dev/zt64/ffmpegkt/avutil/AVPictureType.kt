@@ -25,3 +25,5 @@ public enum class AVPictureType(internal val value: Int) {
     /** BI type */
     BI(7)
 }
+
+public expect fun AVPictureType.getPictureTypeChar(): Char

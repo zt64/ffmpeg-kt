@@ -6,8 +6,10 @@ import org.bytedeco.ffmpeg.global.avcodec.*
 internal actual typealias NativeAVCodec = org.bytedeco.ffmpeg.avcodec.AVCodec
 
 @JvmInline
-public actual value class AVCodec(public val native: NativeAVCodec) : AutoCloseable {
-    public actual val id: AVCodecID
+public actual value class AVCodec(
+    public val native: NativeAVCodec
+) : AutoCloseable {
+    public actual inline val id: AVCodecID
         get() = AVCodecID(native.id())
 
     public actual inline val name: String

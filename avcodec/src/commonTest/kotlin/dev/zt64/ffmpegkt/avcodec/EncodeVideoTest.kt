@@ -19,7 +19,7 @@ class EncodeVideoTest {
 
         val codec = AVCodec.findEncoder(AVCodecID.MPEG4)!!
         val c = try {
-            VideoCodecContext(codec).apply {
+            VideoEncoder(codec).apply {
                 bitRate = 50000
                 width = 256
                 height = 256
@@ -32,8 +32,6 @@ class EncodeVideoTest {
         } catch (e: Exception) {
             fail("Failed to allocate codec context", e)
         }
-        val pkt = AVPacket()
-
         c.open(codec)
 
         val buffer = Buffer()
@@ -69,11 +67,11 @@ class EncodeVideoTest {
                 }
             }
             frame.pts = i.toLong()
-            encode(c, frame, pkt, buffer)
+            encode(c, frame, buffer)
         }
 
         // Flush encoder
-        encode(c, null, pkt, buffer)
+        encode(c, null, buffer)
 
         // Add sequence end code
         if (codec.id == AVCodecID.MPEG1VIDEO || codec.id == AVCodecID.MPEG2VIDEO) {
@@ -82,7 +80,6 @@ class EncodeVideoTest {
 
         c.close()
         frame.close()
-        pkt.close()
 
         buffer.use {
             FileSystem.SYSTEM.write(filename.toPath()) {
@@ -93,9 +90,8 @@ class EncodeVideoTest {
 }
 
 private fun encode(
-    c: VideoCodecContext,
+    c: VideoEncoder,
     frame: VideoFrame?,
-    pkt: AVPacket,
     outputStream: Buffer
 ) {
     if (frame != null) println("Send frame ${frame.pts}")
@@ -103,15 +99,9 @@ private fun encode(
     c.sendFrame(frame)
 
     while (true) {
-        try {
-            c.receivePacket(pkt)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            break
-        }
-
-        println("Write packet ${pkt.pts} (size=${pkt.size})")
-        outputStream.write(pkt.data)
-        pkt.close()
+        c.receivePacket()?.use { packet ->
+            println("Write packet (size=${packet.size})")
+            outputStream.write(packet.data)
+        } ?: break
     }
 }

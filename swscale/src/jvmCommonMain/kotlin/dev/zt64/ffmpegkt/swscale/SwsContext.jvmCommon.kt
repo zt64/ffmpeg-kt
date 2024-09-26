@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.avutil.AVFrame
 import dev.zt64.ffmpegkt.avutil.AVPixelFormat
+import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import org.bytedeco.ffmpeg.global.swscale.*
 
@@ -19,7 +19,7 @@ public actual fun SwsContext(
     dstFilter: SwsFilter?,
     param: DoubleArray?
 ): SwsContext {
-    val context = org.bytedeco.ffmpeg.swscale.SwsContext()
+    val context = SwsContext()
 
     return sws_getCachedContext(
         context,
@@ -55,6 +55,6 @@ public actual fun SwsContext.scale(
     )
 }
 
-public actual fun SwsContext.scaleFrame(src: AVFrame, dst: AVFrame) {
+public actual fun SwsContext.scaleFrame(src: Frame, dst: Frame) {
     sws_scale_frame(this, src.native, dst.native).checkError()
 }

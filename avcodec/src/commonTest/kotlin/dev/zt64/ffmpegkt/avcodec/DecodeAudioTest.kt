@@ -15,10 +15,9 @@ class DecodeAudioTest {
     }
 
     private fun decodeAudio(file: String) {
-        val pkt = AVPacket()
         val codec = AVCodec.findEncoder(AVCodecID.MP2)!!
-        val parser = AVCodecParserContext(AVCodecID.MP2)
-        val codecContext = AudioCodecContext(codec)
+        val parser = CodecParserContext(AVCodecID.MP2)
+        val codecContext = AudioDecoder(codec)
 
         codecContext.open(codec)
 
@@ -37,8 +36,7 @@ class DecodeAudioTest {
             val h = parser.parse(
                 codecContext,
                 ByteArray(0),
-                IntArray(0),
-                ByteArray(0)
+                0
             )
         }
     }

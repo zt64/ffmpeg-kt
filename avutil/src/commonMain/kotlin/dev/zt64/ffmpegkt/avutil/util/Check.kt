@@ -7,4 +7,4 @@ public inline fun Int.checkError(): Int {
     return if (this < 0) throw FfmpegException(this) else this
 }
 
-public fun Int.checkTrue(): Boolean = this >= 0
+public inline fun Int.checkTrue(): Boolean = this >= 0

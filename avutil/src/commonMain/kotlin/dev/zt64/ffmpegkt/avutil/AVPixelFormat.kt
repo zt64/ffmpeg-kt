@@ -3,7 +3,7 @@ package dev.zt64.ffmpegkt.avutil
 import kotlin.jvm.JvmInline
 
 @JvmInline
-public value class AVPixelFormat(public val num: Int) {
+public value class AVPixelFormat(public inline val num: Int) {
     public companion object {
         public val NONE: AVPixelFormat = AVPixelFormat(-1)
         public val YUV420P: AVPixelFormat = AVPixelFormat(0)

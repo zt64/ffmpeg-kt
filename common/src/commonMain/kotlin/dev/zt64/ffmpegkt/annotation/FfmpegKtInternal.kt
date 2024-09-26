@@ -5,6 +5,6 @@ package dev.zt64.ffmpegkt.annotation
  * Developers should not use this declaration for normal use.
  *
  */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @RequiresOptIn
 annotation class FfmpegKtInternal

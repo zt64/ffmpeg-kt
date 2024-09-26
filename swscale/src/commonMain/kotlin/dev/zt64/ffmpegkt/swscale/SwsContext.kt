@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.avutil.AVFrame
 import dev.zt64.ffmpegkt.avutil.AVPixelFormat
+import dev.zt64.ffmpegkt.avutil.Frame
 
 public expect class SwsContext : AutoCloseable
 
@@ -53,4 +53,4 @@ public expect fun SwsContext.scale(
     dstStride: IntArray
 ): Int
 
-public expect fun SwsContext.scaleFrame(src: AVFrame, dst: AVFrame)
+public expect fun SwsContext.scaleFrame(src: Frame, dst: Frame)
