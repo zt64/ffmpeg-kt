@@ -48,6 +48,10 @@ ffmpeg-kt-postproc = { module = "dev.zt64:ffmpeg-kt-postproc", version.ref = "ff
 
 Contributions are welcome and appreciated
 
+## Acknowledgments
+
+* [PyAV](https://github.com/PyAV-Org/PyAV) - For serving as inspiration in designing a user-friendly API
+
 ## License
 
 This project is licensed under the GNU GPL v3.0 License - see the [LICENSE](LICENSE) file for
