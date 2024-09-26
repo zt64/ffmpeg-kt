@@ -42,18 +42,6 @@ class KmpLibPlugin : Plugin<Project> {
                         }
                     }
                 }
-
-                commonTest {
-                    dependencies {
-                        implementation("org.jetbrains.kotlin:kotlin-test")
-                    }
-                }
-
-                named("jvmCommonMain") {
-                    dependencies {
-                        // implementation(target.versionCatalog().findLibrary("ffmpeg").get())
-                    }
-                }
             }
 
             compilerOptions {

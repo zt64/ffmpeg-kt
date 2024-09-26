@@ -35,3 +35,4 @@ include(
     "swscale",
     "complete"
 )
+include("testing")

@@ -40,6 +40,15 @@ class KmpBasePlugin : Plugin<Project> {
             }
 
             sourceSets.apply {
+                commonTest {
+                    dependencies {
+                        implementation(kotlin("test"))
+
+                        if (target.name != "testing") {
+                            implementation(project(":testing"))
+                        }
+                    }
+                }
             }
         }
     }

@@ -16,12 +16,5 @@ kotlin {
                 api(projects.swscale)
             }
         }
-
-        commonTest {
-            dependencies {
-                implementation(libs.kotlin.test)
-                implementation(libs.coroutines.test)
-            }
-        }
     }
 }
