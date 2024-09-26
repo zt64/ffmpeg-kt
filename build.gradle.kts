@@ -4,7 +4,6 @@ plugins {
     // Kotlin
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.kotlin.cocoapods) apply false
 
     // Android
     alias(libs.plugins.android.library) apply false
