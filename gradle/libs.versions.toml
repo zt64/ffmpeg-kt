@@ -18,7 +18,7 @@ ffmpeg = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpeg" }
 okio = { module = "com.squareup.okio:okio", version = "3.9.1" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version = "3.9.1" }
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
-kotlinpoet = { module = "com.squareup:kotlinpoet", version = "1.18.1" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version = "2.0.0" }
 
 # Test
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
