@@ -2,8 +2,7 @@ package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avcodec.AVCodec
 import dev.zt64.ffmpegkt.avcodec.AVPacket
-import dev.zt64.ffmpegkt.avutil.AVClass
-import dev.zt64.ffmpegkt.avutil.AVDictionary
+import dev.zt64.ffmpegkt.avutil.*
 
 public expect class AVFormatContext(
     format: AVOutputFormat? = null,
@@ -16,10 +15,10 @@ public expect class AVFormatContext(
 
     public var pb: AVIOContext?
     public var ctxFlags: Int
-    public val streams: List<AVStream>
+    public val streams: StreamContainer
 
     // public val streamGroups: List<AVStreamGroup>
-    public val chapters: List<AVChapter>
+    public val chapters: List<Chapter>
     public val url: String
     public var startTime: Long
     public var duration: Long
@@ -95,7 +94,7 @@ public expect class AVFormatContext(
         flags: Int
     ): Int
 
-    public fun newStream(): AVStream
+    public fun newStream(): Stream
 
     public fun seekFrame(
         streamIndex: Int,
@@ -129,9 +128,33 @@ public expect class AVFormatContext(
     public fun writeFrame(packet: AVPacket)
     public fun interleavedWriteFrame(packet: AVPacket)
 
+    /**
+     * Guess the sample aspect ratio of a frame, based on both the stream and the frame aspect ratio.
+     *
+     * @param stream the stream which the frame belongs to.
+     * @param frame the frame with the sample aspect ratio to guess.
+     * @return the guessed sample aspect ratio. `null` if the sample aspect ratio could not be guessed.
+     */
+    public fun guessSampleAspectRatio(stream: Stream, frame: Frame): Rational?
+
+    /**
+     * Guess the frame rate of a frame, based on both the stream and the frame rate.
+     *
+     * @param stream the stream which the frame belongs to.
+     * @param frame the frame with the frame rate to guess.
+     * @return the guessed frame rate. `null` if the frame rate could not be guessed.
+     */
+    public fun guessFrameRate(stream: Stream, frame: Frame? = null): Rational?
+
     public companion object {
         public fun openInput(
             url: String,
+            format: AVInputFormat? = null,
+            options: AVDictionary? = null
+        ): AVFormatContext
+
+        public fun openInput(
+            byteArray: ByteArray,
             format: AVInputFormat? = null,
             options: AVDictionary? = null
         ): AVFormatContext

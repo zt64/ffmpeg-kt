@@ -3,9 +3,7 @@ package dev.zt64.ffmpegkt.avcodec
 import dev.zt64.ffmpegkt.avutil.*
 import org.bytedeco.ffmpeg.avcodec.AVCodecParameters
 
-public actual open class CodecParameters(
-    public val native: AVCodecParameters
-) {
+public actual open class CodecParameters(public val native: AVCodecParameters) {
     public actual val codecType: AVMediaType
         get() = AVMediaType(native.codec_type())
     public actual val codecId: AVCodecID
@@ -25,13 +23,13 @@ public actual open class CodecParameters(
         get() = native.profile()
     public actual val level: Int
         get() = native.level()
+
+    override fun toString(): String = commonToString()
 }
 
-public actual class AudioCodecParameters(
-    native: AVCodecParameters
-) : CodecParameters(native) {
-    public actual val format: AVSampleFormat
-        get() = AVSampleFormat(native.format())
+public actual class AudioCodecParameters(native: AVCodecParameters) : CodecParameters(native) {
+    public actual val format: SampleFormat
+        get() = SampleFormat(native.format())
     public actual val channelLayout: AVChannelLayout
         get() = AVChannelLayout(native.ch_layout())
     public actual val sampleRate: Int
@@ -46,20 +44,20 @@ public actual class AudioCodecParameters(
         get() = native.trailing_padding()
     public actual val seekPreroll: Int
         get() = native.seek_preroll()
+
+    override fun toString(): String = commonToString()
 }
 
-public actual class VideoCodecParameters(
-    native: AVCodecParameters
-) : CodecParameters(native) {
-    public actual val format: AVPixelFormat
-        get() = AVPixelFormat(native.format())
+public actual class VideoCodecParameters(native: AVCodecParameters) : CodecParameters(native) {
+    public actual val format: PixelFormat
+        get() = PixelFormat(native.format())
     public actual val width: Int
         get() = native.width()
     public actual val height: Int
         get() = native.height()
-    public actual val aspectRatio: AVRational
+    public actual val aspectRatio: Rational
         get() = native.sample_aspect_ratio()
-    public actual val framerate: AVRational
+    public actual val framerate: Rational
         get() = native.framerate()
     public actual val fieldOrder: FieldOrder
         get() = TODO("Not yet implemented")
@@ -69,4 +67,6 @@ public actual class VideoCodecParameters(
         get() = TODO("Not yet implemented")
     public actual val videoDelay: Int
         get() = native.video_delay()
+
+    override fun toString(): String = commonToString()
 }

@@ -1,5 +1,8 @@
 package dev.zt64.ffmpegkt.avutil
 
+/**
+ * Log level used by FFmpeg logging component
+ */
 public enum class LogLevel(public val value: Int) {
     QUIET(-8),
     PANIC(0),

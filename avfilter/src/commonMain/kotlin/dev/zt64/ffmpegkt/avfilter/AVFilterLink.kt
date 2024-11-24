@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.avfilter
 
 import dev.zt64.ffmpegkt.avutil.AVMediaType
-import dev.zt64.ffmpegkt.avutil.AVRational
+import dev.zt64.ffmpegkt.avutil.Rational
 
 public data class AVFilterLink(
     val sourceFilter: AVFilterContext,
@@ -11,5 +11,5 @@ public data class AVFilterLink(
     val type: AVMediaType,
     val width: Int,
     val height: Int,
-    val sampleAspectRatio: AVRational
+    val sampleAspectRatio: Rational
 )

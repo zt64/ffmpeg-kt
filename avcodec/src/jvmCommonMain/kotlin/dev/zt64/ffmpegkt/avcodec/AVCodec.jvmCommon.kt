@@ -6,9 +6,7 @@ import org.bytedeco.ffmpeg.global.avcodec.*
 internal actual typealias NativeAVCodec = org.bytedeco.ffmpeg.avcodec.AVCodec
 
 @JvmInline
-public actual value class AVCodec(
-    public val native: NativeAVCodec
-) : AutoCloseable {
+public actual value class AVCodec(public val native: NativeAVCodec) : AutoCloseable {
     public actual inline val id: AVCodecID
         get() = AVCodecID(native.id())
 
@@ -27,7 +25,7 @@ public actual value class AVCodec(
     public actual inline val maxLowres: Byte
         get() = native.max_lowres()
 
-    public actual inline val supportedFrameRates: List<AVRational>
+    public actual inline val supportedFrameRates: List<Rational>
         get() = native.supported_framerates()?.run {
             buildList {
                 var i = 0
@@ -35,19 +33,19 @@ public actual value class AVCodec(
                     val rate = position(i.toLong()).takeUnless {
                         it.num() == 0 && it.den() == 0
                     } ?: break
-                    add(AVRational(rate))
+                    add(Rational(rate))
                     i++
                 }
             }
         }.orEmpty()
 
-    public actual inline val pixFormats: List<AVPixelFormat>
+    public actual inline val pixFormats: List<PixelFormat>
         get() = native.pix_fmts()?.run {
             buildList {
                 var i = 0
                 while (true) {
                     val format = position(i.toLong()).get().takeUnless { it == -1 } ?: break
-                    add(AVPixelFormat(format))
+                    add(PixelFormat(format))
                     i++
                 }
             }
@@ -65,13 +63,13 @@ public actual value class AVCodec(
             }
         }.orEmpty().toIntArray()
 
-    public actual inline val sampleFormats: List<AVSampleFormat>
+    public actual inline val sampleFormats: List<SampleFormat>
         get() = native.sample_fmts()?.run {
             buildList {
                 var i = 0
                 while (true) {
                     val format = position(i.toLong()).get().takeUnless { it == -1 } ?: break
-                    add(AVSampleFormat(format))
+                    add(SampleFormat(format))
                     i++
                 }
             }

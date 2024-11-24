@@ -21,7 +21,7 @@ public actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
         while (true) {
             entry = av_dict_iterate(nativeDict, entry) ?: break
 
-            put(entry.tkey, entry.tvalue)
+            put(entry.key().string, entry.value().string)
         }
     }
 

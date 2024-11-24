@@ -8,7 +8,6 @@ import dev.zt64.ffmpegkt.avutil.LibAVUtil
 import dev.zt64.ffmpegkt.avutil.LogLevel
 import dev.zt64.ffmpegkt.avutil.util.FfmpegException
 import dev.zt64.ffmpegkt.test.TestResources
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
@@ -20,8 +19,6 @@ class RemuxTest {
      */
     @Test
     fun testRemux() = runTest {
-        delay(50)
-
         LibAVUtil.setLogLevel(LogLevel.VERBOSE)
 
         autoClose {
@@ -49,7 +46,8 @@ class RemuxTest {
             var streamIndex = 0
 
             inputFormat.streams.forEachIndexed { i, inStream ->
-                val inCodecpar = inStream.codecParameters
+                when (inStream) {
+                }
 
                 if (inCodecpar.codecType != AVMediaType.AUDIO &&
                     inCodecpar.codecType != AVMediaType.VIDEO &&

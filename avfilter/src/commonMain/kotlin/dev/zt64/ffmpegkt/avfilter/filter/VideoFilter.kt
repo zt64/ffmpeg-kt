@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avfilter.filter
 
-import dev.zt64.ffmpegkt.avutil.AVPixelFormat
+import dev.zt64.ffmpegkt.avutil.PixelFormat
 
 /**
  * TODO
@@ -630,7 +630,7 @@ public sealed class VideoFilter(name: String) : Filter(name) {
      * Convert the input video to one of the specified pixel formats.
      */
     public data class Format(
-        val pixelFormats: List<AVPixelFormat>,
+        val pixelFormats: List<PixelFormat>,
     ) : VideoFilter("format")
 
     /**
@@ -1077,7 +1077,7 @@ public sealed class VideoFilter(name: String) : Filter(name) {
     /**
      * Force libavfilter not to use any of the specified pixel formats for the input to the next filter.
      */
-    public data class NoFormat(val pixelFormats: List<AVPixelFormat>) : VideoFilter("noformat")
+    public data class NoFormat(val pixelFormats: List<PixelFormat>) : VideoFilter("noformat")
 
     /**
      * Add noise.
@@ -1428,8 +1428,6 @@ public sealed class VideoFilter(name: String) : Filter(name) {
      * Scroll input video.
      */
     public data class Scroll() : VideoFilter("scroll")
-    ... segment           V->N       Segment video stream.
-    ... select            V->N       Select video frames to pass in output.
     /**
      * Apply CMYK adjustments to specific color ranges.
      */
@@ -1563,7 +1561,7 @@ public sealed class VideoFilter(name: String) : Filter(name) {
      * Apply sobel operator
      */
     public data class SobelOpencl() : VideoFilter("sobel_opencl")
-    ... split             V->N       Pass on the input to N video outputs.
+
     /**
      * Apply a simple post processing filter.
      */
@@ -1588,7 +1586,7 @@ public sealed class VideoFilter(name: String) : Filter(name) {
      * Convert video stereoscopic 3D view.
      */
     public data class Stereo3d() : VideoFilter("stereo3d")
-    ..C streamselect      N->N       Select video streams
+
     /**
      * Render text subtitles onto input video using the libass library.
      */

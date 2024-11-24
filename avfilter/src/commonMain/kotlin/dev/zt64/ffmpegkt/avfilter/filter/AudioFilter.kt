@@ -2,6 +2,7 @@ package dev.zt64.ffmpegkt.avfilter.filter
 
 import dev.zt64.ffmpegkt.avutil.AVChannelLayout
 import dev.zt64.ffmpegkt.avutil.AVSampleFormat
+import dev.zt64.ffmpegkt.avutil.SampleFormat
 import kotlin.random.Random
 import kotlin.time.Duration
 
@@ -9,10 +10,7 @@ public sealed class AudioFilter(name: String) : Filter(name) {
     /**
      * Apply Affine Projection algorithm to the first audio stream using the second audio stream.
      */
-    public data class AP(
-        public val order: Int,
-        public val projection: Int
-    ) : AudioFilter("aap")
+    public data class AP(public val order: Int, public val projection: Int) : AudioFilter("aap")
 
     public data class Compressor(
         public val threshold: Double,
@@ -24,9 +22,7 @@ public sealed class AudioFilter(name: String) : Filter(name) {
         public val link: Int
     ) : AudioFilter("acompressor")
 
-    public data class Contrast(
-        public val contrast: Int,
-    ) : AudioFilter("acontrast")
+    public data class Contrast(public val contrast: Int) : AudioFilter("acontrast")
 
     public data class CrossFade(
         public val samples: Int,
@@ -82,19 +78,11 @@ public sealed class AudioFilter(name: String) : Filter(name) {
         val method: OverlapMethod = OverlapMethod.ADD
     ) : AudioFilter("adeclick")
 
-    public data class Decorrelate(
-        val stages: Int = 6,
-        val seed: Int = Random.nextInt()
-    ) : AudioFilter("adecorrelate")
+    public data class Decorrelate(val stages: Int = 6, val seed: Int = Random.nextInt()) : AudioFilter("adecorrelate")
 
-    public data class Delay(
-        val delays: List<Int>
-    ) : AudioFilter("adelay")
+    public data class Delay(val delays: List<Int>) : AudioFilter("adelay")
 
-    public data class Denorm(
-        val level: Int = -351,
-        val type: Type = Type.DC
-    ) : AudioFilter("adenorm") {
+    public data class Denorm(val level: Int = -351, val type: Type = Type.DC) : AudioFilter("adenorm") {
         public enum class Type {
             DC,
             AC,
@@ -117,37 +105,22 @@ public sealed class AudioFilter(name: String) : Filter(name) {
     public data class DRC(
         val attack: Int,
         val release: Int,
-        val channels: List<Int>? = null,
+        val channels: List<Int>? = null
     ) : AudioFilter("adrc")
 
-    public data class DynamicEqualizer(
-        val threshold: Int = 0
-    ) : AudioFilter("adynamicequalizer")
+    public data class DynamicEqualizer(val threshold: Int = 0) : AudioFilter("adynamicequalizer")
 
-    public data class DynamicSmooth(
-        val sensitivity: Int,
-        val baseFreq: Int,
-    ) : AudioFilter("adynamics")
+    public data class DynamicSmooth(val sensitivity: Int, val baseFreq: Int) : AudioFilter("adynamics")
 
-    public data class Echo(
-        val inGain: Float = 0.6f,
-        val outGain: Float = 0.3f,
-    ) : AudioFilter("aecho")
+    public data class Echo(val inGain: Float = 0.6f, val outGain: Float = 0.3f) : AudioFilter("aecho")
 
-    public data class Emphasis(
-        val levelIn: Int,
-        val levelOut: Int,
-    ) : AudioFilter("aemphasis")
+    public data class Emphasis(val levelIn: Int, val levelOut: Int) : AudioFilter("aemphasis")
 
-    public data class Eval(
-        val expressions: List<String>
-    ) : AudioFilter("aeval") {
+    public data class Eval(val expressions: List<String>) : AudioFilter("aeval") {
         public constructor(vararg expressions: String) : this(expressions.toList())
     }
 
-    public data class Exciter(
-        val levelIn: Float
-    ) : AudioFilter("aexciter")
+    public data class Exciter(val levelIn: Float) : AudioFilter("aexciter")
 
     /**
      * Fade
@@ -203,7 +176,7 @@ public sealed class AudioFilter(name: String) : Filter(name) {
     public data class FIR : AudioFilter("afir")
 
     public data class Format(
-        val sampleFormats: List<AVSampleFormat>,
+        val sampleFormats: List<SampleFormat>,
         val sampleRates: List<Int>,
         val channelLayouts: List<AVChannelLayout>
     ) : AudioFilter("aformat")
@@ -310,15 +283,9 @@ public sealed class AudioFilter(name: String) : Filter(name) {
 
     public data class XCorrelate : AudioFilter("axcorrelate")
 
-    public data class Bandpass(
-        val frequency: Int,
-        val width: Int
-    ) : AudioFilter("bandpass")
+    public data class Bandpass(val frequency: Int, val width: Int) : AudioFilter("bandpass")
 
-    public data class Bandreject(
-        val frequency: Int,
-        val width: Int
-    ) : AudioFilter("bandreject")
+    public data class Bandreject(val frequency: Int, val width: Int) : AudioFilter("bandreject")
 
     public data class Bass(
         val gain: Int,
@@ -343,13 +310,9 @@ public sealed class AudioFilter(name: String) : Filter(name) {
 
     public data class BS2B : AudioFilter("bs2b")
 
-    public data class ChannelMap(
-        val channelMap: List<Int>
-    ) : AudioFilter("channelmap")
+    public data class ChannelMap(val channelMap: List<Int>) : AudioFilter("channelmap")
 
-    public data class Channelsplit(
-        val channelCount: Int
-    ) : AudioFilter("channelsplit")
+    public data class Channelsplit(val channelCount: Int) : AudioFilter("channelsplit")
 
     public data class Chorus : AudioFilter("chorus")
 
@@ -359,15 +322,9 @@ public sealed class AudioFilter(name: String) : Filter(name) {
 
     public data class CrossFeed : AudioFilter("crossfeed")
 
-    public data class Crystalizer(
-        val intensity: Float = 2.0f,
-        val clipping: Boolean = true
-    ) : AudioFilter("crystalizer")
+    public data class Crystalizer(val intensity: Float = 2.0f, val clipping: Boolean = true) : AudioFilter("crystalizer")
 
-    public data class DCShift(
-        val shift: Float,
-        val limiterGain: Float? = null
-    ) : AudioFilter("dcshift")
+    public data class DCShift(val shift: Float, val limiterGain: Float? = null) : AudioFilter("dcshift")
 
     public data class Deesser : AudioFilter("deesser")
 
@@ -381,10 +338,7 @@ public sealed class AudioFilter(name: String) : Filter(name) {
 
     public data class Equalizer : AudioFilter("equalizer")
 
-    public data class ExtraStero(
-        val difference: Float = 2.5f,
-        val clipping: Boolean = true
-    ) : AudioFilter("extrastereo")
+    public data class ExtraStero(val difference: Float = 2.5f, val clipping: Boolean = true) : AudioFilter("extrastereo")
 
     public data class Firequalizer : AudioFilter("firequalizer")
 
@@ -458,15 +412,9 @@ public sealed class AudioFilter(name: String) : Filter(name) {
 
     public data class HighShelf : AudioFilter("highshelf")
 
-    public data class Tremolo(
-        val frequency: Float = 5.0f,
-        val depth: Float = 0.5f
-    ) : AudioFilter("tremolo")
+    public data class Tremolo(val frequency: Float = 5.0f, val depth: Float = 0.5f) : AudioFilter("tremolo")
 
-    public data class Vibrato(
-        val frequency: Float = 5.0f,
-        val depth: Float = 0.5f
-    ) : AudioFilter("vibrato")
+    public data class Vibrato(val frequency: Float = 5.0f, val depth: Float = 0.5f) : AudioFilter("vibrato")
 
     /**
      * Virtual bass
@@ -474,10 +422,7 @@ public sealed class AudioFilter(name: String) : Filter(name) {
      * @property cutoff Cutoff frequency in Hz. Default value is 250 Hz. This sets the frequency below which the bass boost will be applied.
      * @property strength Strength of the bass boost. Default value is 3. This sets the strength of the bass boost.
      */
-    public data class VirtualBass(
-        val cutoff: Int = 250,
-        val strength: Int = 3
-    ) : AudioFilter("virtualbass")
+    public data class VirtualBass(val cutoff: Int = 250, val strength: Int = 3) : AudioFilter("virtualbass")
 
     public data class Volume(
         val volume: String = "1.0",

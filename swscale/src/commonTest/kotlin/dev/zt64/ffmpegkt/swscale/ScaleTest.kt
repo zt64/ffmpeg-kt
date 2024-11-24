@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.avutil.AVPixelFormat
+import dev.zt64.ffmpegkt.avutil.PixelFormat
 import dev.zt64.ffmpegkt.avutil.LibAVUtil
 import okio.FileSystem
 import okio.Path.Companion.toPath
@@ -12,10 +12,10 @@ class ScaleTest {
     fun scaleVideo() {
         val srcW = 320
         val srcH = 240
-        val srcFormat = AVPixelFormat.YUV420P
+        val srcFormat = PixelFormat.YUV420P
         val dstW = 1280
         val dstH = 720
-        val dstFormat = AVPixelFormat.RGB24
+        val dstFormat = PixelFormat.RGB24
 
         val srcData = ByteArray(4)
         val dstData = ByteArray(4)

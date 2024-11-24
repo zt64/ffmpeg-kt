@@ -1,8 +1,6 @@
 package dev.zt64.ffmpegkt.avcodec
 
-public enum class AVDiscard(
-    internal val num: Int
-) {
+public enum class AVDiscard(internal val num: Int) {
     NONE(-16),
     DEFAULT(0),
     NONREF(8),

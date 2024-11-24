@@ -15,6 +15,9 @@ public actual value class AVChannelLayout(public val native: NativeAVChannelLayo
     public actual fun copyTo(dst: AVChannelLayout) {
         av_channel_layout_copy(dst.native.ptr, native.ptr).checkError()
     }
-}
 
-public actual val AVChannelLayoutSTEREO: AVChannelLayout = TODO()
+    public actual companion object {
+        public actual val STEREO: AVChannelLayout
+            get() = TODO()
+    }
+}

@@ -1,27 +1,63 @@
 package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avutil.util.checkError
-import ffmpeg.avio_open
+import ffmpeg.*
 import kotlinx.cinterop.*
+import platform.posix.memcpy
 
 public actual typealias NativeAVIOContext = ffmpeg.AVIOContext
 
 public actual value class AVIOContext(public val native: NativeAVIOContext) : AutoCloseable {
-    public actual constructor(filename: String, flags: Int) : this(open(filename, flags).native)
+    public actual constructor(filename: String, flags: Int) : this(open(filename, flags))
+    public actual constructor(bytes: ByteArray) : this(open(bytes))
 
     override fun close() {
-        TODO("Not yet implemented")
+        avio_close(native.ptr)
     }
 
     private companion object {
-        private fun open(filename: String, flags: Int): AVIOContext {
-            memScoped {
-                val nativeAVIOContext = alloc<NativeAVIOContext>()
-
-                avio_open(cValuesOf(nativeAVIOContext.ptr), filename, flags).checkError()
-
-                return AVIOContext(nativeAVIOContext)
+        private fun open(filename: String, flags: Int): NativeAVIOContext {
+            return nativeHeap.alloc<NativeAVIOContext> {
+                avio_open(cValuesOf(ptr), filename, flags).checkError()
             }
+        }
+
+        private fun open(bytes: ByteArray): NativeAVIOContext {
+            val buffer = bytes.asUByteArray().toCValues().getPointer(scope = ArenaBase())
+            val bufferDataRef = StableRef.create(BufferData(buffer, bytes.size))
+
+            val avioCtxBuffer = av_malloc(4096u)!!.reinterpret<UByteVar>()
+
+            val ctx = avio_alloc_context(
+                avioCtxBuffer,
+                4096,
+                0,
+                bufferDataRef.asCPointer(),
+                staticCFunction { opaque, buf, size ->
+                    val bd = opaque!!.asStableRef<BufferData>().get()
+                    val bufferSize = minOf(size, bd.size)
+
+                    if (bufferSize == 0) return@staticCFunction -1
+
+                    memcpy(buf, bd.ptr, bufferSize.toULong())
+
+                    bd.ptr = bd.ptr.plus(bufferSize.toLong())!!
+                    bd.size -= bufferSize
+
+                    bufferSize
+                },
+                null,
+                null
+            )
+
+            // bufferDataRef.dispose()
+
+            return ctx!!.pointed
         }
     }
 }
+
+private data class BufferData(
+    var ptr: CPointer<UByteVar>,
+    var size: Int,
+)

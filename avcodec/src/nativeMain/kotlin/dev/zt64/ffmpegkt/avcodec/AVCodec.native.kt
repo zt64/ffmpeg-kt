@@ -1,10 +1,10 @@
 package dev.zt64.ffmpegkt.avcodec
 
+import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.AVChannelLayout
 import dev.zt64.ffmpegkt.avutil.AVMediaType
-import dev.zt64.ffmpegkt.avutil.AVPixelFormat
-import dev.zt64.ffmpegkt.avutil.AVRational
-import dev.zt64.ffmpegkt.avutil.AVSampleFormat
+import dev.zt64.ffmpegkt.avutil.Rational
+import dev.zt64.ffmpegkt.avutil.SampleFormat
 import ffmpeg.*
 import kotlinx.cinterop.get
 import kotlinx.cinterop.pointed
@@ -12,9 +12,7 @@ import kotlinx.cinterop.toKString
 
 public actual typealias NativeAVCodec = ffmpeg.AVCodec
 
-public actual value class AVCodec(
-    @PublishedApi internal val native: NativeAVCodec
-) : AutoCloseable {
+public actual value class AVCodec(public val native: NativeAVCodec) : AutoCloseable {
     public actual inline val name: String
         get() = native.name?.toKString().orEmpty()
     public actual inline val longName: String
@@ -27,9 +25,9 @@ public actual value class AVCodec(
         get() = native.capabilities
     public actual inline val maxLowres: Byte
         get() = native.max_lowres.toByte()
-    public actual inline val supportedFrameRates: List<AVRational>
+    public actual inline val supportedFrameRates: List<Rational>
         get() = emptyList()
-    public actual inline val pixFormats: List<AVPixelFormat>
+    public actual inline val pixFormats: List<PixelFormat>
         get() = emptyList()
     public actual inline val supportedSampleRates: IntArray
         get() = native.supported_samplerates?.let {
@@ -44,7 +42,7 @@ public actual value class AVCodec(
                 }
             }
         }.orEmpty().toIntArray()
-    public actual inline val sampleFormats: List<AVSampleFormat>
+    public actual inline val sampleFormats: List<SampleFormat>
         get() = emptyList()
     public actual inline val profiles: List<AVProfile>
         get() = emptyList()

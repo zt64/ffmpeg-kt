@@ -45,16 +45,14 @@ public interface Frame : AutoCloseable {
  *
  * @property native
  */
-public expect value class AudioFrame(
-    override val native: NativeAVFrame
-) : Frame {
+public expect value class AudioFrame(override val native: NativeAVFrame) : Frame {
     /**
      * Create a new blank audio frame for encoding.
      */
     public constructor()
 
     public var nbSamples: Int
-    public var format: AVSampleFormat
+    public var format: SampleFormat
     public var channelLayout: AVChannelLayout
     public var sampleRate: Int
 }
@@ -64,18 +62,16 @@ public expect value class AudioFrame(
  *
  * @property native
  */
-public expect value class VideoFrame(
-    override val native: NativeAVFrame
-) : Frame {
+public expect value class VideoFrame(override val native: NativeAVFrame) : Frame {
     public constructor()
 
     public var width: Int
     public var height: Int
-    public var format: AVPixelFormat
+    public var format: PixelFormat
 }
 
 /**
- * Frame data.
+ * Frame data wrapper backed by the native byte array buffer.
  *
  * 2D array of bytes, where the outer array is the planes of the frame,
  * while the inner arrays are the data of each plane.

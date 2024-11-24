@@ -26,7 +26,7 @@ public actual object LibAVUtil : FfmpegLibrary {
 
     public actual fun versionInfo(): String = av_version_info().string
 
-    public actual fun getTimeBaseQ(): AVRational = AVRational(av_get_time_base_q())
+    public actual fun getTimeBaseQ(): Rational = Rational(av_get_time_base_q())
 
     public actual fun setLogLevel(level: LogLevel) {
         av_log_set_level(level.value)
@@ -48,7 +48,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         buffer: ByteArray,
         channels: Int,
         samples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int = av_samples_fill_arrays(
         audioData,
@@ -65,7 +65,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         linesize: IntArray,
         nbChannels: Int,
         nbSamples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int = av_samples_alloc(
         audioData,
@@ -81,7 +81,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         linesizes: IntArray,
         nbChannels: Int,
         nbSamples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int = av_samples_alloc_array_and_samples(
         PointerPointer<PointerPointer<BytePointer>>(
@@ -109,7 +109,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         srcOffset: Int,
         nbSamples: Int,
         nbChannels: Int,
-        sampleFmt: AVSampleFormat
+        sampleFmt: SampleFormat
     ): Int = av_samples_copy(
         dst,
         src,
@@ -125,7 +125,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         offset: Int,
         nbSamples: Int,
         nbChannels: Int,
-        sampleFmt: AVSampleFormat
+        sampleFmt: SampleFormat
     ): Int = av_samples_set_silence(
         audioData,
         offset,
@@ -139,7 +139,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         linesizes: IntArray,
         width: Int,
         height: Int,
-        pixFmt: AVPixelFormat,
+        pixFmt: PixelFormat,
         align: Int
     ): Int {
         return av_image_alloc(

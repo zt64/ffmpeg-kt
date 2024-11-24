@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.avutil.AVPixelFormat
+import dev.zt64.ffmpegkt.avutil.PixelFormat
 import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import org.bytedeco.ffmpeg.global.swscale.*
@@ -10,10 +10,10 @@ public actual typealias SwsContext = org.bytedeco.ffmpeg.swscale.SwsContext
 public actual fun SwsContext(
     srcW: Int,
     srcH: Int,
-    srcFormat: AVPixelFormat,
+    srcFormat: PixelFormat,
     dstW: Int,
     dstH: Int,
-    dstFormat: AVPixelFormat,
+    dstFormat: PixelFormat,
     flags: Int,
     srcFilter: SwsFilter?,
     dstFilter: SwsFilter?,

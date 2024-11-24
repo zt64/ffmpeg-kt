@@ -1,6 +1,7 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.avutil.AVRational
+import dev.zt64.ffmpegkt.avutil.Rational
+import dev.zt64.ffmpegkt.avutil.asNative
 import ffmpeg.av_packet_alloc
 import ffmpeg.av_packet_rescale_ts
 import ffmpeg.av_packet_unref
@@ -8,9 +9,7 @@ import kotlinx.cinterop.*
 
 public actual typealias NativeAVPacket = ffmpeg.AVPacket
 
-public actual value class AVPacket(
-    public val native: NativeAVPacket
-) : AutoCloseable {
+public actual value class AVPacket(public val native: NativeAVPacket) : AutoCloseable {
     public actual constructor() : this(av_packet_alloc()!!.pointed)
 
     public actual var streamIndex: Int
@@ -34,8 +33,11 @@ public actual value class AVPacket(
     public actual val pts: Long
         get() = native.pts
 
-    public actual fun rescaleTs(src: AVRational, dst: AVRational) {
-        av_packet_rescale_ts(native.ptr, src.readValue(), dst.readValue())
+    public actual val dts: Long
+        get() = native.dts
+
+    public actual fun rescaleTs(src: Rational, dst: Rational) {
+        av_packet_rescale_ts(native.ptr, src.asNative().readValue(), dst.asNative().readValue())
     }
 
     public override fun close() {

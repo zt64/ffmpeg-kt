@@ -3,9 +3,7 @@ package dev.zt64.ffmpegkt.avcodec
 import ffmpeg.*
 import kotlinx.cinterop.*
 
-public actual class CodecParserContext(
-    private val native: AVCodecParserContext
-) : AutoCloseable {
+public actual class CodecParserContext(private val native: AVCodecParserContext) : AutoCloseable {
     public actual constructor(codec: AVCodecID) : this(av_parser_init(codec.num)!!.pointed)
 
     public actual val parser: AVCodecParser
@@ -15,29 +13,13 @@ public actual class CodecParserContext(
 
     public actual fun parse(
         avCtx: CodecContext,
-        outBuf: ByteArray,
-        buf: ByteArray,
+        input: ByteArray,
+        dataSize: Int,
         pts: Long,
         dts: Long,
         pos: Long
-    ): Int {
-        return memScoped {
-            val poutbuf = alloc<CPointerVar<UByteVar>> {
-                value = outBuf.asUByteArray().toCValues().ptr
-            }
-
-            av_parser_parse2(
-                native.ptr,
-                avCtx.native.ptr,
-                poutbuf.ptr,
-                cValuesOf(outBuf.size),
-                buf.asUByteArray().toCValues(),
-                buf.size,
-                pts,
-                dts,
-                pos
-            )
-        }
+    ): ParsedPacket {
+        TODO()
     }
 
     override fun close() {

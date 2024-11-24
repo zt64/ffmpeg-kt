@@ -8,9 +8,7 @@ import org.bytedeco.ffmpeg.global.avutil.av_channel_layout_copy
 
 private typealias NativeCodecContext = org.bytedeco.ffmpeg.avcodec.AVCodecContext
 
-public actual abstract class CodecContext(
-    internal val native: NativeCodecContext
-) : AutoCloseable {
+public actual abstract class CodecContext(internal val native: NativeCodecContext) : AutoCloseable {
     public constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
     public actual var codecTag: Int
@@ -38,7 +36,7 @@ public actual abstract class CodecContext(
         set(value) {
             native.flags(value)
         }
-    public actual var timeBase: AVRational
+    public actual var timeBase: Rational
         get() = native.time_base()
         set(value) {
             native.time_base(value)
@@ -48,8 +46,6 @@ public actual abstract class CodecContext(
         set(value) {
             native.thread_count(value)
         }
-
-    private val packet = AVPacket()
 
     public actual fun open(codec: AVCodec, options: AVDictionary?) {
         avcodec_open2(native, codec.native, options?.let(::AVDictionaryNative)).checkError()
@@ -72,11 +68,9 @@ public actual abstract class CodecContext(
     }
 }
 
-public actual abstract class AudioCodecContext(
-    native: NativeCodecContext
-) : CodecContext(native) {
-    public actual var sampleFmt: AVSampleFormat
-        get() = AVSampleFormat(native.sample_fmt())
+public actual abstract class AudioCodecContext(native: NativeCodecContext) : CodecContext(native) {
+    public actual var sampleFmt: SampleFormat
+        get() = SampleFormat(native.sample_fmt())
         set(value) {
             native.sample_fmt(value.num)
         }
@@ -97,11 +91,9 @@ public actual abstract class AudioCodecContext(
         }
 }
 
-public actual abstract class VideoCodecContext(
-    native: NativeCodecContext
-) : CodecContext(native) {
-    public actual var pixFmt: AVPixelFormat
-        get() = AVPixelFormat(native.pix_fmt())
+public actual abstract class VideoCodecContext(native: NativeCodecContext) : CodecContext(native) {
+    public actual var pixFmt: PixelFormat
+        get() = PixelFormat(native.pix_fmt())
         set(value) {
             native.pix_fmt(value.num)
         }
@@ -125,16 +117,20 @@ public actual abstract class VideoCodecContext(
         set(value) {
             native.max_b_frames(value)
         }
-    public actual var framerate: AVRational
+    public actual var mbDecision: Int
+        get() = native.mb_decision()
+        set(value) {
+            native.mb_decision(value)
+        }
+    public actual var framerate: Rational
         get() = native.framerate()
         set(value) {
             native.framerate(value)
         }
 }
 
-public actual class AudioEncoder(
-    native: NativeCodecContext
-) : AudioCodecContext(native),
+public actual class AudioEncoder(native: NativeCodecContext) :
+    AudioCodecContext(native),
     Encoder {
     public actual constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
@@ -156,9 +152,8 @@ public actual class AudioEncoder(
     }
 }
 
-public actual class AudioDecoder(
-    native: NativeCodecContext
-) : AudioCodecContext(native),
+public actual class AudioDecoder(native: NativeCodecContext) :
+    AudioCodecContext(native),
     Decoder {
     public actual constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
@@ -173,9 +168,8 @@ public actual class AudioDecoder(
     }
 }
 
-public actual class VideoEncoder(
-    native: NativeCodecContext
-) : VideoCodecContext(native),
+public actual class VideoEncoder(native: NativeCodecContext) :
+    VideoCodecContext(native),
     Encoder {
     public actual constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
@@ -197,9 +191,8 @@ public actual class VideoEncoder(
     }
 }
 
-public actual class VideoDecoder(
-    native: NativeCodecContext
-) : VideoCodecContext(native),
+public actual class VideoDecoder(native: NativeCodecContext) :
+    VideoCodecContext(native),
     Decoder {
     public actual constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
@@ -209,8 +202,14 @@ public actual class VideoDecoder(
         avcodec_send_packet(native, packet?.native).checkError()
     }
 
-    public actual fun receiveFrame(): VideoFrame {
-        avcodec_receive_frame(native, frame.native).checkError()
-        return frame
+    public actual fun receiveFrame(): VideoFrame? {
+        val ret = avcodec_receive_frame(native, frame.native)
+
+        return if (ret == ERROR_AGAIN || ret == ERROR_EOF) {
+            null
+        } else {
+            ret.checkError()
+            frame
+        }
     }
 }

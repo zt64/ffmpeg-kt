@@ -9,9 +9,7 @@ import kotlin.jvm.JvmInline
  * @constructor Should not be used directly. Use the predefined values in the companion object.
  */
 @JvmInline
-public value class AVCodecID(
-    public val num: Int
-) {
+public value class AVCodecID(public val num: Int) {
     @Suppress("ktlint:standard:backing-property-naming", "ObjectPropertyName", "SpellCheckingInspection")
     public companion object {
         public val NONE: AVCodecID = AVCodecID(0)

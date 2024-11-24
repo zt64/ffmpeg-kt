@@ -1,16 +1,15 @@
 package dev.zt64.ffmpegkt
 
 import dev.zt64.ffmpegkt.avcodec.*
-import dev.zt64.ffmpegkt.avformat.AVFormatContext
-import dev.zt64.ffmpegkt.avformat.AVIOContext
-import dev.zt64.ffmpegkt.avformat.AVStream
+import dev.zt64.ffmpegkt.avformat.*
 import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.swresample.SwrContext
 import dev.zt64.ffmpegkt.swscale.SwsContext
 import kotlin.test.Test
+import kotlin.test.fail
 
 class OutputStream {
-    var str: AVStream? = null
+    var str: Stream? = null
     var enc: CodecContext? = null
     var nextPts: Long? = null
     var frame: Frame? = null
@@ -24,6 +23,10 @@ class OutputStream {
 }
 
 class MuxTest {
+    /**
+     * Mux an audio and video file into a single format
+     *
+     */
     @Test
     fun mux() {
         val stream = OutputStream()
@@ -61,28 +64,30 @@ class MuxTest {
         codec: AVCodec,
         codecId: AVCodecID
     ) {
-        val encoder = AVCodec.findEncoder(codecId)
+        val codec = AVCodec.findEncoder(codecId)
             ?: error("Codec not found for ${codec.name}")
 
         outputStream.tmpPkt = AVPacket()
         outputStream.str = newStream()
         outputStream.str!!.id = streams.size - 1
 
-        val c = AVCodecContext(encoder)
+        val c = VideoEncoder(codec)
         outputStream.enc = c
 
-        when (codec.type) {
+        val encoder = when (codec.type) {
             AVMediaType.VIDEO -> {
+                val c = VideoEncoder(codec)
+
                 c.codecId = codecId
                 c.bitRate = 400000
                 c.width = 352
                 c.height = 288
 
-                outputStream.str!!.timeBase = AVRational(1, 25)
+                outputStream.str!!.timeBase = Rational(1, 25)
                 c.timeBase = outputStream.str!!.timeBase
 
                 c.gopSize = 12
-                c.pixFmt = AVPixelFormat.YUV420P
+                c.pixFmt = PixelFormat.YUV420P
 
                 if (c.codecId == AVCodecID.MPEG2VIDEO) {
                     c.maxBFrames = 2
@@ -91,10 +96,14 @@ class MuxTest {
                 if (c.codecId == AVCodecID.MPEG1VIDEO) {
                     c.mbDecision = 2
                 }
+
+                c
             }
 
             AVMediaType.AUDIO -> {
-                c.sampleFmt = codec.sampleFormats.getOrNull(0) ?: AVSampleFormat.FLTP
+                val c = AudioEncoder(codec)
+
+                c.sampleFmt = codec.sampleFormats.getOrNull(0) ?: SampleFormat.FLTP
                 c.bitRate = 64000
                 c.sampleRate = 44100
 
@@ -106,11 +115,12 @@ class MuxTest {
                     }
                 }
 
-                c.channelLayout = AVChannelLayoutSTEREO
-                outputStream.str!!.timeBase = AVRational(1, c.sampleRate)
-            }
+                c.channelLayout = AVChannelLayout.STEREO
+                outputStream.str!!.timeBase = Rational(1, c.sampleRate)
 
-            else -> {}
+                c
+            }
+            else -> fail("Unexpected type ${codec.type}")
         }
 
         if (oformat!!.flags and 0x0040 == 1) {

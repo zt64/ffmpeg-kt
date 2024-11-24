@@ -23,11 +23,11 @@ class EncodeVideoTest {
                 bitRate = 50000
                 width = 256
                 height = 256
-                timeBase = AVRational(1, frameRate)
-                framerate = AVRational(frames, 1)
+                timeBase = Rational(1, frameRate)
+                framerate = Rational(frames, 1)
                 gopSize = 10
                 maxBFrames = 1
-                pixFmt = AVPixelFormat.YUV420P
+                pixFmt = PixelFormat.YUV420P
             }
         } catch (e: Exception) {
             fail("Failed to allocate codec context", e)

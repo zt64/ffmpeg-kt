@@ -5,7 +5,7 @@ import dev.zt64.ffmpegkt.FfmpegLibrary
 public expect object LibAVUtil : FfmpegLibrary {
     public fun versionInfo(): String
 
-    public fun getTimeBaseQ(): AVRational
+    public fun getTimeBaseQ(): Rational
 
     /**
      * Set the log level.
@@ -29,7 +29,7 @@ public expect object LibAVUtil : FfmpegLibrary {
         buffer: ByteArray,
         channels: Int,
         samples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int
 
@@ -38,7 +38,7 @@ public expect object LibAVUtil : FfmpegLibrary {
         linesize: IntArray,
         nbChannels: Int,
         nbSamples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int
 
@@ -47,7 +47,7 @@ public expect object LibAVUtil : FfmpegLibrary {
         linesizes: IntArray,
         nbChannels: Int,
         nbSamples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int
 
@@ -58,7 +58,7 @@ public expect object LibAVUtil : FfmpegLibrary {
         srcOffset: Int,
         nbSamples: Int,
         nbChannels: Int,
-        sampleFmt: AVSampleFormat
+        sampleFmt: SampleFormat
     ): Int
 
     public fun samplesSetSilence(
@@ -66,7 +66,7 @@ public expect object LibAVUtil : FfmpegLibrary {
         offset: Int,
         nbSamples: Int,
         nbChannels: Int,
-        sampleFmt: AVSampleFormat
+        sampleFmt: SampleFormat
     ): Int
 
     /**
@@ -85,7 +85,7 @@ public expect object LibAVUtil : FfmpegLibrary {
         linesizes: IntArray,
         width: Int,
         height: Int,
-        pixFmt: AVPixelFormat,
+        pixFmt: PixelFormat,
         align: Int
     ): Int
 }

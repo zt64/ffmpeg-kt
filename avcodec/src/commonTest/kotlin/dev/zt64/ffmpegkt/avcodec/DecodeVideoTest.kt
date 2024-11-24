@@ -1,16 +1,14 @@
 package dev.zt64.ffmpegkt.avcodec
 
+import dev.zt64.ffmpegkt.test.TestResources
 import okio.Buffer
-import okio.FileSystem
-import okio.Path.Companion.toPath
-import okio.SYSTEM
 import kotlin.test.Test
 import kotlin.test.fail
 
 class DecodeVideoTest {
     @Test
     fun decodeVideo() {
-        // First get the
+        // First get the ID
         val codecId = AVCodecID.MPEG4
         val codec = AVCodec.findDecoder(codecId)!!
         val parser = CodecParserContext(codecId)
@@ -19,7 +17,8 @@ class DecodeVideoTest {
 
         codecContext.open(codec)
 
-        val f = FileSystem.SYSTEM.source("/home/nick/Downloads/example.mp4".toPath())
+        val buf = Buffer()
+        buf.write(TestResources.RESOURCE_1.readBytes())
 
         var data = ByteArray(4096 + 64)
 
@@ -51,7 +50,7 @@ class DecodeVideoTest {
         var eof = false
         while (!eof) {
             val buffer = Buffer()
-            var dataSize = f.read(buffer, byteCount = 4096)
+            var dataSize = buf.read(buffer, byteCount = 4096)
 
             eof = dataSize == -1L
             data = buffer.readByteArray() + ByteArray(64)
@@ -76,7 +75,7 @@ class DecodeVideoTest {
 
         codecContext.close()
         parser.close()
-        f.close()
+        buf.close()
     }
 }
 
@@ -120,12 +119,7 @@ fun VideoDecoder.decode(packet: AVPacket?) {
     }
 
     while (true) {
-        val ret = try {
-            receiveFrame()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            break
-        }
+        val ret = receiveFrame() ?: break
 
         println("saving frame ${ret.pts}")
     }

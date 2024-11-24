@@ -6,14 +6,24 @@ import dev.zt64.ffmpegkt.avutil.AVClass
 internal typealias NativeAVOutputFormat = org.bytedeco.ffmpeg.avformat.AVOutputFormat
 
 public actual class AVOutputFormat(public val native: NativeAVOutputFormat) {
-    public actual val name: String = native.name().string
-    public actual val longName: String = native.long_name().string
-    public actual val mimeType: String = native.mime_type().string
-    public actual val extensions: String = native.extensions().string
-    public actual val audioCodec: AVCodecID = AVCodecID(native.audio_codec())
-    public actual val videoCodec: AVCodecID = AVCodecID(native.video_codec())
-    public actual val subtitleCodec: AVCodecID = AVCodecID(native.subtitle_codec())
-    public actual val flags: Int = native.flags()
-    public actual val codecTag: List<AVCodecTag> = emptyList()
-    public actual val privClass: AVClass = AVClass(native.priv_class())
+    public actual inline val name: String
+        get() = native.name().string
+    public actual inline val longName: String
+        get() = native.long_name().string
+    public actual inline val mimeType: String
+        get() = native.mime_type().string
+    public actual inline val extensions: String
+        get() = native.extensions().string
+    public actual inline val audioCodec: AVCodecID
+        get() = AVCodecID(native.audio_codec())
+    public actual inline val videoCodec: AVCodecID
+        get() = AVCodecID(native.video_codec())
+    public actual inline val subtitleCodec: AVCodecID
+        get() = AVCodecID(native.subtitle_codec())
+    public actual inline val flags: Int
+        get() = native.flags()
+    public actual inline val codecTag: List<AVCodecTag>
+        get() = TODO()
+    public actual inline val privClass: AVClass
+        get() = AVClass(native.priv_class())
 }

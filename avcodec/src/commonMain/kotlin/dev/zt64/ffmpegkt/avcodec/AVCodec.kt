@@ -15,19 +15,17 @@ public expect class NativeAVCodec
  *
  * @property native
  */
-public expect value class AVCodec(
-    internal val native: NativeAVCodec
-) : AutoCloseable {
+public expect value class AVCodec(internal val native: NativeAVCodec) : AutoCloseable {
     public val name: String
     public val longName: String
     public val type: AVMediaType
     public val id: AVCodecID
     public val capabilities: Int
     public val maxLowres: Byte
-    public val supportedFrameRates: List<AVRational>
-    public val pixFormats: List<AVPixelFormat>
+    public val supportedFrameRates: List<Rational>
+    public val pixFormats: List<PixelFormat>
     public val supportedSampleRates: IntArray
-    public val sampleFormats: List<AVSampleFormat>
+    public val sampleFormats: List<SampleFormat>
     public val profiles: List<AVProfile>
     public val channelLayouts: List<AVChannelLayout>
     public val wrapperName: String

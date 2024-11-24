@@ -1,15 +1,13 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.avutil.AVRational
+import dev.zt64.ffmpegkt.avutil.Rational
 
 public expect class NativeAVPacket
 
 /**
  * A packet of compressed data to be written to a container format
  */
-public expect value class AVPacket(
-    internal val native: NativeAVPacket
-) : AutoCloseable {
+public expect value class AVPacket(internal val native: NativeAVPacket) : AutoCloseable {
     /**
      * Create an empty packet
      */
@@ -33,5 +31,5 @@ public expect value class AVPacket(
     public val pts: Long
     public val dts: Long
 
-    public fun rescaleTs(src: AVRational, dst: AVRational)
+    public fun rescaleTs(src: Rational, dst: Rational)
 }

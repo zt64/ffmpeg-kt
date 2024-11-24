@@ -12,6 +12,8 @@ public expect value class AVChannelLayout internal constructor(internal val nati
     public val nbChannels: Int
 
     public fun copyTo(dst: AVChannelLayout)
-}
 
-public expect val AVChannelLayoutSTEREO: AVChannelLayout
+    public companion object {
+        public val STEREO: AVChannelLayout
+    }
+}

@@ -31,8 +31,8 @@ public actual value class AudioFrame(
             native.nb_samples(value)
         }
 
-    public actual inline var format: AVSampleFormat
-        get() = AVSampleFormat(native.format())
+    public actual inline var format: SampleFormat
+        get() = SampleFormat(native.format())
         set(value) {
             native.format(value.num)
         }
@@ -91,8 +91,8 @@ public actual value class VideoFrame(
             native.height(value)
         }
 
-    public actual inline var format: AVPixelFormat
-        get() = AVPixelFormat(native.format())
+    public actual inline var format: PixelFormat
+        get() = PixelFormat(native.format())
         set(value) {
             native.format(value.num)
         }

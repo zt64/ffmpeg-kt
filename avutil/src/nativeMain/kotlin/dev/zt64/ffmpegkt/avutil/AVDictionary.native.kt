@@ -6,13 +6,11 @@ import kotlinx.cinterop.*
 public actual typealias AVDictionaryNative = ffmpeg.AVDictionary
 
 public actual fun AVDictionaryNative(dict: AVDictionary): AVDictionaryNative {
-    val nativeDict = nativeHeap.alloc<AVDictionaryNative>()
-
-    for ((key, value) in dict) {
-        av_dict_set(cValuesOf(nativeDict.ptr), key, value, 0)
+    return nativeHeap.alloc<AVDictionaryNative> {
+        for ((key, value) in dict) {
+            av_dict_set(cValuesOf(ptr), key, value, 0)
+        }
     }
-
-    return nativeDict
 }
 
 public actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {

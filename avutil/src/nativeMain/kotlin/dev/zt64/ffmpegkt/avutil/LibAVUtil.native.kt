@@ -20,10 +20,8 @@ public actual object LibAVUtil : FfmpegLibrary {
         return av_version_info()?.toKString().orEmpty()
     }
 
-    public actual fun getTimeBaseQ(): AVRational {
-        return memScoped {
-            av_get_time_base_q().ptr.pointed
-        }
+    public actual fun getTimeBaseQ(): Rational {
+        return av_get_time_base_q().useContents { Rational(this) }
     }
 
     public actual fun setLogLevel(level: LogLevel) {
@@ -46,7 +44,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         buffer: ByteArray,
         channels: Int,
         samples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int {
         return memScoped {
@@ -67,7 +65,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         linesize: IntArray,
         nbChannels: Int,
         nbSamples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int = memScoped {
         av_samples_alloc(
@@ -85,7 +83,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         linesizes: IntArray,
         nbChannels: Int,
         nbSamples: Int,
-        sampleFmt: AVSampleFormat,
+        sampleFmt: SampleFormat,
         align: Int
     ): Int = memScoped {
         av_samples_alloc_array_and_samples(
@@ -109,7 +107,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         srcOffset: Int,
         nbSamples: Int,
         nbChannels: Int,
-        sampleFmt: AVSampleFormat
+        sampleFmt: SampleFormat
     ): Int = memScoped {
         av_samples_copy(
             cValuesOf(dst.toUByteArray().toCValues().ptr),
@@ -127,7 +125,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         offset: Int,
         nbSamples: Int,
         nbChannels: Int,
-        sampleFmt: AVSampleFormat
+        sampleFmt: SampleFormat
     ): Int = memScoped {
         av_samples_set_silence(
             cValuesOf(audioData.toUByteArray().toCValues().ptr),
@@ -143,7 +141,7 @@ public actual object LibAVUtil : FfmpegLibrary {
         linesizes: IntArray,
         width: Int,
         height: Int,
-        pixFmt: AVPixelFormat,
+        pixFmt: PixelFormat,
         align: Int
     ): Int = memScoped {
         av_image_alloc(

@@ -5,132 +5,183 @@ package dev.zt64.ffmpegkt.avformat
 import dev.zt64.ffmpegkt.avcodec.AVCodec
 import dev.zt64.ffmpegkt.avcodec.AVPacket
 import dev.zt64.ffmpegkt.avcodec.NativeAVPacket
-import dev.zt64.ffmpegkt.avutil.AVClass
-import dev.zt64.ffmpegkt.avutil.AVDictionary
-import dev.zt64.ffmpegkt.avutil.AVDictionaryNative
+import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
+import org.bytedeco.ffmpeg.avformat.AVProbeData
 import org.bytedeco.ffmpeg.global.avformat.*
 import org.bytedeco.javacpp.BytePointer
 
 internal typealias NativeAVFormatContext = org.bytedeco.ffmpeg.avformat.AVFormatContext
 
-public actual class AVFormatContext(internal val native: NativeAVFormatContext) : AutoCloseable {
+public actual class AVFormatContext(
+    @PublishedApi
+    internal val native: NativeAVFormatContext
+) : AutoCloseable {
     public actual constructor(
         format: AVOutputFormat?,
         formatName: String?,
         filename: String
-    ) : this(
-        NativeAVFormatContext()
-    ) {
+    ) : this(NativeAVFormatContext()) {
         avformat_alloc_output_context2(native, format?.native, formatName, filename).checkError()
     }
 
-    public actual val avClass: AVClass = AVClass(native.av_class())
-    public actual val iformat: AVInputFormat? = native.iformat()?.let(::AVInputFormat)
-    public actual val oformat: AVOutputFormat? = native.oformat()?.let(::AVOutputFormat)
-    public actual var pb: AVIOContext?
+    public actual inline val avClass: AVClass
+        get() = AVClass(native.av_class())
+    public actual inline val iformat: AVInputFormat?
+        get() = native.iformat()?.let(::AVInputFormat)
+    public actual inline val oformat: AVOutputFormat?
+        get() = native.oformat()?.let(::AVOutputFormat)
+
+    public actual inline var pb: AVIOContext?
         get() = native.pb()?.let(::AVIOContext)
         set(value) {
             native.pb(value?.native)
         }
-    public actual var ctxFlags: Int
+    public actual inline var ctxFlags: Int
         get() = native.ctx_flags()
         set(value) {
             native.ctx_flags(value)
         }
-    public actual val streams: List<AVStream>
-        get() = List(native.nb_streams()) {
-            AVStream(native.streams(it))
+    public actual inline val streams: StreamContainer
+        get() {
+            val streams = List(native.nb_streams()) {
+                val stream = native.streams(it)
+
+                when (AVMediaType(stream.codecpar().codec_type())) {
+                    AVMediaType.AUDIO -> AudioStream(stream)
+                    AVMediaType.VIDEO -> VideoStream(stream)
+                    else -> Stream(stream)
+                }
+            }
+
+            return StreamContainer(streams)
         }
 
-    public actual val chapters: List<AVChapter> = emptyList()
-    public actual val url: String = native.url().string
-    public actual var startTime: Long
+    public actual inline val chapters: List<Chapter>
+        get() = List(native.nb_chapters()) {
+            Chapter(native.chapters(it))
+        }
+    public actual inline val url: String
+        get() = native.url().string
+    public actual inline var startTime: Long
         get() = native.start_time()
         set(value) {
             native.start_time(value)
         }
-    public actual var duration: Long
+    public actual inline var duration: Long
         get() = native.duration()
         set(value) {
             native.duration(value)
         }
-    public actual var bitRate: Long
+    public actual inline var bitRate: Long
         get() = native.bit_rate()
         set(value) {
             native.bit_rate(value)
         }
-    public actual var packetSize: Int
+    public actual inline var packetSize: Int
         get() = native.packet_size()
         set(value) {
             native.packet_size(value)
         }
-    public actual var maxDelay: Int
+    public actual inline var maxDelay: Int
         get() = native.max_delay()
         set(value) {
             native.max_delay(value)
         }
-    public actual var flags: Int
+    public actual inline var flags: Int
         get() = native.flags()
         set(value) {
             native.flags(value)
         }
-    public actual var probesize: Long
+    public actual inline var probesize: Long
         get() = native.probesize()
         set(value) {
             native.probesize(value)
         }
-    public actual var maxAnalyzeDuration: Long
+    public actual inline var maxAnalyzeDuration: Long
         get() = native.max_analyze_duration()
         set(value) {
             native.max_analyze_duration(value)
         }
-    public actual var key: UByte
+    public actual inline var key: UByte
         get() = native.key().get().toUByte()
         set(value) {
             native.key(BytePointer(value.toByte()))
         }
-    public actual var keylen: Int
+    public actual inline var keylen: Int
         get() = native.keylen()
         set(value) {
             native.keylen(value)
         }
-    public actual val programs: List<AVProgram> = List(native.nb_programs()) {
-        AVProgram(native.programs(it))
-    }
-    public actual val videoCodecId: Int = native.video_codec_id()
-    public actual val audioCodecId: Int = native.audio_codec_id()
-    public actual val subtitleCodecId: Int = native.subtitle_codec_id()
-    public actual val dataCodecId: Int = native.data_codec_id()
-    public actual val metadata: AVDictionary? = native.metadata()?.let { AVDictionary(it) }
-    public actual val startTimeRealtime: Long = native.start_time_realtime()
-    public actual val fpsProbeSize: Int = native.fps_probe_size()
-    public actual val errorRecognition: Int = native.error_recognition()
-    public actual val interruptCallback: AVIOInterruptCB<*> = TODO()
-    public actual val debug: Int = native.debug()
-    public actual val maxStreams: Int = native.max_streams()
-    public actual val maxIndexSize: Int = native.max_index_size()
-    public actual val maxPictureBuffer: Int = native.max_picture_buffer()
-    public actual val maxInterleaveDelta: Long = native.max_interleave_delta()
-    public actual val maxTsProbe: Int = native.max_ts_probe()
-    public actual val maxChunkDuration: Int = native.max_chunk_duration()
-    public actual val maxChunkSize: Int = native.max_chunk_size()
-    public actual val maxProbePackets: Int = native.max_probe_packets()
-    public actual val strictStdCompliance: Int = native.strict_std_compliance()
-    public actual val eventFlags: Int = native.event_flags()
-    public actual val avoidNegativeTs: Int = native.avoid_negative_ts()
-    public actual val audioPreload: Int = native.audio_preload()
-    public actual val useWallclockAsTimestamps: Int = native.use_wallclock_as_timestamps()
-    public actual val skipEstimateDurationFromPts: Int = native.skip_estimate_duration_from_pts()
-    public actual val avioFlags: Int = native.avio_flags()
-    public actual val durationEstimationMethod: Int = native.duration_estimation_method()
-    public actual val skipInitialBytes: Long = native.skip_initial_bytes()
-    public actual val correctTsOverflow: Int = native.correct_ts_overflow()
-    public actual val seek2any: Int = native.seek2any()
-    public actual val flushPackets: Int = native.flush_packets()
-    public actual val probeScore: Int = native.probe_score()
-    public actual val formatProbesize: Int = native.format_probesize()
+    public actual inline val programs: List<AVProgram>
+        get() = List(native.nb_programs()) {
+            AVProgram(native.programs(it))
+        }
+    public actual inline val videoCodecId: Int
+        get() = native.video_codec_id()
+    public actual inline val audioCodecId: Int
+        get() = native.audio_codec_id()
+    public actual inline val subtitleCodecId: Int
+        get() = native.subtitle_codec_id()
+    public actual inline val dataCodecId: Int
+        get() = native.data_codec_id()
+    public actual inline val metadata: Map<String, String>?
+        get() = native.metadata()?.let { AVDictionary(it) }
+    public actual inline val startTimeRealtime: Long
+        get() = native.start_time_realtime()
+    public actual inline val fpsProbeSize: Int
+        get() = native.fps_probe_size()
+    public actual inline val errorRecognition: Int
+        get() = native.error_recognition()
+    public actual inline val interruptCallback: AVIOInterruptCB<*>
+        get() = TODO()
+    public actual inline val debug: Int
+        get() = native.debug()
+    public actual inline val maxStreams: Int
+        get() = native.max_streams()
+    public actual inline val maxIndexSize: Int
+        get() = native.max_index_size()
+    public actual inline val maxPictureBuffer: Int
+        get() = native.max_picture_buffer()
+    public actual inline val maxInterleaveDelta: Long
+        get() = native.max_interleave_delta()
+    public actual inline val maxTsProbe: Int
+        get() = native.max_ts_probe()
+    public actual inline val maxChunkDuration: Int
+        get() = native.max_chunk_duration()
+    public actual inline val maxChunkSize: Int
+        get() = native.max_chunk_size()
+    public actual inline val maxProbePackets: Int
+        get() = native.max_probe_packets()
+    public actual inline val strictStdCompliance: Int
+        get() = native.strict_std_compliance()
+    public actual inline val eventFlags: Int
+        get() = native.event_flags()
+    public actual inline val avoidNegativeTs: Int
+        get() = native.avoid_negative_ts()
+    public actual inline val audioPreload: Int
+        get() = native.audio_preload()
+    public actual inline val useWallclockAsTimestamps: Int
+        get() = native.use_wallclock_as_timestamps()
+    public actual inline val skipEstimateDurationFromPts: Int
+        get() = native.skip_estimate_duration_from_pts()
+    public actual inline val avioFlags: Int
+        get() = native.avio_flags()
+    public actual inline val durationEstimationMethod: Int
+        get() = native.duration_estimation_method()
+    public actual inline val skipInitialBytes: Long
+        get() = native.skip_initial_bytes()
+    public actual inline val correctTsOverflow: Int
+        get() = native.correct_ts_overflow()
+    public actual inline val seek2any: Int
+        get() = native.seek2any()
+    public actual inline val flushPackets: Int
+        get() = native.flush_packets()
+    public actual inline val probeScore: Int
+        get() = native.probe_score()
+    public actual inline val formatProbesize: Int
+        get() = native.format_probesize()
 
     public actual val codecWhitelist: List<String> by lazy {
         List(native.codec_whitelist().sizeof()) {
@@ -153,33 +204,35 @@ public actual class AVFormatContext(internal val native: NativeAVFormatContext) 
         }
     }
 
-    public actual val ioRepositioned: Int = native.io_repositioned()
+    public actual inline val ioRepositioned: Int
+        get() = native.io_repositioned()
 
-    public actual var videoCodec: AVCodec?
+    public actual inline var videoCodec: AVCodec?
         get() = native.video_codec()?.let(::AVCodec)
         set(value) {
             native.video_codec(value?.native)
         }
-    public actual var audioCodec: AVCodec?
+    public actual inline var audioCodec: AVCodec?
         get() = native.audio_codec()?.let(::AVCodec)
         set(value) {
             native.audio_codec(value?.native)
         }
-    public actual var subtitleCodec: AVCodec?
+    public actual inline var subtitleCodec: AVCodec?
         get() = native.subtitle_codec()?.let(::AVCodec)
         set(value) {
             native.subtitle_codec(value?.native)
         }
-    public actual var dataCodec: AVCodec?
+    public actual inline var dataCodec: AVCodec?
         get() = native.data_codec()?.let(::AVCodec)
         set(value) {
             native.data_codec(value?.native)
         }
 
-    public actual val metadataHeaderPadding: Int = native.metadata_header_padding()
-    public actual val outputTsOffset: Long
+    public actual inline val metadataHeaderPadding: Int
+        get() = native.metadata_header_padding()
+    public actual inline val outputTsOffset: Long
         get() = native.output_ts_offset()
-    public actual var dumpSeparator: ByteArray
+    public actual inline var dumpSeparator: ByteArray
         get() = native.dump_separator().stringBytes
         set(value) {
             native.dump_separator(BytePointer(*value))
@@ -202,12 +255,13 @@ public actual class AVFormatContext(internal val native: NativeAVFormatContext) 
         av_program_add_stream_index(native, programId, streamIndex)
     }
 
-    public actual fun newStream(): AVStream {
-        return AVStream(avformat_new_stream(native, null))
+    public actual fun newStream(): Stream {
+        return Stream(avformat_new_stream(native, null))
     }
 
     public override fun close() {
-        avformat_close_input(native)
+        if (pb != null) avio_context_free(native.pb())
+        // avformat_close_input(native)
     }
 
     public actual fun findBestStream(
@@ -294,6 +348,18 @@ public actual class AVFormatContext(internal val native: NativeAVFormatContext) 
         av_interleaved_write_frame(native, packet.native).checkError()
     }
 
+    public actual fun guessSampleAspectRatio(stream: Stream, frame: Frame): Rational? {
+        return av_guess_sample_aspect_ratio(native, stream.native, frame.native).takeUnless {
+            it.num() == 0 && it.den() == 1
+        }?.let(::Rational)
+    }
+
+    public actual fun guessFrameRate(stream: Stream, frame: Frame?): Rational? {
+        return av_guess_frame_rate(native, stream.native, frame?.native).takeUnless {
+            it.num() == 0 && it.den() == 1
+        }?.let(::Rational)
+    }
+
     public actual companion object {
         public actual fun openInput(
             url: String,
@@ -308,6 +374,46 @@ public actual class AVFormatContext(internal val native: NativeAVFormatContext) 
                 format,
                 options?.let(::AVDictionaryNative)
             ).checkError()
+
+            return AVFormatContext(formatContext)
+        }
+
+        public actual fun openInput(
+            byteArray: ByteArray,
+            format: AVInputFormat?,
+            options: AVDictionary?
+        ): AVFormatContext {
+            val formatContext = avformat_alloc_context()
+
+            val bufferPointer = BytePointer(*byteArray)
+            val bufferSize = byteArray.size
+            val avioCtx = AVIOContext(byteArray)
+            formatContext.pb(avioCtx.native)
+
+            // Probe the input format if not provided
+            if (format == null) {
+                val probeData = AVProbeData().apply {
+                    buf_size(bufferSize.coerceAtMost(4096))
+                    filename(BytePointer("stream"))
+                    buf(bufferPointer)
+                }
+
+                var inputFormat = av_probe_input_format(probeData, 1)
+                if (inputFormat == null) {
+                    inputFormat = av_probe_input_format(probeData, 0)
+                }
+
+                if (inputFormat == null) {
+                    throw IllegalArgumentException("Could not determine input format")
+                }
+
+                // inputFormat.flags(inputFormat.flags() or AVFMT_NOFILE)
+                formatContext.iformat(inputFormat)
+            } else {
+                formatContext.iformat(format)
+            }
+
+            avformat_open_input(formatContext, null as String?, formatContext.iformat(), options?.let(::AVDictionaryNative)).checkError()
 
             return AVFormatContext(formatContext)
         }

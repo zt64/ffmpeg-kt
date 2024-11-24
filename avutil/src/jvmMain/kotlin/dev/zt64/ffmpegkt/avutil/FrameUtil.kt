@@ -7,7 +7,7 @@ import java.nio.ByteBuffer
 @OptIn(ExperimentalUnsignedTypes::class)
 public fun VideoFrame.toImage(): Image {
     return when (format) {
-        AVPixelFormat.YUV420P -> {
+        PixelFormat.YUV420P -> {
             val yPlane = ByteBuffer.wrap(data[0].toUByteArray().asByteArray())
             val uPlane = ByteBuffer.wrap(data[0].toUByteArray().asByteArray())
             val vPlane = ByteBuffer.wrap(data[0].toUByteArray().asByteArray())

@@ -6,8 +6,7 @@ import dev.zt64.ffmpegkt.avutil.Frame
 
 public expect class NativeAVFilterContext
 
-public expect value class AVFilterContext(internal val native: NativeAVFilterContext) :
-    AutoCloseable {
+public expect value class AVFilterContext(internal val native: NativeAVFilterContext) : AutoCloseable {
     public val avClass: AVClass
     public val name: String
     public val width: Int

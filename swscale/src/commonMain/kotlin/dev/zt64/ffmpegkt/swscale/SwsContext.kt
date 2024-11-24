@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.avutil.AVPixelFormat
+import dev.zt64.ffmpegkt.avutil.PixelFormat
 import dev.zt64.ffmpegkt.avutil.Frame
 
 public expect class SwsContext : AutoCloseable
@@ -8,10 +8,10 @@ public expect class SwsContext : AutoCloseable
 public expect fun SwsContext(
     srcW: Int,
     srcH: Int,
-    srcFormat: AVPixelFormat,
+    srcFormat: PixelFormat,
     dstW: Int,
     dstH: Int,
-    dstFormat: AVPixelFormat,
+    dstFormat: PixelFormat,
     flags: Int,
     srcFilter: SwsFilter? = null,
     dstFilter: SwsFilter? = null,
@@ -21,10 +21,10 @@ public expect fun SwsContext(
 public fun SwsContext(
     srcW: Int,
     srcH: Int,
-    srcFormat: AVPixelFormat,
+    srcFormat: PixelFormat,
     dstW: Int,
     dstH: Int,
-    dstFormat: AVPixelFormat,
+    dstFormat: PixelFormat,
     flags: List<SwsFlag>,
     srcFilter: SwsFilter? = null,
     dstFilter: SwsFilter? = null,

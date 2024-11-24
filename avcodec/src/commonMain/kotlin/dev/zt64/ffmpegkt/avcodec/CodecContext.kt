@@ -15,7 +15,7 @@ public expect abstract class CodecContext : AutoCloseable {
     public var bitRate: Long
 
     public var flags: Int
-    public var timeBase: AVRational
+    public var timeBase: Rational
 
     /**
      * Thread count is used to decide how many independent tasks should be passed to execute()
@@ -54,7 +54,7 @@ public expect abstract class CodecContext : AutoCloseable {
  * Base class for audio encoders and decoders.
  */
 public expect abstract class AudioCodecContext : CodecContext {
-    public var sampleFmt: AVSampleFormat
+    public var sampleFmt: SampleFormat
     public var sampleRate: Int
     public var channelLayout: AVChannelLayout
     public var frameSize: Int
@@ -64,12 +64,13 @@ public expect abstract class AudioCodecContext : CodecContext {
  * Base class for video encoders and decoders.
  */
 public expect abstract class VideoCodecContext : CodecContext {
-    public var pixFmt: AVPixelFormat
+    public var pixFmt: PixelFormat
     public var width: Int
     public var height: Int
     public var gopSize: Int
     public var maxBFrames: Int
-    public var framerate: AVRational
+    public var mbDecision: Int
+    public var framerate: Rational
 }
 
 public interface Encoder {
@@ -91,9 +92,8 @@ public interface Decoder {
  *
  * @param codec
  */
-public expect class AudioEncoder(
-    codec: AVCodec?
-) : AudioCodecContext,
+public expect class AudioEncoder(codec: AVCodec?) :
+    AudioCodecContext,
     Encoder {
     public fun sendFrame(frame: AudioFrame?)
 }
@@ -105,9 +105,8 @@ public expect class AudioEncoder(
  *
  * @param codec
  */
-public expect class AudioDecoder(
-    codec: AVCodec?
-) : AudioCodecContext,
+public expect class AudioDecoder(codec: AVCodec?) :
+    AudioCodecContext,
     Decoder {
     public fun receiveFrame(): AudioFrame
 }
@@ -119,9 +118,8 @@ public expect class AudioDecoder(
  *
  * @param codec
  */
-public expect class VideoEncoder(
-    codec: AVCodec?
-) : VideoCodecContext,
+public expect class VideoEncoder(codec: AVCodec?) :
+    VideoCodecContext,
     Encoder {
     public fun sendFrame(frame: VideoFrame?)
 }
@@ -133,9 +131,8 @@ public expect class VideoEncoder(
  *
  * @param codec
  */
-public expect class VideoDecoder(
-    codec: AVCodec?
-) : VideoCodecContext,
+public expect class VideoDecoder(codec: AVCodec?) :
+    VideoCodecContext,
     Decoder {
-    public fun receiveFrame(): VideoFrame
+    public fun receiveFrame(): VideoFrame?
 }
