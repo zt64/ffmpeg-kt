@@ -7,7 +7,7 @@ coroutines = "1.9.0"
 
 # Maintenance
 compatibility = "0.16.3"
-kover = "0.8.3"
+kover = "0.9.0"
 publish = "0.30.0"
 ktx-resources = "0.9.0"
 ktlintPlugin = "12.1.2"
