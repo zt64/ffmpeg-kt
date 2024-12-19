@@ -3,7 +3,7 @@ package dev.zt64.ffmpegkt.avcodec
 import dev.zt64.ffmpegkt.avutil.*
 import org.bytedeco.ffmpeg.avcodec.AVCodecParameters
 
-public actual open class CodecParameters(public val native: AVCodecParameters) {
+public actual sealed class CodecParameters(public val native: AVCodecParameters) {
     public actual val codecType: AVMediaType
         get() = AVMediaType(native.codec_type())
     public actual val codecId: AVCodecID
@@ -56,9 +56,9 @@ public actual class VideoCodecParameters(native: AVCodecParameters) : CodecParam
     public actual val height: Int
         get() = native.height()
     public actual val aspectRatio: Rational
-        get() = native.sample_aspect_ratio()
+        get() = Rational(native.sample_aspect_ratio())
     public actual val framerate: Rational
-        get() = native.framerate()
+        get() = Rational(native.framerate())
     public actual val fieldOrder: FieldOrder
         get() = TODO("Not yet implemented")
     public actual val colorRange: ColorRange

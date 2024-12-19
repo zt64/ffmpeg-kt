@@ -14,7 +14,7 @@ class OutputStream {
     var nextPts: Long? = null
     var frame: Frame? = null
     var tmpFrame: Frame? = null
-    var tmpPkt: AVPacket? = null
+    var tmpPkt: Packet? = null
     var t: Float? = null
     var tincr: Float? = null
     var tincr2: Float? = null
@@ -67,7 +67,7 @@ class MuxTest {
         val codec = AVCodec.findEncoder(codecId)
             ?: error("Codec not found for ${codec.name}")
 
-        outputStream.tmpPkt = AVPacket()
+        outputStream.tmpPkt = Packet()
         outputStream.str = newStream()
         outputStream.str!!.id = streams.size - 1
 
@@ -120,6 +120,7 @@ class MuxTest {
 
                 c
             }
+
             else -> fail("Unexpected type ${codec.type}")
         }
 

@@ -6,6 +6,7 @@ import dev.zt64.ffmpegkt.avutil.*
 
 public expect class NativeAVCodec
 
+// TODO: Split into dedicated AudioCodec and VideoCodec classes to avoid confusion and misuse
 /**
  * A codec used for encoding or decoding audio or video.
  *

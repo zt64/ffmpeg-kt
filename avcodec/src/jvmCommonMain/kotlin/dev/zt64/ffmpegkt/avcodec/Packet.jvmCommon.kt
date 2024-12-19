@@ -1,13 +1,13 @@
 package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.Rational
-import dev.zt64.ffmpegkt.avutil.Rational
+import dev.zt64.ffmpegkt.avutil.toNative
 import org.bytedeco.ffmpeg.global.avcodec.*
 
 public actual typealias NativeAVPacket = org.bytedeco.ffmpeg.avcodec.AVPacket
 
 @JvmInline
-public actual value class AVPacket(public val native: NativeAVPacket) : AutoCloseable {
+public actual value class Packet(public val native: NativeAVPacket) : AutoCloseable {
     public actual constructor() : this(av_packet_alloc())
 
     public actual inline var streamIndex: Int
@@ -35,7 +35,7 @@ public actual value class AVPacket(public val native: NativeAVPacket) : AutoClos
         get() = native.dts()
 
     public actual fun rescaleTs(src: Rational, dst: Rational) {
-        return av_packet_rescale_ts(native, src, dst)
+        return av_packet_rescale_ts(native, src.toNative(), dst.toNative())
     }
 
     override fun close() {

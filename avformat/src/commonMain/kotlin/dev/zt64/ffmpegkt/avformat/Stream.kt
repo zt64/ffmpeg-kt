@@ -9,7 +9,7 @@ import dev.zt64.ffmpegkt.avutil.Rational
  * A data stream
  *
  */
-public expect open class Stream {
+public expect abstract class Stream {
     /**
      * The index of this stream in the parent format
      */
@@ -27,7 +27,7 @@ public expect open class Stream {
      * The number of frames in this stream
      */
     public val frames: Long
-    public open val codecParameters: CodecParameters
+    public abstract val codecParameters: CodecParameters
 }
 
 public expect class AudioStream : Stream {
@@ -40,12 +40,12 @@ public expect class VideoStream : Stream {
 
 internal fun Stream.commonToString(): String {
     return "Stream(" +
-            "index=$index, " +
-            "id=$id, " +
-            "timeBase=$timeBase, " +
-            "startTime=$startTime, " +
-            "duration=$duration, " +
-            "frames=$frames, " +
-            "codecParameters=$codecParameters" +
-            ")"
+        "index=$index, " +
+        "id=$id, " +
+        "timeBase=$timeBase, " +
+        "startTime=$startTime, " +
+        "duration=$duration, " +
+        "frames=$frames, " +
+        "codecParameters=$codecParameters" +
+        ")"
 }

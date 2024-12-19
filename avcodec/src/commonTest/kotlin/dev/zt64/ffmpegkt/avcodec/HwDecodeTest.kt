@@ -10,6 +10,6 @@ class HwDecodeTest {
     @Test
     fun decode() {
         val type = AVHWDeviceType.VAAPI
-        val packet = AVPacket()
+        val packet = Packet()
     }
 }

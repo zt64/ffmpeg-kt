@@ -1,9 +1,6 @@
 package dev.zt64.ffmpegkt
 
-import dev.zt64.ffmpegkt.avformat.AVFMT
-import dev.zt64.ffmpegkt.avformat.AVFormatContext
-import dev.zt64.ffmpegkt.avformat.AVIOContext
-import dev.zt64.ffmpegkt.avutil.AVMediaType
+import dev.zt64.ffmpegkt.avformat.*
 import dev.zt64.ffmpegkt.avutil.LibAVUtil
 import dev.zt64.ffmpegkt.avutil.LogLevel
 import dev.zt64.ffmpegkt.avutil.util.FfmpegException
@@ -46,13 +43,7 @@ class RemuxTest {
             var streamIndex = 0
 
             inputFormat.streams.forEachIndexed { i, inStream ->
-                when (inStream) {
-                }
-
-                if (inCodecpar.codecType != AVMediaType.AUDIO &&
-                    inCodecpar.codecType != AVMediaType.VIDEO &&
-                    inCodecpar.codecType != AVMediaType.SUBTITLE
-                ) {
+                if (inStream !is AudioStream && inStream !is VideoStream) {
                     streamMapping[i] = -1
                     return@forEachIndexed
                 }
@@ -60,7 +51,7 @@ class RemuxTest {
                 streamMapping[i] = streamIndex++
 
                 val outStream = outputFormat.newStream()
-                outStream.codecParameters = inCodecpar
+                outStream.codecParameters = inStream.codecParameters
                 outStream.codecParameters.codecTag = 0
             }
 

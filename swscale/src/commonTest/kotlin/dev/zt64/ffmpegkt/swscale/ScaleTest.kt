@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.swscale
 
-import dev.zt64.ffmpegkt.avutil.PixelFormat
 import dev.zt64.ffmpegkt.avutil.LibAVUtil
+import dev.zt64.ffmpegkt.avutil.PixelFormat
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
@@ -77,7 +77,7 @@ class ScaleTest {
     }
 }
 
-fun fillYuvImage(
+private fun fillYuvImage(
     data: Array<ByteArray>,
     linesize: IntArray,
     width: Int,

@@ -3,8 +3,8 @@
 package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avcodec.AVCodec
-import dev.zt64.ffmpegkt.avcodec.AVPacket
 import dev.zt64.ffmpegkt.avcodec.NativeAVPacket
+import dev.zt64.ffmpegkt.avcodec.Packet
 import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
@@ -281,10 +281,10 @@ public actual class AVFormatContext(
         )
     }
 
-    public actual fun readFrame(): AVPacket? {
+    public actual fun readFrame(): Packet? {
         return NativeAVPacket().takeIf {
             av_read_frame(native, it) == 0
-        }?.let(::AVPacket)
+        }?.let(::Packet)
     }
 
     public actual fun seekFrame(
@@ -340,11 +340,11 @@ public actual class AVFormatContext(
         av_write_trailer(native).checkError()
     }
 
-    public actual fun writeFrame(packet: AVPacket) {
+    public actual fun writeFrame(packet: Packet) {
         av_write_frame(native, packet.native).checkError()
     }
 
-    public actual fun interleavedWriteFrame(packet: AVPacket) {
+    public actual fun interleavedWriteFrame(packet: Packet) {
         av_interleaved_write_frame(native, packet.native).checkError()
     }
 

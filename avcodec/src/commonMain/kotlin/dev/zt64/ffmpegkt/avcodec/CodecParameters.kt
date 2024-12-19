@@ -2,7 +2,7 @@ package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.*
 
-public expect open class CodecParameters {
+public expect sealed class CodecParameters {
     public val codecType: AVMediaType
     public val codecId: AVCodecID
     public var codecTag: Int
@@ -16,17 +16,18 @@ public expect open class CodecParameters {
     public val level: Int
 }
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun CodecParameters.commonToString(): String {
     return "CodecParameters(" +
-            "bitRate=$bitRate, " +
-            "codecType=$codecType, " +
-            "codecId=$codecId, " +
-            "codecTag=$codecTag, " +
-            "bitsPerCodedSample=$bitsPerCodedSample, " +
-            "bitsPerRawSample=$bitsPerRawSample, " +
-            "profile=$profile, " +
-            "level=$level" +
-            ")"
+        "bitRate=$bitRate, " +
+        "codecType=$codecType, " +
+        "codecId=$codecId, " +
+        "codecTag=$codecTag, " +
+        "bitsPerCodedSample=$bitsPerCodedSample, " +
+        "bitsPerRawSample=$bitsPerRawSample, " +
+        "profile=$profile, " +
+        "level=$level" +
+        ")"
 }
 
 public expect class AudioCodecParameters : CodecParameters {
@@ -40,17 +41,18 @@ public expect class AudioCodecParameters : CodecParameters {
     public val seekPreroll: Int
 }
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun AudioCodecParameters.commonToString(): String {
     return "AudioCodecParameters(" +
-            "format=$format, " +
-            "channelLayout=$channelLayout, " +
-            "sampleRate=$sampleRate, " +
-            "blockAlign=$blockAlign, " +
-            "frameSize=$frameSize, " +
-            "initialPadding=$initialPadding, " +
-            "trailingPadding=$trailingPadding, " +
-            "seekPreroll=$seekPreroll" +
-            ")"
+        "format=$format, " +
+        "channelLayout=$channelLayout, " +
+        "sampleRate=$sampleRate, " +
+        "blockAlign=$blockAlign, " +
+        "frameSize=$frameSize, " +
+        "initialPadding=$initialPadding, " +
+        "trailingPadding=$trailingPadding, " +
+        "seekPreroll=$seekPreroll" +
+        ")"
 }
 
 public expect class VideoCodecParameters : CodecParameters {
@@ -70,16 +72,17 @@ public expect class VideoCodecParameters : CodecParameters {
     public val videoDelay: Int
 }
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun VideoCodecParameters.commonToString(): String {
     return "VideoCodecParameters(" +
-            "format=$format, " +
-            "width=$width, " +
-            "height=$height, " +
-            "aspectRatio=$aspectRatio, " +
-            "framerate=$framerate, " +
-            "fieldOrder=$fieldOrder, " +
-            "colorRange=$colorRange, " +
-            "colorPrimaries=$colorPrimaries, " +
-            "videoDelay=$videoDelay" +
-            ")"
+        "format=$format, " +
+        "width=$width, " +
+        "height=$height, " +
+        "aspectRatio=$aspectRatio, " +
+        "framerate=$framerate, " +
+        "fieldOrder=$fieldOrder, " +
+        "colorRange=$colorRange, " +
+        "colorPrimaries=$colorPrimaries, " +
+        "videoDelay=$videoDelay" +
+        ")"
 }

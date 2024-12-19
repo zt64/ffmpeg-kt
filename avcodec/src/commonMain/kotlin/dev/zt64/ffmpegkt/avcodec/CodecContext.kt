@@ -25,6 +25,11 @@ public expect abstract class CodecContext : AutoCloseable {
     public var threadCount: Int
 
     /**
+     * Frame counter
+     */
+    public var frameNum: Long
+
+    /**
      * Open the codec context with the given codec and options. You **must** call this method before using the codec context.
      * After opening the codec context, you can start sending packets to the codec context and receive frames from it.
      *
@@ -78,11 +83,11 @@ public interface Encoder {
      * Receive a new encoded packet of data
      * @return the packet or null if no more data
      */
-    public fun receivePacket(): AVPacket?
+    public fun receivePacket(): Packet?
 }
 
 public interface Decoder {
-    public fun sendPacket(packet: AVPacket?)
+    public fun sendPacket(packet: Packet?)
 }
 
 /**

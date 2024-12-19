@@ -1,8 +1,7 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.avutil.AVSampleFormat
-import dev.zt64.ffmpegkt.avutil.SampleFormat
 import dev.zt64.ffmpegkt.avutil.AudioFrame
+import dev.zt64.ffmpegkt.avutil.SampleFormat
 import okio.*
 import kotlin.math.PI
 import kotlin.math.sin

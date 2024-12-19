@@ -13,7 +13,7 @@ public actual class CodecParserContext(
 ) : AutoCloseable {
     public actual constructor(codec: AVCodecID) : this(av_parser_init(codec.num))
 
-    private val packet = AVPacket()
+    private val packet = Packet()
 
     public actual inline val parser: AVCodecParser
         get() = AVCodecParser(native.parser())
@@ -50,7 +50,7 @@ public actual class CodecParserContext(
         packet.native.data(outputPointer)
         packet.native.size(outputSizePointer.get())
 
-        inputPointer.deallocate()
+        // inputPointer.deallocate()
         outputPointer.deallocate()
         outputSizePointer.deallocate()
 

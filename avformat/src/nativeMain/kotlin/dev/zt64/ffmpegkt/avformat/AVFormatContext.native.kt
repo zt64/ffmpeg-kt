@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avcodec.AVCodec
-import dev.zt64.ffmpegkt.avcodec.AVPacket
+import dev.zt64.ffmpegkt.avcodec.Packet
 import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.AVClass
 import dev.zt64.ffmpegkt.avutil.AVDictionary
@@ -21,9 +21,11 @@ public actual class AVFormatContext(
         format: AVOutputFormat?,
         formatName: String?,
         filename: String
-    ) : this(nativeHeap.alloc<NativeAVFormatContext> {
-        avformat_alloc_output_context2(cValuesOf(ptr), format?.native?.ptr, formatName, filename).checkError()
-    })
+    ) : this(
+        nativeHeap.alloc<NativeAVFormatContext> {
+            avformat_alloc_output_context2(cValuesOf(ptr), format?.native?.ptr, formatName, filename).checkError()
+        }
+    )
 
     public actual inline val avClass: AVClass
         get() = AVClass(native.av_class!!.pointed)
@@ -312,8 +314,8 @@ public actual class AVFormatContext(
         avformat_flush(native.ptr)
     }
 
-    public actual fun readFrame(): AVPacket? {
-        val pkt = AVPacket()
+    public actual fun readFrame(): Packet? {
+        val pkt = Packet()
         av_read_frame(native.ptr, pkt.native.ptr).checkError()
         return pkt
     }
@@ -342,11 +344,11 @@ public actual class AVFormatContext(
         av_write_trailer(native.ptr).checkError()
     }
 
-    public actual fun writeFrame(packet: AVPacket) {
+    public actual fun writeFrame(packet: Packet) {
         av_write_frame(native.ptr, packet.native.ptr).checkError()
     }
 
-    public actual fun interleavedWriteFrame(packet: AVPacket) {
+    public actual fun interleavedWriteFrame(packet: Packet) {
         av_interleaved_write_frame(native.ptr, packet.native.ptr).checkError()
     }
 
@@ -397,7 +399,7 @@ public actual class AVFormatContext(
             }
 
             memScoped {
-                val g = alloc<CPointerVar<ffmpeg.AVFormatContext>>() {
+                val g = alloc<CPointerVar<ffmpeg.AVFormatContext>> {
                     value = formatContext
                 }
             }

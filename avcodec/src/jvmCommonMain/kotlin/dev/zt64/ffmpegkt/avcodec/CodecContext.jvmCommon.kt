@@ -37,14 +37,20 @@ public actual abstract class CodecContext(internal val native: NativeCodecContex
             native.flags(value)
         }
     public actual var timeBase: Rational
-        get() = native.time_base()
+        get() = Rational(native.time_base())
         set(value) {
-            native.time_base(value)
+            native.time_base(value.toNative())
         }
     public actual var threadCount: Int
         get() = native.thread_count()
         set(value) {
             native.thread_count(value)
+        }
+
+    public actual var frameNum: Long
+        get() = native.frame_num()
+        set(value) {
+            native.frame_num(value)
         }
 
     public actual fun open(codec: AVCodec, options: AVDictionary?) {
@@ -123,9 +129,9 @@ public actual abstract class VideoCodecContext(native: NativeCodecContext) : Cod
             native.mb_decision(value)
         }
     public actual var framerate: Rational
-        get() = native.framerate()
+        get() = Rational(native.framerate())
         set(value) {
-            native.framerate(value)
+            native.framerate(value.toNative())
         }
 }
 
@@ -134,13 +140,13 @@ public actual class AudioEncoder(native: NativeCodecContext) :
     Encoder {
     public actual constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
-    private val packet = AVPacket()
+    private val packet = Packet()
 
     public actual fun sendFrame(frame: AudioFrame?) {
         super.sendFrame(frame)
     }
 
-    override fun receivePacket(): AVPacket? {
+    override fun receivePacket(): Packet? {
         val ret = avcodec_receive_packet(native, packet.native)
 
         return if (ret == ERROR_AGAIN || ret == ERROR_EOF) {
@@ -157,7 +163,7 @@ public actual class AudioDecoder(native: NativeCodecContext) :
     Decoder {
     public actual constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
-    override fun sendPacket(packet: AVPacket?) {
+    override fun sendPacket(packet: Packet?) {
         avcodec_send_packet(native, packet?.native).checkError()
     }
 
@@ -173,13 +179,13 @@ public actual class VideoEncoder(native: NativeCodecContext) :
     Encoder {
     public actual constructor(codec: AVCodec?) : this(avcodec_alloc_context3(codec?.native))
 
-    private val packet = AVPacket()
+    private val packet = Packet()
 
     public actual fun sendFrame(frame: VideoFrame?) {
         avcodec_send_frame(native, frame?.native).checkError()
     }
 
-    override fun receivePacket(): AVPacket? {
+    override fun receivePacket(): Packet? {
         val ret = avcodec_receive_packet(native, packet.native)
 
         return if (ret == ERROR_AGAIN || ret == ERROR_EOF) {
@@ -198,7 +204,7 @@ public actual class VideoDecoder(native: NativeCodecContext) :
 
     private val frame = VideoFrame()
 
-    override fun sendPacket(packet: AVPacket?) {
+    override fun sendPacket(packet: Packet?) {
         avcodec_send_packet(native, packet?.native).checkError()
     }
 

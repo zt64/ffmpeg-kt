@@ -10,7 +10,7 @@ import kotlin.test.fail
 class EncodeVideoTest {
     @Test
     fun encodeVideo() = runTest {
-        val frameRate = 25
+        val frameRate = 25 // 25 frames per second
         val frames = 250 // 10 seconds of video
 
         val filename = "output.mp4"
@@ -87,21 +87,21 @@ class EncodeVideoTest {
             }
         }
     }
-}
 
-private fun encode(
-    c: VideoEncoder,
-    frame: VideoFrame?,
-    outputStream: Buffer
-) {
-    if (frame != null) println("Send frame ${frame.pts}")
+    private fun encode(
+        c: VideoEncoder,
+        frame: VideoFrame?,
+        outputStream: Buffer
+    ) {
+        if (frame != null) println("Send frame ${frame.pts}")
 
-    c.sendFrame(frame)
+        c.sendFrame(frame)
 
-    while (true) {
-        c.receivePacket()?.use { packet ->
-            println("Write packet (size=${packet.size})")
-            outputStream.write(packet.data)
-        } ?: break
+        while (true) {
+            c.receivePacket()?.use { packet ->
+                println("Write packet (size=${packet.size})")
+                outputStream.write(packet.data)
+            } ?: break
+        }
     }
 }

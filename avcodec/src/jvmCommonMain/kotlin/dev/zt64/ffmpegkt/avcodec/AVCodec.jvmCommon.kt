@@ -83,12 +83,7 @@ public actual value class AVCodec(public val native: NativeAVCodec) : AutoClosea
                     val profile = position(i.toLong()).takeUnless {
                         it.profile() == AVProfileType.UNKNOWN
                     } ?: break
-                    add(
-                        AVProfile(
-                            profile.profile(),
-                            profile.name().string
-                        )
-                    )
+                    add(AVProfile(profile.profile(), profile.name().string))
                     i++
                 }
             }

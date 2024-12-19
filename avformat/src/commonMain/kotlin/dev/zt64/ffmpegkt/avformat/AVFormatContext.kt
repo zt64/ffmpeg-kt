@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avcodec.AVCodec
-import dev.zt64.ffmpegkt.avcodec.AVPacket
+import dev.zt64.ffmpegkt.avcodec.Packet
 import dev.zt64.ffmpegkt.avutil.*
 
 public expect class AVFormatContext(
@@ -112,7 +112,7 @@ public expect class AVFormatContext(
 
     public fun flush()
 
-    public fun readFrame(): AVPacket?
+    public fun readFrame(): Packet?
     public fun readPlay()
     public fun readPause()
 
@@ -125,8 +125,8 @@ public expect class AVFormatContext(
     public fun writeHeader(options: AVDictionary? = null)
     public fun writeTrailer()
 
-    public fun writeFrame(packet: AVPacket)
-    public fun interleavedWriteFrame(packet: AVPacket)
+    public fun writeFrame(packet: Packet)
+    public fun interleavedWriteFrame(packet: Packet)
 
     /**
      * Guess the sample aspect ratio of a frame, based on both the stream and the frame aspect ratio.

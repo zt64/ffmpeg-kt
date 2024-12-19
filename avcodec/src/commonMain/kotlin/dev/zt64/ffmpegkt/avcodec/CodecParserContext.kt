@@ -25,4 +25,4 @@ public expect class CodecParserContext : AutoCloseable {
     ): ParsedPacket
 }
 
-public data class ParsedPacket(public val packet: AVPacket, public val bytesRead: Int)
+public data class ParsedPacket(public val packet: Packet, public val bytesRead: Int)

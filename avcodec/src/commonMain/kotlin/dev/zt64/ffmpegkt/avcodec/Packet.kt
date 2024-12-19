@@ -7,7 +7,7 @@ public expect class NativeAVPacket
 /**
  * A packet of compressed data to be written to a container format
  */
-public expect value class AVPacket(internal val native: NativeAVPacket) : AutoCloseable {
+public expect value class Packet(internal val native: NativeAVPacket) : AutoCloseable {
     /**
      * Create an empty packet
      */
