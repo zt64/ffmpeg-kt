@@ -8,13 +8,6 @@ public expect object LibAVUtil : FfmpegLibrary {
     public fun getTimeBaseQ(): Rational
 
     /**
-     * Set the log level.
-     *
-     * @param level
-     */
-    public fun setLogLevel(level: LogLevel)
-
-    /**
      * Convert an error code into a string.
      *
      * @param error
@@ -89,3 +82,5 @@ public expect object LibAVUtil : FfmpegLibrary {
         align: Int
     ): Int
 }
+
+public val LibAVUtil.logging get() = Logging

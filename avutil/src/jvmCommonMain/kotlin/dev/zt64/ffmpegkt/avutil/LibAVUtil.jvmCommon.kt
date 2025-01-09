@@ -28,10 +28,6 @@ public actual object LibAVUtil : FfmpegLibrary {
 
     public actual fun getTimeBaseQ(): Rational = Rational(av_get_time_base_q())
 
-    public actual fun setLogLevel(level: LogLevel) {
-        av_log_set_level(level.value)
-    }
-
     public actual fun errorToString(error: Int): String {
         val ba = ByteArray(AV_ERROR_MAX_STRING_SIZE)
         av_make_error_string(

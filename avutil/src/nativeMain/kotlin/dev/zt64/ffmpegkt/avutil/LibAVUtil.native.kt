@@ -24,10 +24,6 @@ public actual object LibAVUtil : FfmpegLibrary {
         return av_get_time_base_q().useContents { Rational(this) }
     }
 
-    public actual fun setLogLevel(level: LogLevel) {
-        av_log_set_level(level.value)
-    }
-
     public actual fun errorToString(error: Int): String {
         return memScoped {
             av_make_error_string(

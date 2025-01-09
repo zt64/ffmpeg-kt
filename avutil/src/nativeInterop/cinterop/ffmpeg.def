@@ -1,5 +1,5 @@
 headers = libavutil/avutil.h libavutil/pixfmt.h libavutil/pixdesc.h libavutil/dict.h libavutil/crc.h \
-    libavutil/hwcontext.h libavutil/imgutils.h libavutil/rational.h
+    libavutil/hwcontext.h libavutil/imgutils.h libavutil/rational.h libavutil/log.h
 headerFilter = libavutil/**
 package = ffmpeg
 
@@ -15,3 +15,13 @@ struct AVDictionary {
     int count;
     AVDictionaryEntry *elems;
 };
+
+typedef void (*simple_log_callback_t)(void*, int, const char*, void*);
+
+static inline simple_log_callback_t av_log_default_callback2() {
+    return (simple_log_callback_t)av_log_default_callback;
+}
+
+static inline void av_log_set_callback2(simple_log_callback_t callback) {
+    av_log_set_callback((void (*)(void*, int, const char*, va_list))callback);
+}
