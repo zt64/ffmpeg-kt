@@ -4,7 +4,7 @@ android = "8.7.2"
 ffmpeg = "7.1-1.5.11"
 ksp = "2.1.0-1.0.29"
 coroutines = "1.9.0"
-okio = "3.9.1"
+okio = "3.10.2"
 
 # Maintenance
 compatibility = "0.16.3"
