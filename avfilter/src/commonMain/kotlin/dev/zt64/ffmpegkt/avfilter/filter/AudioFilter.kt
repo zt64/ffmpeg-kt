@@ -1,7 +1,6 @@
 package dev.zt64.ffmpegkt.avfilter.filter
 
-import dev.zt64.ffmpegkt.avutil.AVChannelLayout
-import dev.zt64.ffmpegkt.avutil.AVSampleFormat
+import dev.zt64.ffmpegkt.avutil.ChannelLayout
 import dev.zt64.ffmpegkt.avutil.SampleFormat
 import kotlin.random.Random
 import kotlin.time.Duration
@@ -173,12 +172,12 @@ public sealed class AudioFilter(name: String) : Filter(name) {
         }
     }
 
-    public data class FIR : AudioFilter("afir")
+    public class FIR : AudioFilter("afir")
 
     public data class Format(
         val sampleFormats: List<SampleFormat>,
         val sampleRates: List<Int>,
-        val channelLayouts: List<AVChannelLayout>
+        val channelLayouts: List<ChannelLayout>
     ) : AudioFilter("aformat")
 
     public data class FreqShift(
@@ -187,15 +186,15 @@ public sealed class AudioFilter(name: String) : Filter(name) {
         val order: Int = 8
     ) : AudioFilter("afreqshift")
 
-    public data class FWTDN : AudioFilter("afwtdn")
+    public class FWTDN : AudioFilter("afwtdn")
 
-    public data class Gate : AudioFilter("agate")
+    public class Gate : AudioFilter("agate")
 
-    public data class IIR : AudioFilter("aiir")
+    public class IIR : AudioFilter("aiir")
 
-    public data class Limiter : AudioFilter("alimiter")
+    public class Limiter : AudioFilter("alimiter")
 
-    public data class LLPass : AudioFilter("allpass")
+    public class LLPass : AudioFilter("allpass")
 
     public data class Loop(
         val loops: Int = 0,
@@ -206,21 +205,21 @@ public sealed class AudioFilter(name: String) : Filter(name) {
 
     public data class Merge(val inputs: Int = 2) : AudioFilter("amerge")
 
-    public data class Mixer : AudioFilter("amix")
+    public class Mixer : AudioFilter("amix")
 
     public data object Multiply : AudioFilter("amultiply")
 
-    public data class NEqualizer : AudioFilter("anequalizer")
+    public class NEqualizer : AudioFilter("anequalizer")
 
-    public data class NLMDN : AudioFilter("anlmdn")
+    public class NLMDN : AudioFilter("anlmdn")
 
-    public data class NLMF : AudioFilter("anlmf")
+    public class NLMF : AudioFilter("anlmf")
 
-    public data class NLMS : AudioFilter("anlms")
+    public class NLMS : AudioFilter("anlms")
 
     public data object Null : AudioFilter("anull")
 
-    public data class Pad : AudioFilter("apad")
+    public class Pad : AudioFilter("apad")
 
     public data class Phaser(
         val inGain: Float = 0.4f,
@@ -231,57 +230,57 @@ public sealed class AudioFilter(name: String) : Filter(name) {
         val type: ModulationType = ModulationType.TRIANGULAR
     ) : AudioFilter("aphaser")
 
-    public data class PhaseShift : AudioFilter("aphaseshift")
+    public class PhaseShift : AudioFilter("aphaseshift")
 
-    public data object PSNR : AudioFilter("apsnr")
+    public object PSNR : AudioFilter("apsnr")
 
-    public data class PSYClip : AudioFilter("apsyclip")
+    public class PSYClip : AudioFilter("apsyclip")
 
-    public data class Pulsator : AudioFilter("apulsator")
+    public class Pulsator : AudioFilter("apulsator")
 
-    public data class Resample : AudioFilter("aresample")
+    public class Resample : AudioFilter("aresample")
 
-    public data object Reverse : AudioFilter("areverse")
+    public object Reverse : AudioFilter("areverse")
 
-    public data class RLS : AudioFilter("arls")
+    public class RLS : AudioFilter("arls")
 
-    public data class RNNDN : AudioFilter("arnndn")
+    public class RNNDN : AudioFilter("arnndn")
 
-    public data class SDR : AudioFilter("asdr")
+    public class SDR : AudioFilter("asdr")
 
-    public data class SetNSamples : AudioFilter("asetnsamples")
+    public class SetNSamples : AudioFilter("asetnsamples")
 
-    public data class SetRate : AudioFilter("asetrate")
+    public class SetRate : AudioFilter("asetrate")
 
-    public data class ShowInfo : AudioFilter("ashowinfo")
+    public class ShowInfo : AudioFilter("ashowinfo")
 
-    public data class SISDR : AudioFilter("asisdr")
+    public class SISDR : AudioFilter("asisdr")
 
-    public data class SoftClip : AudioFilter("asoftclip")
+    public class SoftClip : AudioFilter("asoftclip")
 
-    public data class SpectralStats : AudioFilter("aspecstats")
+    public class SpectralStats : AudioFilter("aspecstats")
 
-    public data class SR : AudioFilter("asr")
+    public class SR : AudioFilter("asr")
 
-    public data class Stats : AudioFilter("astats")
+    public class Stats : AudioFilter("astats")
 
-    public data class SubBoost : AudioFilter("asubboost")
+    public class SubBoost : AudioFilter("asubboost")
 
-    public data class SubCut : AudioFilter("asubcut")
+    public class SubCut : AudioFilter("asubcut")
 
-    public data class SuperCut : AudioFilter("asupercut")
+    public class SuperCut : AudioFilter("asupercut")
 
-    public data class SuperPass : AudioFilter("asuperpass")
+    public class SuperPass : AudioFilter("asuperpass")
 
-    public data class SuperStop : AudioFilter("asuperstop")
+    public class SuperStop : AudioFilter("asuperstop")
 
-    public data class Tempo : AudioFilter("atempo")
+    public class Tempo : AudioFilter("atempo")
 
-    public data class Tilt : AudioFilter("atilt")
+    public class Tilt : AudioFilter("atilt")
 
-    public data class Trim : AudioFilter("atrim")
+    public class Trim : AudioFilter("atrim")
 
-    public data class XCorrelate : AudioFilter("axcorrelate")
+    public class XCorrelate : AudioFilter("axcorrelate")
 
     public data class Bandpass(val frequency: Int, val width: Int) : AudioFilter("bandpass")
 
@@ -308,39 +307,39 @@ public sealed class AudioFilter(name: String) : Filter(name) {
         val a2: Double
     ) : AudioFilter("biquad")
 
-    public data class BS2B : AudioFilter("bs2b")
+    public class BS2B : AudioFilter("bs2b")
 
     public data class ChannelMap(val channelMap: List<Int>) : AudioFilter("channelmap")
 
     public data class Channelsplit(val channelCount: Int) : AudioFilter("channelsplit")
 
-    public data class Chorus : AudioFilter("chorus")
+    public class Chorus : AudioFilter("chorus")
 
-    public data class Compand : AudioFilter("compand")
+    public class Compand : AudioFilter("compand")
 
-    public data class CompensationDelay : AudioFilter("compensationdelay")
+    public class CompensationDelay : AudioFilter("compensationdelay")
 
-    public data class CrossFeed : AudioFilter("crossfeed")
+    public class CrossFeed : AudioFilter("crossfeed")
 
     public data class Crystalizer(val intensity: Float = 2.0f, val clipping: Boolean = true) : AudioFilter("crystalizer")
 
     public data class DCShift(val shift: Float, val limiterGain: Float? = null) : AudioFilter("dcshift")
 
-    public data class Deesser : AudioFilter("deesser")
+    public class Deesser : AudioFilter("deesser")
 
-    public data class DialogueEnhance : AudioFilter("dialogueenhance")
+    public class DialogueEnhance : AudioFilter("dialogueenhance")
 
     public data class DRMeter(val length: Int = 3) : AudioFilter("drmeter")
 
-    public data class Dynaudnorm : AudioFilter("dynaudnorm")
+    public class Dynaudnorm : AudioFilter("dynaudnorm")
 
     public data object Earwax : AudioFilter("earwax")
 
-    public data class Equalizer : AudioFilter("equalizer")
+    public class Equalizer : AudioFilter("equalizer")
 
     public data class ExtraStero(val difference: Float = 2.5f, val clipping: Boolean = true) : AudioFilter("extrastereo")
 
-    public data class Firequalizer : AudioFilter("firequalizer")
+    public class Firequalizer : AudioFilter("firequalizer")
 
     public data class Flanger(
         val delay: Int = 0,
@@ -358,59 +357,57 @@ public sealed class AudioFilter(name: String) : Filter(name) {
         }
     }
 
-    public data class Haas : AudioFilter("haas")
+    public class Haas : AudioFilter("haas")
 
-    public data class HDCD : AudioFilter("hdcd")
+    public class HDCD : AudioFilter("hdcd")
 
-    public data class Headphone : AudioFilter("headphone")
+    public class Headphone : AudioFilter("headphone")
 
-    public data class Highpass : AudioFilter("highpass")
+    public class Highpass : AudioFilter("highpass")
 
-    public data class Join : AudioFilter("join")
+    public class Join : AudioFilter("join")
 
-    public data class Ladspa : AudioFilter("ladspa")
+    public class Ladspa : AudioFilter("ladspa")
 
-    public data class Loudnorm : AudioFilter("loudnorm")
+    public class Loudnorm : AudioFilter("loudnorm")
 
-    public data class Lowpass : AudioFilter("lowpass")
+    public class Lowpass : AudioFilter("lowpass")
 
-    public data class LV2 : AudioFilter("lv2")
+    public class LV2 : AudioFilter("lv2")
 
-    public data class MCompand : AudioFilter("mcompand")
+    public class MCompand : AudioFilter("mcompand")
 
-    public data class Pan : AudioFilter("pan")
+    public class Pan : AudioFilter("pan")
 
     public data object ReplayGain : AudioFilter("replaygain")
 
-    public data object Resample : AudioFilter("resample")
+    public class Rubberband : AudioFilter("rubberband")
 
-    public data class Rubberband : AudioFilter("rubberband")
+    public class SideChainCompress : AudioFilter("sidechaincompress")
 
-    public data class SideChainCompress : AudioFilter("sidechaincompress")
+    public class SideChainGate : AudioFilter("sidechaingate")
 
-    public data class SideChainGate : AudioFilter("sidechaingate")
+    public class SilenceDetect : AudioFilter("silencedetect")
 
-    public data class SilenceDetect : AudioFilter("silencedetect")
+    public class SilenceRemove : AudioFilter("silenceremove")
 
-    public data class SilenceRemove : AudioFilter("silenceremove")
+    public class Sofalizer : AudioFilter("sofalizer")
 
-    public data class Sofalizer : AudioFilter("sofalizer")
+    public class SpeechNormalizer : AudioFilter("speechnormalizer")
 
-    public data class SpeechNormalizer : AudioFilter("speechnormalizer")
+    public class StereoTools : AudioFilter("stereotools")
 
-    public data class StereoTools : AudioFilter("stereotools")
+    public class StereoWiden : AudioFilter("stereowiden")
 
-    public data class StereoWiden : AudioFilter("stereowiden")
+    public class SuperEqualizer : AudioFilter("superequalizer")
 
-    public data class SuperEqualizer : AudioFilter("superequalizer")
+    public class Surround : AudioFilter("surround")
 
-    public data class Surround : AudioFilter("surround")
+    public class TiltShelf : AudioFilter("tiltshelf")
 
-    public data class TiltShelf : AudioFilter("tiltshelf")
+    public class Treble : AudioFilter("treble")
 
-    public data class Treble : AudioFilter("treble")
-
-    public data class HighShelf : AudioFilter("highshelf")
+    public class HighShelf : AudioFilter("highshelf")
 
     public data class Tremolo(val frequency: Float = 5.0f, val depth: Float = 0.5f) : AudioFilter("tremolo")
 

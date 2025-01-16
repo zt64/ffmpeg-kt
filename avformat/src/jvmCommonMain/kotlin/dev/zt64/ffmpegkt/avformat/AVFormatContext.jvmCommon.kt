@@ -3,11 +3,11 @@
 package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avcodec.AVCodec
-import dev.zt64.ffmpegkt.avcodec.NativeAVPacket
 import dev.zt64.ffmpegkt.avcodec.Packet
 import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
+import org.bytedeco.ffmpeg.avcodec.AVPacket
 import org.bytedeco.ffmpeg.avformat.AVProbeData
 import org.bytedeco.ffmpeg.global.avformat.*
 import org.bytedeco.javacpp.BytePointer
@@ -48,9 +48,9 @@ public actual class AVFormatContext(
             val streams = List(native.nb_streams()) {
                 val stream = native.streams(it)
 
-                when (AVMediaType(stream.codecpar().codec_type())) {
-                    AVMediaType.AUDIO -> AudioStream(stream)
-                    AVMediaType.VIDEO -> VideoStream(stream)
+                when (MediaType(stream.codecpar().codec_type())) {
+                    MediaType.AUDIO -> AudioStream(stream)
+                    MediaType.VIDEO -> VideoStream(stream)
                     else -> Stream(stream)
                 }
             }
@@ -244,7 +244,7 @@ public actual class AVFormatContext(
         }
 
     public actual fun findStreamInfo(options: AVDictionary?): Boolean {
-        return avformat_find_stream_info(native, options?.let(::AVDictionaryNative)).checkTrue()
+        return avformat_find_stream_info(native, options?.toNative()).checkTrue()
     }
 
     public actual fun findProgramFromStream(last: AVProgram?, streamIndex: Int): AVProgram? {
@@ -282,7 +282,7 @@ public actual class AVFormatContext(
     }
 
     public actual fun readFrame(): Packet? {
-        return NativeAVPacket().takeIf {
+        return AVPacket().takeIf {
             av_read_frame(native, it) == 0
         }?.let(::Packet)
     }
@@ -333,7 +333,7 @@ public actual class AVFormatContext(
     }
 
     public actual fun writeHeader(options: AVDictionary?) {
-        avformat_write_header(native, options?.let(::AVDictionaryNative)).checkError()
+        avformat_write_header(native, options?.toNative()).checkError()
     }
 
     public actual fun writeTrailer() {
@@ -371,8 +371,8 @@ public actual class AVFormatContext(
             avformat_open_input(
                 formatContext,
                 url,
-                format,
-                options?.let(::AVDictionaryNative)
+                format?.native,
+                options?.toNative()
             ).checkError()
 
             return AVFormatContext(formatContext)
@@ -410,10 +410,10 @@ public actual class AVFormatContext(
                 // inputFormat.flags(inputFormat.flags() or AVFMT_NOFILE)
                 formatContext.iformat(inputFormat)
             } else {
-                formatContext.iformat(format)
+                formatContext.iformat(format.native)
             }
 
-            avformat_open_input(formatContext, null as String?, formatContext.iformat(), options?.let(::AVDictionaryNative)).checkError()
+            avformat_open_input(formatContext, null as String?, formatContext.iformat(), options?.toNative()).checkError()
 
             return AVFormatContext(formatContext)
         }

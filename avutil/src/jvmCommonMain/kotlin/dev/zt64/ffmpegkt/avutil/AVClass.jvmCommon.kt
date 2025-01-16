@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avutil
 
-public actual typealias NativeAVClass = org.bytedeco.ffmpeg.avutil.AVClass
+internal actual typealias NativeAVClass = org.bytedeco.ffmpeg.avutil.AVClass
 
 @JvmInline
 public actual value class AVClass(@PublishedApi internal val native: NativeAVClass) {

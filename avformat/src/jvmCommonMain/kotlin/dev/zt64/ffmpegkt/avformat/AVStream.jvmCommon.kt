@@ -7,7 +7,7 @@ import dev.zt64.ffmpegkt.avutil.Rational
 import org.bytedeco.ffmpeg.avformat.AVStream
 import org.bytedeco.ffmpeg.global.avcodec.avcodec_parameters_copy
 
-public actual abstract class Stream(public val native: AVStream) {
+public actual open class Stream(public val native: AVStream) {
     public actual inline val index: Int
         get() = native.index()
     public actual inline val id: Int
@@ -20,7 +20,8 @@ public actual abstract class Stream(public val native: AVStream) {
         get() = native.duration()
     public actual inline val frames: Long
         get() = native.nb_frames()
-    public actual abstract val codecParameters: CodecParameters
+    public actual open val codecParameters: CodecParameters
+        get() = CodecParameters(native.codecpar())
 
     override fun toString(): String {
         return "Stream(" +

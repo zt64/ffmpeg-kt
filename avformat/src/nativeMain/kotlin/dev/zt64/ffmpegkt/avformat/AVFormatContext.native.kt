@@ -5,7 +5,7 @@ import dev.zt64.ffmpegkt.avcodec.Packet
 import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.AVClass
 import dev.zt64.ffmpegkt.avutil.AVDictionary
-import dev.zt64.ffmpegkt.avutil.AVMediaType
+import dev.zt64.ffmpegkt.avutil.MediaType
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
@@ -49,9 +49,9 @@ public actual class AVFormatContext(
             val streams = List(native.nb_streams.toInt()) {
                 val stream = native.streams!![it]!!.pointed
 
-                when (AVMediaType(stream.codecpar!!.pointed.codec_type)) {
-                    AVMediaType.AUDIO -> AudioStream(stream)
-                    AVMediaType.VIDEO -> VideoStream(stream)
+                when (MediaType(stream.codecpar!!.pointed.codec_type)) {
+                    MediaType.AUDIO -> AudioStream(stream)
+                    MediaType.VIDEO -> VideoStream(stream)
                     else -> Stream(stream)
                 }
             }
@@ -237,7 +237,7 @@ public actual class AVFormatContext(
         }
 
     public actual fun findStreamInfo(options: AVDictionary?): Boolean {
-        return avformat_find_stream_info(native.ptr, options?.let(::AVDictionaryNative)?.reinterpret()).checkTrue()
+        return avformat_find_stream_info(native.ptr, options?.toNative()?.reinterpret()).checkTrue()
     }
 
     public actual fun findProgramFromStream(last: AVProgram?, streamIndex: Int): AVProgram? {
@@ -337,7 +337,7 @@ public actual class AVFormatContext(
     }
 
     public actual fun writeHeader(options: AVDictionary?) {
-        avformat_write_header(native.ptr, options?.let(::AVDictionaryNative)?.reinterpret()).checkError()
+        avformat_write_header(native.ptr, options?.toNative()?.reinterpret()).checkError()
     }
 
     public actual fun writeTrailer() {
@@ -381,7 +381,7 @@ public actual class AVFormatContext(
                 cValuesOf(formatContext),
                 url,
                 format?.readValue(),
-                options?.let(::AVDictionaryNative)?.reinterpret()
+                options?.toNative()?.reinterpret()
             ).checkError()
 
             return AVFormatContext(formatContext.pointed)

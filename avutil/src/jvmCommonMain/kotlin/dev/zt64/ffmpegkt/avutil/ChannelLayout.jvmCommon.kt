@@ -7,18 +7,18 @@ import org.bytedeco.ffmpeg.global.avutil.av_channel_layout_copy
 internal actual typealias NativeAVChannelLayout = org.bytedeco.ffmpeg.avutil.AVChannelLayout
 
 @JvmInline
-public actual value class AVChannelLayout(public val native: NativeAVChannelLayout) {
+public actual value class ChannelLayout(public val native: NativeAVChannelLayout) {
     public actual inline val order: AVChannelOrder
         get() = AVChannelOrder(native.order())
 
     public actual inline val nbChannels: Int
         get() = native.nb_channels()
 
-    public actual fun copyTo(dst: AVChannelLayout) {
+    public actual fun copyTo(dst: ChannelLayout) {
         av_channel_layout_copy(dst.native, native).checkError()
     }
 
     public actual companion object {
-        public actual val STEREO: AVChannelLayout = AVChannelLayout(AV_CHANNEL_LAYOUT_STEREO)
+        public actual val STEREO: ChannelLayout = ChannelLayout(AV_CHANNEL_LAYOUT_STEREO)
     }
 }

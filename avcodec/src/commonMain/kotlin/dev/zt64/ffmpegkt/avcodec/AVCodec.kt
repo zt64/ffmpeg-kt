@@ -4,7 +4,7 @@ import dev.zt64.ffmpegkt.avcodec.AVCodec.Companion.findDecoder
 import dev.zt64.ffmpegkt.avcodec.AVCodec.Companion.findEncoder
 import dev.zt64.ffmpegkt.avutil.*
 
-public expect class NativeAVCodec
+internal expect class NativeAVCodec
 
 // TODO: Split into dedicated AudioCodec and VideoCodec classes to avoid confusion and misuse
 /**
@@ -16,10 +16,10 @@ public expect class NativeAVCodec
  *
  * @property native
  */
-public expect value class AVCodec(internal val native: NativeAVCodec) : AutoCloseable {
+public expect value class AVCodec internal constructor(internal val native: NativeAVCodec) : AutoCloseable {
     public val name: String
     public val longName: String
-    public val type: AVMediaType
+    public val type: MediaType
     public val id: AVCodecID
     public val capabilities: Int
     public val maxLowres: Byte
@@ -28,7 +28,7 @@ public expect value class AVCodec(internal val native: NativeAVCodec) : AutoClos
     public val supportedSampleRates: IntArray
     public val sampleFormats: List<SampleFormat>
     public val profiles: List<AVProfile>
-    public val channelLayouts: List<AVChannelLayout>
+    public val channelLayouts: List<ChannelLayout>
     public val wrapperName: String
 
     public companion object {

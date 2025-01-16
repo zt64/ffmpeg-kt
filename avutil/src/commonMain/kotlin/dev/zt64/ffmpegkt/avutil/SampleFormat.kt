@@ -26,7 +26,7 @@ public value class SampleFormat(public val num: Int) {
     }
 }
 
-public expect fun AVSampleFormat(name: String): SampleFormat
+public expect fun SampleFormat(name: String): SampleFormat
 
 public expect val SampleFormat.name: String?
 public expect val SampleFormat.packed: SampleFormat

@@ -2,8 +2,8 @@ package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.*
 
-public expect sealed class CodecParameters {
-    public val codecType: AVMediaType
+public expect open class CodecParameters {
+    public val codecType: MediaType
     public val codecId: AVCodecID
     public var codecTag: Int
 
@@ -32,7 +32,7 @@ internal inline fun CodecParameters.commonToString(): String {
 
 public expect class AudioCodecParameters : CodecParameters {
     public val format: SampleFormat
-    public val channelLayout: AVChannelLayout
+    public val channelLayout: ChannelLayout
     public val sampleRate: Int
     public val blockAlign: Int
     public val frameSize: Int
@@ -44,6 +44,14 @@ public expect class AudioCodecParameters : CodecParameters {
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun AudioCodecParameters.commonToString(): String {
     return "AudioCodecParameters(" +
+        "bitRate=$bitRate, " +
+        "codecType=$codecType, " +
+        "codecId=$codecId, " +
+        "codecTag=$codecTag, " +
+        "bitsPerCodedSample=$bitsPerCodedSample, " +
+        "bitsPerRawSample=$bitsPerRawSample, " +
+        "profile=$profile, " +
+        "level=$level, " +
         "format=$format, " +
         "channelLayout=$channelLayout, " +
         "sampleRate=$sampleRate, " +
@@ -75,6 +83,14 @@ public expect class VideoCodecParameters : CodecParameters {
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun VideoCodecParameters.commonToString(): String {
     return "VideoCodecParameters(" +
+        "bitRate=$bitRate, " +
+        "codecType=$codecType, " +
+        "codecId=$codecId, " +
+        "codecTag=$codecTag, " +
+        "bitsPerCodedSample=$bitsPerCodedSample, " +
+        "bitsPerRawSample=$bitsPerRawSample, " +
+        "profile=$profile, " +
+        "level=$level, " +
         "format=$format, " +
         "width=$width, " +
         "height=$height, " +

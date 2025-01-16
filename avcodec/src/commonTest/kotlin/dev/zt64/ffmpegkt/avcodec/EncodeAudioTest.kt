@@ -18,24 +18,23 @@ class EncodeAudioTest {
             channelLayout = codec.channelLayouts.maxBy { it.nbChannels }
         }
 
-        codecContext.open(codec)
+        codecContext.open()
 
-        val frame = AudioFrame().apply {
-            nbSamples = codecContext.frameSize
-            format = codecContext.sampleFmt
+        val frame = AudioFrame(
+            nbSamples = codecContext.frameSize,
+            format = codecContext.sampleFmt,
             channelLayout = codecContext.channelLayout
-        }
-
-        frame.getBuffer()
+        )
 
         val buffer = Buffer()
 
         /* Initialize the starting phase for the sine wave */
         var t = 0.0
         /* Calculate the phase increment for generating a 440 Hz sine wave. */
-        val tincr = 2 * PI * 440.0 / codecContext.sampleRate
-        for (i in 0 until 200) {
-            frame.makeWritable()
+        var freq = 440.0
+        val length = 2 // seconds
+        for (i in 0 until (codecContext.sampleRate * length) / codecContext.frameSize) {
+            val tincr = 2 * PI * freq / codecContext.sampleRate
 
             /* Loop over the number of samples in the frame */
             for (j in 0 until codecContext.frameSize) {
@@ -56,10 +55,12 @@ class EncodeAudioTest {
 
                 /* Increment the phase for the next sample */
                 t += tincr
+                freq += 0.001
             }
 
             encode(codecContext, frame, buffer)
         }
+        // flush buffer
         encode(codecContext, null, buffer)
 
         // Write the buffer to a file
@@ -80,10 +81,10 @@ private fun encode(
     frame: AudioFrame?,
     outputStream: Buffer
 ) {
-    c.sendFrame(frame)
+    c.encode(frame)
 
     while (true) {
-        c.receivePacket()?.use { packet ->
+        c.encode()?.use { packet ->
             println("Write packet (size=${packet.size})")
             outputStream.write(packet.data)
         } ?: break

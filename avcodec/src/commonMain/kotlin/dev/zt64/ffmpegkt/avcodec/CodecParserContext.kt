@@ -23,6 +23,14 @@ public expect class CodecParserContext : AutoCloseable {
         dts: Long = 0x800000000000000,
         pos: Long = 0
     ): ParsedPacket
+
+    public fun parsePackets(
+        avCtx: CodecContext,
+        input: ByteArray,
+        pts: Long = 0x800000000000000,
+        dts: Long = 0x800000000000000,
+        pos: Long = 0
+    ): List<ParsedPacket>
 }
 
 public data class ParsedPacket(public val packet: Packet, public val bytesRead: Int)

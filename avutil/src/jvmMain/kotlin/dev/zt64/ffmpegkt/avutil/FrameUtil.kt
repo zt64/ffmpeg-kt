@@ -4,18 +4,24 @@ import java.awt.Image
 import java.awt.image.BufferedImage
 import java.nio.ByteBuffer
 
+/**
+ * Converts a [VideoFrame] to an [Image].
+ *
+ * @return the converted image
+ */
 @OptIn(ExperimentalUnsignedTypes::class)
-public fun VideoFrame.toImage(): Image {
-    return when (format) {
+public fun VideoFrame.toImage(): BufferedImage {
+    val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+
+    when (format) {
         PixelFormat.YUV420P -> {
             val yPlane = ByteBuffer.wrap(data[0].toUByteArray().asByteArray())
-            val uPlane = ByteBuffer.wrap(data[0].toUByteArray().asByteArray())
-            val vPlane = ByteBuffer.wrap(data[0].toUByteArray().asByteArray())
+            val uPlane = ByteBuffer.wrap(data[1].toUByteArray().asByteArray())
+            val vPlane = ByteBuffer.wrap(data[2].toUByteArray().asByteArray())
             val yStride = this.linesize[0]
             val uStride = this.linesize[1]
             val vStride = this.linesize[2]
 
-            val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
             val rgbArray = IntArray(width * height)
 
             for (y in 0 until height) {
@@ -37,9 +43,10 @@ public fun VideoFrame.toImage(): Image {
             }
 
             bufferedImage.setRGB(0, 0, width, height, rgbArray, 0, width)
-            bufferedImage
         }
 
         else -> throw UnsupportedOperationException("Unsupported pixel format: $format")
     }
+
+    return bufferedImage
 }

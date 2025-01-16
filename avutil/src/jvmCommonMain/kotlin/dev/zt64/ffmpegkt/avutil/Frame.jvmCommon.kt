@@ -3,27 +3,45 @@ package dev.zt64.ffmpegkt.avutil
 import org.bytedeco.ffmpeg.avutil.AVFrame.AV_NUM_DATA_POINTERS
 import org.bytedeco.ffmpeg.global.avutil.*
 import org.bytedeco.javacpp.BytePointer
-import org.bytedeco.javacpp.PointerPointer
 
-public actual typealias NativeAVFrame = org.bytedeco.ffmpeg.avutil.AVFrame
+internal actual typealias NativeAVFrame = org.bytedeco.ffmpeg.avutil.AVFrame
 
-@JvmInline
-public actual value class AudioFrame(
-    override val native: NativeAVFrame
-) : Frame {
-    public actual constructor() : this(av_frame_alloc())
+public actual open class Frame(public open val native: NativeAVFrame) : AutoCloseable {
+    public constructor() : this(av_frame_alloc())
 
-    override val linesize: IntArray
+    public actual val linesize: IntArray
         get() = IntArray(AV_NUM_DATA_POINTERS) { native.linesize(it) }
+    public actual val data: FrameData
+        get() = FrameData(native)
 
-    override val data: FrameData
-        get() = FrameData(native.data(), linesize)
-
-    override var pts: Long
+    public actual var pts: Long
         get() = native.pts()
         set(value) {
             native.pts(value)
         }
+
+    public actual fun getBuffer(align: Int) {
+        av_frame_get_buffer(native, align)
+    }
+
+    public actual fun makeWritable() {
+        av_frame_make_writable(native)
+    }
+
+    actual final override fun close() {
+        av_frame_free(native)
+    }
+}
+
+public actual class AudioFrame(override val native: NativeAVFrame) : Frame(native) {
+    public actual constructor() : this(av_frame_alloc())
+    public actual constructor(nbSamples: Int, format: SampleFormat, channelLayout: ChannelLayout) : this(av_frame_alloc()) {
+        this.nbSamples = nbSamples
+        this.format = format
+        this.channelLayout = channelLayout
+
+        getBuffer()
+    }
 
     public actual inline var nbSamples: Int
         get() = native.nb_samples()
@@ -37,8 +55,8 @@ public actual value class AudioFrame(
             native.format(value.num)
         }
 
-    public actual inline var channelLayout: AVChannelLayout
-        get() = AVChannelLayout(native.ch_layout())
+    public actual inline var channelLayout: ChannelLayout
+        get() = ChannelLayout(native.ch_layout())
         set(value) {
             value.copyTo(channelLayout)
         }
@@ -48,37 +66,17 @@ public actual value class AudioFrame(
         set(value) {
             native.sample_rate(value)
         }
-
-    override fun getBuffer(align: Int) {
-        av_frame_get_buffer(native, align)
-    }
-
-    override fun makeWritable() {
-        av_frame_make_writable(native)
-    }
-
-    override fun close() {
-        av_frame_free(native)
-    }
 }
 
-@JvmInline
-public actual value class VideoFrame(
-    override val native: NativeAVFrame
-) : Frame {
+public actual class VideoFrame(override val native: NativeAVFrame) : Frame(native) {
     public actual constructor() : this(av_frame_alloc())
+    public actual constructor(width: Int, height: Int, format: PixelFormat) : this(av_frame_alloc()) {
+        this.width = width
+        this.height = height
+        this.format = format
 
-    override val linesize: IntArray
-        get() = IntArray(AV_NUM_DATA_POINTERS) { native.linesize(it) }
-
-    override val data: FrameData
-        get() = FrameData(native.data(), linesize)
-
-    override var pts: Long
-        get() = native.pts()
-        set(value) {
-            native.pts(value)
-        }
+        getBuffer()
+    }
 
     public actual inline var width: Int
         get() = native.width()
@@ -96,34 +94,21 @@ public actual value class VideoFrame(
         set(value) {
             native.format(value.num)
         }
-
-    override fun getBuffer(align: Int) {
-        av_frame_get_buffer(native, align)
-    }
-
-    override fun makeWritable() {
-        av_frame_make_writable(native)
-    }
-
-    override fun close() {
-        av_frame_free(native)
-    }
 }
 
-public actual class FrameData(
-    private val native: PointerPointer<*>,
-    private val linesizes: IntArray
-) : AbstractList<FrameData.FrameDataSegment>() {
+public actual class FrameData(private val native: NativeAVFrame) : AbstractList<FrameData.FrameDataSegment>() {
     override val size: Int = AV_NUM_DATA_POINTERS
 
     public override operator fun get(index: Int): FrameDataSegment {
-        return FrameDataSegment(BytePointer(native.get(index.toLong())), linesizes[index])
+        val pointer = BytePointer(native.data().get(index.toLong()))
+        return FrameDataSegment(pointer, calculatePlaneSize(index))
     }
 
-    public actual inner class FrameDataSegment(
-        private val pointer: BytePointer,
-        override val size: Int
-    ) : AbstractList<UByte>() {
+    private fun calculatePlaneSize(index: Int): Int {
+        return av_image_get_linesize(native.format(), native.width(), index) * native.height()
+    }
+
+    public actual inner class FrameDataSegment(private val pointer: BytePointer, override val size: Int) : AbstractList<UByte>() {
         public override operator fun get(index: Int): UByte {
             return pointer[index.toLong()].toUByte()
         }

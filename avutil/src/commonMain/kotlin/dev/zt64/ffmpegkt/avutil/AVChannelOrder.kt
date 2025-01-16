@@ -9,14 +9,14 @@ public value class AVChannelOrder(internal val num: Int) {
          * Only the channel count is specified, without any further information
          * about the channel order.
          */
-        public val AV_CHANNEL_ORDER_UNSPEC: AVChannelOrder = AVChannelOrder(0)
+        public val UNSPECIFIED: AVChannelOrder = AVChannelOrder(0)
 
         /**
          * The native channel order, i.e. the channels are in the same order in
          * which they are defined in the AVChannel enum. This supports up to 63
          * different channels.
          */
-        public val AV_CHANNEL_ORDER_NATIVE: AVChannelOrder = AVChannelOrder(1)
+        public val NATIVE: AVChannelOrder = AVChannelOrder(1)
 
         /**
          * The channel order does not correspond to any other predefined order and
@@ -24,7 +24,7 @@ public value class AVChannelOrder(internal val num: Int) {
          * layouts with 64 or more channels, or with empty/skipped (AV_CHAN_UNUSED)
          * channels at arbitrary positions.
          */
-        public val AV_CHANNEL_ORDER_CUSTOM: AVChannelOrder = AVChannelOrder(2)
+        public val CUSTOM: AVChannelOrder = AVChannelOrder(2)
 
         /**
          * The audio is represented as the decomposition of the sound field into
@@ -48,11 +48,11 @@ public value class AVChannelOrder(internal val num: Int) {
          * Normalization is assumed to be SN3D (Schmidt Semi-Normalization)
          * as defined in AmbiX format $ 2.1.
          */
-        public val AV_CHANNEL_ORDER_AMBISONIC: AVChannelOrder = AVChannelOrder(0)
+        public val AMBISONIC: AVChannelOrder = AVChannelOrder(0)
 
         /**
          * Number of channel orders, not part of ABI/API
          */
-        public val FF_CHANNEL_ORDER_NB: AVChannelOrder = AVChannelOrder(0)
+        public val NB: AVChannelOrder = AVChannelOrder(0)
     }
 }

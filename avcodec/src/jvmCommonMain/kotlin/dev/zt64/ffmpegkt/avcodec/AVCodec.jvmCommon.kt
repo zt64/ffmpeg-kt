@@ -16,8 +16,8 @@ public actual value class AVCodec(public val native: NativeAVCodec) : AutoClosea
     public actual inline val longName: String
         get() = native.long_name().string
 
-    public actual inline val type: AVMediaType
-        get() = AVMediaType(native.type())
+    public actual inline val type: MediaType
+        get() = MediaType(native.type())
 
     public actual inline val capabilities: Int
         get() = native.capabilities()
@@ -88,7 +88,7 @@ public actual value class AVCodec(public val native: NativeAVCodec) : AutoClosea
                 }
             }
         }.orEmpty()
-    public actual inline val channelLayouts: List<AVChannelLayout>
+    public actual inline val channelLayouts: List<ChannelLayout>
         get() = native.ch_layouts().run {
             buildList {
                 var i = 0
@@ -96,7 +96,7 @@ public actual value class AVCodec(public val native: NativeAVCodec) : AutoClosea
                     val layout = getPointer(i.toLong()).takeUnless {
                         it.nb_channels() == 0 && it.order() == 0 && it.u_mask() == 0L
                     } ?: break
-                    add(AVChannelLayout(layout))
+                    add(ChannelLayout(layout))
                     i++
                 }
             }

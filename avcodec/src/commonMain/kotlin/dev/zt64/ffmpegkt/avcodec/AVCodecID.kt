@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.avutil.AVMediaType
+import dev.zt64.ffmpegkt.avutil.MediaType
 import kotlin.jvm.JvmInline
 
 /**
@@ -316,5 +316,5 @@ public value class AVCodecID(public val num: Int) {
     override fun toString(): String = name
 }
 
-public expect val AVCodecID.type: AVMediaType
+public expect val AVCodecID.type: MediaType
 public expect val AVCodecID.name: String

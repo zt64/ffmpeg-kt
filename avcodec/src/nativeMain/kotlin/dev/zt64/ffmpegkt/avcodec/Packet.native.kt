@@ -40,7 +40,7 @@ public actual value class Packet(public val native: NativeAVPacket) : AutoClosea
         av_packet_rescale_ts(native.ptr, src.asNative().readValue(), dst.asNative().readValue())
     }
 
-    public override fun close() {
+    public actual override fun close() {
         av_packet_unref(native.ptr)
     }
 }

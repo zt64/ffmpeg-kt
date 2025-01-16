@@ -1,13 +1,8 @@
 package dev.zt64.ffmpegkt.avutil
 
-public expect class NativeAVFrame
+internal expect class NativeAVFrame
 
-public interface Frame : AutoCloseable {
-    /**
-     * The native instance of the frame.
-     */
-    public val native: NativeAVFrame
-
+public expect open class Frame : AutoCloseable {
     /**
      * The number of planes in the frame.
      */
@@ -38,6 +33,7 @@ public interface Frame : AutoCloseable {
      * Non-refcounted frames behave as non-writable, i.e. a copy is always made.
      */
     public fun makeWritable()
+    final override fun close()
 }
 
 /**
@@ -45,15 +41,16 @@ public interface Frame : AutoCloseable {
  *
  * @property native
  */
-public expect value class AudioFrame(override val native: NativeAVFrame) : Frame {
-    /**
-     * Create a new blank audio frame for encoding.
-     */
+public expect class AudioFrame(
+    nbSamples: Int,
+    format: SampleFormat,
+    channelLayout: ChannelLayout
+) : Frame {
     public constructor()
 
     public var nbSamples: Int
     public var format: SampleFormat
-    public var channelLayout: AVChannelLayout
+    public var channelLayout: ChannelLayout
     public var sampleRate: Int
 }
 
@@ -62,12 +59,16 @@ public expect value class AudioFrame(override val native: NativeAVFrame) : Frame
  *
  * @property native
  */
-public expect value class VideoFrame(override val native: NativeAVFrame) : Frame {
-    public constructor()
+public expect class VideoFrame() : Frame {
+    public constructor(
+        width: Int,
+        height: Int,
+        format: PixelFormat
+    )
 
-    public var width: Int
-    public var height: Int
-    public var format: PixelFormat
+    public inline var width: Int
+    public inline var height: Int
+    public inline var format: PixelFormat
 }
 
 /**

@@ -1,47 +1,39 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.PixelFormat
+import dev.zt64.ffmpegkt.avutil.Rational
+import dev.zt64.ffmpegkt.avutil.VideoFrame
 import kotlinx.coroutines.test.runTest
 import okio.*
 import okio.Path.Companion.toPath
 import kotlin.test.Test
-import kotlin.test.fail
 
 class EncodeVideoTest {
     @Test
     fun encodeVideo() = runTest {
         val frameRate = 25 // 25 frames per second
         val frames = 250 // 10 seconds of video
-
         val filename = "output.mp4"
 
-        LibAVUtil.setLogLevel(LogLevel.VERBOSE)
-
         val codec = AVCodec.findEncoder(AVCodecID.MPEG4)!!
-        val c = try {
-            VideoEncoder(codec).apply {
-                bitRate = 50000
-                width = 256
-                height = 256
-                timeBase = Rational(1, frameRate)
-                framerate = Rational(frames, 1)
-                gopSize = 10
-                maxBFrames = 1
-                pixFmt = PixelFormat.YUV420P
-            }
-        } catch (e: Exception) {
-            fail("Failed to allocate codec context", e)
+        val c = VideoEncoder(codec).apply {
+            bitRate = 50000
+            width = 256
+            height = 256
+            timeBase = Rational(1, frameRate)
+            framerate = Rational(frames, 1)
+            gopSize = 10
+            maxBFrames = 1
+            pixFmt = PixelFormat.YUV420P
         }
-        c.open(codec)
+        c.open()
 
         val buffer = Buffer()
-        val frame = VideoFrame().apply {
-            width = c.width
-            height = c.height
+        val frame = VideoFrame(
+            width = c.width,
+            height = c.height,
             format = c.pixFmt
-        }
-
-        frame.getBuffer(0)
+        )
 
         for (i in 0 until frames) {
             frame.makeWritable()
@@ -73,11 +65,6 @@ class EncodeVideoTest {
         // Flush encoder
         encode(c, null, buffer)
 
-        // Add sequence end code
-        if (codec.id == AVCodecID.MPEG1VIDEO || codec.id == AVCodecID.MPEG2VIDEO) {
-            buffer.write(byteArrayOf(0, 0, 1, 0xb7.toByte()))
-        }
-
         c.close()
         frame.close()
 
@@ -95,13 +82,11 @@ class EncodeVideoTest {
     ) {
         if (frame != null) println("Send frame ${frame.pts}")
 
-        c.sendFrame(frame)
-
-        while (true) {
-            c.receivePacket()?.use { packet ->
+        c.encode(frame).forEach { packet ->
+            packet.use {
                 println("Write packet (size=${packet.size})")
                 outputStream.write(packet.data)
-            } ?: break
+            }
         }
     }
 }

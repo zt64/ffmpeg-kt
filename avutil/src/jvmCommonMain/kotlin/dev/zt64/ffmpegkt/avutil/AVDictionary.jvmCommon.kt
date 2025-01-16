@@ -3,17 +3,7 @@ package dev.zt64.ffmpegkt.avutil
 import org.bytedeco.ffmpeg.avutil.AVDictionaryEntry
 import org.bytedeco.ffmpeg.global.avutil.*
 
-public actual typealias AVDictionaryNative = org.bytedeco.ffmpeg.avutil.AVDictionary
-
-public actual fun AVDictionaryNative(dict: AVDictionary): AVDictionaryNative {
-    val nativeDict = AVDictionaryNative()
-
-    dict.forEach {
-        av_dict_set(nativeDict, it.key, it.value, 0)
-    }
-
-    return nativeDict
-}
+internal actual typealias AVDictionaryNative = org.bytedeco.ffmpeg.avutil.AVDictionary
 
 public actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
     val dict: AVDictionary = LinkedHashMap<String, String>(av_dict_count(nativeDict)).apply {
@@ -28,4 +18,14 @@ public actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
     av_dict_free(nativeDict)
 
     return dict
+}
+
+public actual fun AVDictionary.toNative(): AVDictionaryNative {
+    val nativeDict = AVDictionaryNative()
+
+    this.forEach {
+        av_dict_set(nativeDict, it.key, it.value, 0)
+    }
+
+    return nativeDict
 }

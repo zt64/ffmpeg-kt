@@ -10,7 +10,7 @@ import android.graphics.*
 @OptIn(ExperimentalUnsignedTypes::class)
 public fun VideoFrame.toBitmap(): Bitmap {
     return when (format) {
-        AVPixelFormat.YUV420P -> {
+        PixelFormat.YUV420P -> {
             val concatenatedData = data[0].toUByteArray() + data[1].toUByteArray() + data[2].toUByteArray()
 
             val img = YuvImage(

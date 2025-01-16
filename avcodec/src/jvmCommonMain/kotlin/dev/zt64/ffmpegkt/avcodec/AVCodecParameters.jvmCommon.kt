@@ -1,11 +1,12 @@
 package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.valueOf
 import org.bytedeco.ffmpeg.avcodec.AVCodecParameters
 
-public actual sealed class CodecParameters(public val native: AVCodecParameters) {
-    public actual val codecType: AVMediaType
-        get() = AVMediaType(native.codec_type())
+public actual open class CodecParameters(public val native: AVCodecParameters) {
+    public actual val codecType: MediaType
+        get() = MediaType(native.codec_type())
     public actual val codecId: AVCodecID
         get() = AVCodecID(native.codec_id())
     public actual var codecTag: Int
@@ -28,45 +29,43 @@ public actual sealed class CodecParameters(public val native: AVCodecParameters)
 }
 
 public actual class AudioCodecParameters(native: AVCodecParameters) : CodecParameters(native) {
-    public actual val format: SampleFormat
+    public actual inline val format: SampleFormat
         get() = SampleFormat(native.format())
-    public actual val channelLayout: AVChannelLayout
-        get() = AVChannelLayout(native.ch_layout())
-    public actual val sampleRate: Int
+    public actual inline val channelLayout: ChannelLayout
+        get() = ChannelLayout(native.ch_layout())
+    public actual inline val sampleRate: Int
         get() = native.sample_rate()
-    public actual val blockAlign: Int
+    public actual inline val blockAlign: Int
         get() = native.block_align()
-    public actual val frameSize: Int
+    public actual inline val frameSize: Int
         get() = native.frame_size()
-    public actual val initialPadding: Int
+    public actual inline val initialPadding: Int
         get() = native.initial_padding()
-    public actual val trailingPadding: Int
+    public actual inline val trailingPadding: Int
         get() = native.trailing_padding()
-    public actual val seekPreroll: Int
+    public actual inline val seekPreroll: Int
         get() = native.seek_preroll()
 
     override fun toString(): String = commonToString()
 }
 
 public actual class VideoCodecParameters(native: AVCodecParameters) : CodecParameters(native) {
-    public actual val format: PixelFormat
+    public actual inline val format: PixelFormat
         get() = PixelFormat(native.format())
-    public actual val width: Int
+    public actual inline val width: Int
         get() = native.width()
-    public actual val height: Int
+    public actual inline val height: Int
         get() = native.height()
-    public actual val aspectRatio: Rational
+    public actual inline val aspectRatio: Rational
         get() = Rational(native.sample_aspect_ratio())
-    public actual val framerate: Rational
+    public actual inline val framerate: Rational
         get() = Rational(native.framerate())
-    public actual val fieldOrder: FieldOrder
-        get() = TODO("Not yet implemented")
-    public actual val colorRange: ColorRange
-        get() = TODO("Not yet implemented")
-    public actual val colorPrimaries: ColorPrimaries
-        get() = TODO("Not yet implemented")
-    public actual val videoDelay: Int
+    public actual inline val fieldOrder: FieldOrder
+        get() = FieldOrder.entries[native.field_order()]
+    public actual inline val colorRange: ColorRange
+        get() = ColorRange.entries[native.color_range()]
+    public actual inline val colorPrimaries: ColorPrimaries
+        get() = valueOf(native.color_primaries())
+    public actual inline val videoDelay: Int
         get() = native.video_delay()
-
-    override fun toString(): String = commonToString()
 }

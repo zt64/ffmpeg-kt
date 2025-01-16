@@ -2,6 +2,15 @@ package dev.zt64.ffmpegkt.avutil
 
 import kotlin.jvm.JvmInline
 
+public interface VideoFormat {
+    public val name: String
+    public val isPlanar: Boolean
+    public val isRgb: Boolean
+}
+
+public expect fun VideoFormat(name: String): VideoFormat
+
+// TODO: There's probably a better way to do this
 @JvmInline
 public value class PixelFormat(public val num: Int) {
     public companion object {
@@ -242,4 +251,5 @@ public value class PixelFormat(public val num: Int) {
     override fun toString(): String = commonToString() ?: "Unknown"
 }
 
+internal expect fun PixelFormat(name: String): PixelFormat
 internal expect fun PixelFormat.commonToString(): String?

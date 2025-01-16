@@ -1,7 +1,6 @@
 package dev.zt64.ffmpegkt.avcodec
 
 import com.goncalossilva.resources.Resource
-import okio.Buffer
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
@@ -18,46 +17,56 @@ class DecodeVideoTest {
         val parser = CodecParserContext(codecId)
         val codecContext = VideoDecoder(codec)
 
-        codecContext.open(codec)
+        codecContext.open()
 
-        val buf = Buffer()
-        buf.write(Resource("src/commonTest/resources/sample_640x360.mpeg").readBytes())
-
-        var data = ByteArray(4096 + 64)
-
-        var eof = false
-        while (!eof) {
-            val buffer = Buffer()
-            var dataSize = buf.read(buffer, byteCount = 4096)
-
-            eof = dataSize == -1L
-            data = buffer.readByteArray() + ByteArray(64)
-
-            while (dataSize > 0 || eof) {
-                val parsedPacket = parser.parse(codecContext, data, dataSize.toInt())
-                val packet = parsedPacket.packet
-
-                data += ByteArray(parsedPacket.bytesRead)
-                dataSize -= parsedPacket.bytesRead
-
-                when {
-                    packet.size > 0 -> codecContext.decode(packet)
-                    eof -> break
-                }
-            }
+        parser.parsePackets(
+            codecContext,
+            Resource("../testing/src/commonMain/resources/video/sample_640x360.mpeg").readBytes()
+        ).forEach { parsedPacket ->
+            val packet = parsedPacket.packet
+            println("parsed packet size: ${packet.size}")
+            if (packet.size > 0) codecContext.decode2(packet)
         }
 
+        // val buf = Buffer()
+        // buf.write(Resource("../testing/src/commonMain/resources/video/sample_640x360.mpeg").readBytes())
+
+        // var data = ByteArray(4096 + 64)
+        //
+        // var eof = false
+        // while (!eof) {
+        //     val buffer = Buffer()
+        //     var dataSize = buf.read(buffer, byteCount = 4096)
+        //
+        //     eof = dataSize == -1L
+        //     data = buffer.readByteArray() + ByteArray(64)
+        //
+        //     while (dataSize > 0 || eof) {
+        //         val parsedPacket = parser.parse(codecContext, data, dataSize.toInt())
+        //         val packet = parsedPacket.packet
+        //
+        //         data += ByteArray(parsedPacket.bytesRead)
+        //         dataSize -= parsedPacket.bytesRead
+        //
+        //         when {
+        //             packet.size > 0 -> codecContext.decode2(packet)
+        //             eof -> break
+        //         }
+        //     }
+        // }
+
         // flush
-        codecContext.decode(null)
+        codecContext.decode2(null)
 
         codecContext.close()
         parser.close()
-        buf.close()
+        // buf.close()
     }
 
-    private fun VideoDecoder.decode(packet: Packet?) {
+    @OptIn(ExperimentalUnsignedTypes::class)
+    private fun VideoDecoder.decode2(packet: Packet?) {
         try {
-            sendPacket(packet)
+            decode(packet)
         } catch (e: Exception) {
             fail("Error sending a packet for decoding", e)
         }
@@ -65,7 +74,7 @@ class DecodeVideoTest {
         FileSystem.SYSTEM.createDirectory("./frames".toPath())
 
         while (true) {
-            val frame = receiveFrame() ?: break
+            val frame = decode() ?: break
 
             println("saving frame $frameNum")
 

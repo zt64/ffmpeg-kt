@@ -8,6 +8,7 @@ import okio.SYSTEM
 import kotlin.test.Test
 
 class ScaleTest {
+    // take a video and scale it to a different resolution
     @Test
     fun scaleVideo() {
         val srcW = 320
@@ -34,14 +35,14 @@ class ScaleTest {
 
         val file = FileSystem.SYSTEM.appendingSink("scaleVideo.rgb".toPath())
 
-        LibAVUtil.imageAlloc(
-            srcData,
-            srcLinesize,
-            srcW,
-            srcH,
-            srcFormat,
-            16
-        )
+        // LibAVUtil.imageAlloc(
+        //     srcData,
+        //     srcLinesize,
+        //     srcW,
+        //     srcH,
+        //     srcFormat,
+        //     16
+        // )
 
         LibAVUtil.imageAlloc(
             dstData,

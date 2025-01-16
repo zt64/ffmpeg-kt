@@ -8,9 +8,11 @@ internal const val ERROR_AGAIN = -11
 /**
  * Base class for all encoders and decoders. Contains common properties and methods.
  */
-public expect abstract class CodecContext : AutoCloseable {
+public expect sealed class CodecContext : AutoCloseable {
+    internal val codec: AVCodec
+
     public var codecTag: Int
-    public var codecType: AVMediaType
+    public var codecType: MediaType
     public var codecId: AVCodecID
     public var bitRate: Long
 
@@ -36,7 +38,7 @@ public expect abstract class CodecContext : AutoCloseable {
      * @param codec The codec to open the context with.
      * @param options
      */
-    public fun open(codec: AVCodec, options: AVDictionary? = null)
+    public fun open(options: AVDictionary? = null)
 
     /**
      * Flush the buffers of the codec context.
@@ -58,17 +60,17 @@ public expect abstract class CodecContext : AutoCloseable {
 /**
  * Base class for audio encoders and decoders.
  */
-public expect abstract class AudioCodecContext : CodecContext {
+public expect sealed class AudioCodecContext : CodecContext {
     public var sampleFmt: SampleFormat
     public var sampleRate: Int
-    public var channelLayout: AVChannelLayout
+    public var channelLayout: ChannelLayout
     public var frameSize: Int
 }
 
 /**
  * Base class for video encoders and decoders.
  */
-public expect abstract class VideoCodecContext : CodecContext {
+public expect sealed class VideoCodecContext : CodecContext {
     public var pixFmt: PixelFormat
     public var width: Int
     public var height: Int
@@ -83,11 +85,11 @@ public interface Encoder {
      * Receive a new encoded packet of data
      * @return the packet or null if no more data
      */
-    public fun receivePacket(): Packet?
+    public fun encode(): Packet?
 }
 
 public interface Decoder {
-    public fun sendPacket(packet: Packet?)
+    public fun decode(packet: Packet?)
 }
 
 /**
@@ -97,10 +99,10 @@ public interface Decoder {
  *
  * @param codec
  */
-public expect class AudioEncoder(codec: AVCodec?) :
+public expect class AudioEncoder(codec: AVCodec) :
     AudioCodecContext,
     Encoder {
-    public fun sendFrame(frame: AudioFrame?)
+    public fun encode(frame: AudioFrame?)
 }
 
 /**
@@ -110,10 +112,10 @@ public expect class AudioEncoder(codec: AVCodec?) :
  *
  * @param codec
  */
-public expect class AudioDecoder(codec: AVCodec?) :
+public expect class AudioDecoder(codec: AVCodec) :
     AudioCodecContext,
     Decoder {
-    public fun receiveFrame(): AudioFrame
+    public fun decode(): AudioFrame
 }
 
 /**
@@ -123,10 +125,10 @@ public expect class AudioDecoder(codec: AVCodec?) :
  *
  * @param codec
  */
-public expect class VideoEncoder(codec: AVCodec?) :
+public expect class VideoEncoder(codec: AVCodec) :
     VideoCodecContext,
     Encoder {
-    public fun sendFrame(frame: VideoFrame?)
+    public fun encode(frame: VideoFrame?): List<Packet>
 }
 
 /**
@@ -136,8 +138,13 @@ public expect class VideoEncoder(codec: AVCodec?) :
  *
  * @param codec
  */
-public expect class VideoDecoder(codec: AVCodec?) :
+public expect class VideoDecoder(codec: AVCodec) :
     VideoCodecContext,
     Decoder {
-    public fun receiveFrame(): VideoFrame?
+    /**
+     * Receive a new decoded frame of video data.
+     *
+     * NOTE: This frame should not be modified or closed by the user.
+     */
+    public fun decode(): VideoFrame?
 }

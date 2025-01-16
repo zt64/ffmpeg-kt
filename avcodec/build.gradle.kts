@@ -8,7 +8,6 @@ kotlin {
     sourceSets {
         commonTest {
             dependencies {
-                implementation(libs.coroutines.test)
                 implementation(libs.okio)
                 implementation(libs.okio.fakefilesystem)
             }

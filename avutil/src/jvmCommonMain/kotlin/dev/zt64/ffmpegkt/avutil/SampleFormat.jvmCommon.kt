@@ -2,7 +2,7 @@ package dev.zt64.ffmpegkt.avutil
 
 import org.bytedeco.ffmpeg.global.avutil.*
 
-public actual fun AVSampleFormat(name: String): SampleFormat {
+public actual fun SampleFormat(name: String): SampleFormat {
     return SampleFormat(av_get_sample_fmt(name))
 }
 

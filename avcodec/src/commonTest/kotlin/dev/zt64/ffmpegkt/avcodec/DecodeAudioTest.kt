@@ -19,7 +19,7 @@ class DecodeAudioTest {
         val parser = CodecParserContext(AVCodecID.MP2)
         val codecContext = AudioDecoder(codec)
 
-        codecContext.open(codec)
+        codecContext.open()
 
         val source = try {
             FileSystem.SYSTEM.source(file.toPath())

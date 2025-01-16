@@ -1,5 +1,6 @@
 package dev.zt64.ffmpegkt.avcodec
 
+import dev.zt64.ffmpegkt.avutil.util.FfmpegException
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.javacpp.BytePointer
@@ -55,6 +56,74 @@ public actual class CodecParserContext(
         outputSizePointer.deallocate()
 
         return ParsedPacket(packet, read)
+    }
+
+    public actual fun parsePackets(
+        avCtx: CodecContext,
+        input: ByteArray,
+        pts: Long,
+        dts: Long,
+        pos: Long
+    ): List<ParsedPacket> {
+        val packets = mutableListOf<ParsedPacket>()
+        var currentPosition = 0
+        val chunkSize = 4096
+
+        while (currentPosition < input.size) {
+            // Calculate how much data is left to process
+            val remainingBytes = input.size - currentPosition
+            val currentChunkSize = minOf(chunkSize, remainingBytes)
+
+            // Create a chunk of data with padding
+            val chunk = ByteArray(currentChunkSize + 64) // 64 bytes padding
+            System.arraycopy(input, currentPosition, chunk, 0, currentChunkSize)
+
+            var dataSize = currentChunkSize
+            var shouldContinue = true
+
+            while (dataSize > 0 && shouldContinue) {
+                try {
+                    val parsedPacket = parse(avCtx, chunk, dataSize)
+
+                    if (parsedPacket.packet.size > 0) {
+                        // Add packet to list only if it has actual content
+                        packets.add(parsedPacket)
+                    }
+
+                    if (parsedPacket.bytesRead <= 0) {
+                        shouldContinue = false
+                        continue
+                    }
+
+                    // Shift remaining data to start of buffer
+                    if (parsedPacket.bytesRead < dataSize) {
+                        System.arraycopy(
+                            chunk,
+                            parsedPacket.bytesRead,
+                            chunk,
+                            0,
+                            dataSize - parsedPacket.bytesRead
+                        )
+                    }
+
+                    dataSize -= parsedPacket.bytesRead
+                } catch (e: FfmpegException) {
+                    if (e.code == -541478725) { // AVERROR_EOF
+                        shouldContinue = false
+                        continue
+                    }
+                    throw e
+                }
+            }
+
+            if (dataSize > 0) {
+                currentPosition += (currentChunkSize - dataSize)
+            } else {
+                currentPosition += currentChunkSize
+            }
+        }
+
+        return packets
     }
 
     public override fun close() {

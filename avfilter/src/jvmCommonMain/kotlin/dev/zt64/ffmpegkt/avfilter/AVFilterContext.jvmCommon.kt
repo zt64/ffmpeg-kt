@@ -1,15 +1,15 @@
 package dev.zt64.ffmpegkt.avfilter
 
-import dev.zt64.ffmpegkt.avutil.AVBufferRef
 import dev.zt64.ffmpegkt.avutil.AVClass
 import dev.zt64.ffmpegkt.avutil.Frame
+import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import org.bytedeco.ffmpeg.global.avfilter.*
 
 internal actual typealias NativeAVFilterContext = org.bytedeco.ffmpeg.avfilter.AVFilterContext
 
 @JvmInline
-public actual value class AVFilterContext actual constructor(
+public actual value class AVFilterContext(
     @PublishedApi
     internal actual val native: NativeAVFilterContext
 ) : AutoCloseable {
@@ -31,15 +31,19 @@ public actual value class AVFilterContext actual constructor(
         get() = TODO("Not yet implemented")
     public actual val outputs: List<AVFilterLink>
         get() = TODO("Not yet implemented")
-    public actual var hwDeviceCtx: AVBufferRef?
+    public actual var hwDeviceCtx: HWDeviceContext?
         get() = TODO("Not yet implemented")
         set(value) {}
     public actual var extraHwFrames: Int
-        get() = TODO("Not yet implemented")
-        set(value) {}
+        get() = native.extra_hw_frames()
+        set(value) {
+            native.extra_hw_frames(value)
+        }
     public actual var threads: Int
-        get() = TODO("Not yet implemented")
-        set(value) {}
+        get() = native.nb_threads()
+        set(value) {
+            native.nb_threads(value)
+        }
     public actual var threadType: Int
         get() = TODO("Not yet implemented")
         set(value) {}
@@ -73,6 +77,7 @@ public actual value class AVFilterContext actual constructor(
         av_buffersink_set_frame_size(native, size)
     }
 
-    override fun close() {
+    actual override fun close() {
+        avfilter_free(native)
     }
 }

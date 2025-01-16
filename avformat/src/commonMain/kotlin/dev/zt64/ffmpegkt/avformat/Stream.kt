@@ -9,7 +9,7 @@ import dev.zt64.ffmpegkt.avutil.Rational
  * A data stream
  *
  */
-public expect abstract class Stream {
+public expect open class Stream {
     /**
      * The index of this stream in the parent format
      */
@@ -27,7 +27,7 @@ public expect abstract class Stream {
      * The number of frames in this stream
      */
     public val frames: Long
-    public abstract val codecParameters: CodecParameters
+    public open val codecParameters: CodecParameters
 }
 
 public expect class AudioStream : Stream {

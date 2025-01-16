@@ -1,24 +1,22 @@
 package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.*
-import dev.zt64.ffmpegkt.avutil.AVChannelLayout
-import dev.zt64.ffmpegkt.avutil.AVMediaType
-import dev.zt64.ffmpegkt.avutil.Rational
-import dev.zt64.ffmpegkt.avutil.SampleFormat
+import dev.zt64.ffmpegkt.avutil.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.MediaType
 import ffmpeg.*
 import kotlinx.cinterop.get
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.toKString
 
-public actual typealias NativeAVCodec = ffmpeg.AVCodec
+internal actual typealias NativeAVCodec = ffmpeg.AVCodec
 
 public actual value class AVCodec(public val native: NativeAVCodec) : AutoCloseable {
     public actual inline val name: String
         get() = native.name?.toKString().orEmpty()
     public actual inline val longName: String
         get() = native.long_name?.toKString().orEmpty()
-    public actual inline val type: AVMediaType
-        get() = AVMediaType(native.type)
+    public actual inline val type: MediaType
+        get() = MediaType(native.type)
     public actual inline val id: AVCodecID
         get() = AVCodecID(native.id.toInt())
     public actual inline val capabilities: Int
@@ -46,14 +44,14 @@ public actual value class AVCodec(public val native: NativeAVCodec) : AutoClosea
         get() = emptyList()
     public actual inline val profiles: List<AVProfile>
         get() = emptyList()
-    public actual inline val channelLayouts: List<AVChannelLayout>
+    public actual inline val channelLayouts: List<ChannelLayout>
         get() = native.ch_layouts!!.let { layouts ->
             buildList {
                 var i = 0
                 while (true) {
                     val layout = layouts[i].takeIf {
                         it.nb_channels != 0 && it.order.value != 0u
-                    }?.let(::AVChannelLayout) ?: break
+                    }?.let(::ChannelLayout) ?: break
                     add(layout)
                     i++
                 }

@@ -7,13 +7,13 @@ public expect class NativeAVChannelLayout
  *
  * @property native
  */
-public expect value class AVChannelLayout internal constructor(internal val native: NativeAVChannelLayout) {
+public expect value class ChannelLayout internal constructor(internal val native: NativeAVChannelLayout) {
     public val order: AVChannelOrder
     public val nbChannels: Int
 
-    public fun copyTo(dst: AVChannelLayout)
+    public fun copyTo(dst: ChannelLayout)
 
     public companion object {
-        public val STEREO: AVChannelLayout
+        public val STEREO: ChannelLayout
     }
 }

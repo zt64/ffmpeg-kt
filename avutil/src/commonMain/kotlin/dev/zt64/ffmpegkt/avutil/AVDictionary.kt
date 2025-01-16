@@ -2,14 +2,14 @@ package dev.zt64.ffmpegkt.avutil
 
 public typealias AVDictionary = Map<String, String>
 
-public expect class AVDictionaryNative
-
-/**
- * Converts an [AVDictionary] to a [AVDictionaryNative] for passing to FFmpeg.
- */
-public expect fun AVDictionaryNative(dict: AVDictionary): AVDictionaryNative
+internal expect class AVDictionaryNative
 
 /**
  * Converts an [AVDictionaryNative] to a [AVDictionary] for use in Kotlin.
  */
-public expect fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary
+internal expect fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary
+
+/**
+ * Converts an [AVDictionary] to a [AVDictionaryNative] for passing to FFmpeg.
+ */
+internal expect fun AVDictionary.toNative(): AVDictionaryNative

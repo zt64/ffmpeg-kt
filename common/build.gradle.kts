@@ -2,6 +2,8 @@ plugins {
     id("kmp-base")
 }
 
+description = "Common utilities for ffmpeg-kt"
+
 kotlin {
     sourceSets {
         jvmCommonMain {
@@ -11,5 +13,3 @@ kotlin {
         }
     }
 }
-
-description = "Common utilities for ffmpeg-kt"

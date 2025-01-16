@@ -6,18 +6,18 @@ import kotlinx.cinterop.ptr
 
 public actual typealias NativeAVChannelLayout = ffmpeg.AVChannelLayout
 
-public actual value class AVChannelLayout(public val native: NativeAVChannelLayout) {
+public actual value class ChannelLayout(public val native: NativeAVChannelLayout) {
     public actual inline val order: AVChannelOrder
         get() = AVChannelOrder(native.order.value.toInt())
     public actual inline val nbChannels: Int
         get() = native.nb_channels
 
-    public actual fun copyTo(dst: AVChannelLayout) {
+    public actual fun copyTo(dst: ChannelLayout) {
         av_channel_layout_copy(dst.native.ptr, native.ptr).checkError()
     }
 
     public actual companion object {
-        public actual val STEREO: AVChannelLayout
+        public actual val STEREO: ChannelLayout
             get() = TODO()
     }
 }

@@ -46,7 +46,7 @@ class MuxTest {
 
         val options: AVDictionary = mutableMapOf()
 
-        output.dumpFormat(0, "output.mp4", 1)
+        output.dumpFormat(0, "output.mp4", true)
 
         output.openAudioCodec(audioCodec, options)
         output.openVideoCodec(videoCodec, options)
@@ -75,7 +75,7 @@ class MuxTest {
         outputStream.enc = c
 
         val encoder = when (codec.type) {
-            AVMediaType.VIDEO -> {
+            MediaType.VIDEO -> {
                 val c = VideoEncoder(codec)
 
                 c.codecId = codecId
@@ -100,7 +100,7 @@ class MuxTest {
                 c
             }
 
-            AVMediaType.AUDIO -> {
+            MediaType.AUDIO -> {
                 val c = AudioEncoder(codec)
 
                 c.sampleFmt = codec.sampleFormats.getOrNull(0) ?: SampleFormat.FLTP
@@ -115,7 +115,7 @@ class MuxTest {
                     }
                 }
 
-                c.channelLayout = AVChannelLayout.STEREO
+                c.channelLayout = ChannelLayout.STEREO
                 outputStream.str!!.timeBase = Rational(1, c.sampleRate)
 
                 c

@@ -19,7 +19,7 @@ class AVUtilTest {
             "key5" to "value5"
         )
 
-        val toNative = AVDictionaryNative(dictionary)
+        val toNative = dictionary.toNative()
         val fromNative = AVDictionary(toNative)
 
         assertEquals(
@@ -30,8 +30,8 @@ class AVUtilTest {
     }
 
     @Test
-    fun testAVSampleFormat() {
-        val sampleFormat = AVSampleFormat("s16")
+    fun testSampleFormat() {
+        val sampleFormat = SampleFormat("s16")
         assertEquals(
             expected = "s16",
             actual = sampleFormat.name,
@@ -47,5 +47,15 @@ class AVUtilTest {
             actual = sampleFormat.isPlanar,
             message = "Sample format should not be planar"
         )
+        assertEquals(
+            expected = SampleFormat.S16,
+            actual = SampleFormat.S16.altSampleFmt(0),
+            message = "Alternate sample format should be S16"
+        )
+    }
+
+    @Test
+    fun testCrc() {
+        TODO()
     }
 }

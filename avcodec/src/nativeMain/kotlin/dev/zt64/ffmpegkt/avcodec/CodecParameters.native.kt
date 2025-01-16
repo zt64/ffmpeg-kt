@@ -4,8 +4,8 @@ import dev.zt64.ffmpegkt.avutil.*
 import ffmpeg.AVCodecParameters
 
 public actual open class CodecParameters(public val native: AVCodecParameters) {
-    public actual val codecType: AVMediaType
-        get() = AVMediaType(native.codec_type)
+    public actual val codecType: MediaType
+        get() = MediaType(native.codec_type)
     public actual val codecId: AVCodecID
         get() = AVCodecID(native.codec_id.toInt())
     public actual var codecTag: Int
@@ -30,8 +30,8 @@ public actual open class CodecParameters(public val native: AVCodecParameters) {
 public actual class AudioCodecParameters(native: AVCodecParameters) : CodecParameters(native) {
     public actual val format: SampleFormat
         get() = SampleFormat(native.format)
-    public actual val channelLayout: AVChannelLayout
-        get() = AVChannelLayout(native.ch_layout)
+    public actual val channelLayout: ChannelLayout
+        get() = ChannelLayout(native.ch_layout)
     public actual val sampleRate: Int
         get() = native.sample_rate
     public actual val blockAlign: Int
@@ -49,15 +49,15 @@ public actual class AudioCodecParameters(native: AVCodecParameters) : CodecParam
 }
 
 public actual class VideoCodecParameters(native: AVCodecParameters) : CodecParameters(native) {
-    public actual val format: PixelFormat
+    public actual inline val format: PixelFormat
         get() = PixelFormat(native.format)
-    public actual val width: Int
+    public actual inline val width: Int
         get() = native.width
-    public actual val height: Int
+    public actual inline val height: Int
         get() = native.height
-    public actual val aspectRatio: Rational
+    public actual inline val aspectRatio: Rational
         get() = Rational(native.sample_aspect_ratio)
-    public actual val framerate: Rational
+    public actual inline val framerate: Rational
         get() = Rational(native.framerate)
     public actual val fieldOrder: FieldOrder
         get() = FieldOrder.entries[native.field_order.ordinal]
