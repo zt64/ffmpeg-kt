@@ -6,7 +6,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
-        maven("https://repo.nokee.dev/snapshot")
     }
 
     includeBuild("build-logic")
