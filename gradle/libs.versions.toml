@@ -1,13 +1,13 @@
 [versions]
 kotlin = "2.1.10"
-android = "8.7.2"
+android = "8.7.3"
 ffmpeg = "7.1-1.5.11"
 ksp = "2.1.0-1.0.29"
-coroutines = "1.9.0"
+coroutines = "1.10.1"
 okio = "3.10.2"
 
 # Maintenance
-compatibility = "0.16.3"
+compatibility = "0.17.0"
 kover = "0.8.3"
 publish = "0.30.0"
 ktx-resources = "0.10.0"
