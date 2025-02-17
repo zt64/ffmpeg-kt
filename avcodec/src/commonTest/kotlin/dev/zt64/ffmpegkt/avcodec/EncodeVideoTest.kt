@@ -59,14 +59,22 @@ class EncodeVideoTest {
                 }
             }
             frame.pts = i.toLong()
-            encode(c, frame, buffer)
+
+            println("Send frame ${frame.pts}")
+
+            c.encode(frame).forEach { packet ->
+                packet.use {
+                    println("Write packet (size=${packet.size})")
+                    buffer.write(packet.data)
+                }
+            }
         }
 
-        // Flush encoder
-        encode(c, null, buffer)
-
-        c.close()
         frame.close()
+
+        // Flush encoder
+        c.encode(null)
+        c.close()
 
         buffer.use {
             FileSystem.SYSTEM.write(filename.toPath()) {

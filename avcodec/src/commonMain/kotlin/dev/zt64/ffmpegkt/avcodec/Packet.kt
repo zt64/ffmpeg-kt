@@ -1,5 +1,6 @@
 package dev.zt64.ffmpegkt.avcodec
 
+import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.Rational
 
 internal expect class NativeAVPacket
@@ -36,6 +37,8 @@ public expect value class Packet internal constructor(internal val native: Nativ
     public val timeBase: Rational
 
     public fun rescaleTs(src: Rational, dst: Rational)
+
+    public fun decode(): Frame
 
     override fun close()
 }

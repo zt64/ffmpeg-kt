@@ -32,6 +32,13 @@ public expect sealed class CodecContext : AutoCloseable {
     public var frameNum: Long
 
     /**
+     * Indicates whether the codec context is open.
+     *
+     * @return `true` if the codec context is open, `false` otherwise.
+     */
+    public val isOpen: Boolean
+
+    /**
      * Open the codec context with the given codec and options. You **must** call this method before using the codec context.
      * After opening the codec context, you can start sending packets to the codec context and receive frames from it.
      *
@@ -44,13 +51,6 @@ public expect sealed class CodecContext : AutoCloseable {
      * Flush the buffers of the codec context.
      */
     public fun flushBuffers()
-
-    /**
-     * Indicates whether the codec context is open.
-     *
-     * @return `true` if the codec context is open, `false` otherwise.
-     */
-    public fun isOpen(): Boolean
 
     protected fun sendFrame(frame: Frame?)
 
@@ -115,7 +115,7 @@ public expect class AudioEncoder(codec: AVCodec) :
 public expect class AudioDecoder(codec: AVCodec) :
     AudioCodecContext,
     Decoder {
-    public fun decode(): AudioFrame
+    public fun decode(): AudioFrame?
 }
 
 /**

@@ -30,7 +30,6 @@ class EncodeAudioTest {
 
         /* Initialize the starting phase for the sine wave */
         var t = 0.0
-        /* Calculate the phase increment for generating a 440 Hz sine wave. */
         var freq = 440.0
         val length = 2 // seconds
         for (i in 0 until (codecContext.sampleRate * length) / codecContext.frameSize) {
@@ -48,8 +47,8 @@ class EncodeAudioTest {
 
                     /* Write the 32-bit sample value into the plane for this channel */
                     samples[index] = (sampleValue and 0xFF).toUByte() // Least significant byte
-                    samples[index + 1] = (sampleValue shr 8 and 0xFF).toUByte() // Next byte
-                    samples[index + 2] = (sampleValue shr 16 and 0xFF).toUByte() // Next byte
+                    samples[index + 1] = (sampleValue shr 8 and 0xFF).toUByte()
+                    samples[index + 2] = (sampleValue shr 16 and 0xFF).toUByte()
                     samples[index + 3] = (sampleValue shr 24 and 0xFF).toUByte() // Most significant byte
                 }
 
@@ -58,10 +57,19 @@ class EncodeAudioTest {
                 freq += 0.001
             }
 
-            encode(codecContext, frame, buffer)
+            codecContext.encode(frame)
+
+            while (true) {
+                codecContext.encode()?.use { packet ->
+                    println("Write packet (size=${packet.size})")
+                    buffer.write(packet.data)
+                } ?: break
+            }
         }
-        // flush buffer
-        encode(codecContext, null, buffer)
+
+        codecContext.flushBuffers()
+        codecContext.close()
+        frame.close()
 
         // Write the buffer to a file
         buffer.use {
@@ -69,24 +77,5 @@ class EncodeAudioTest {
                 writeAll(buffer)
             }
         }
-
-        // Close all resources
-        frame.close()
-        codecContext.close()
-    }
-}
-
-private fun encode(
-    c: AudioEncoder,
-    frame: AudioFrame?,
-    outputStream: Buffer
-) {
-    c.encode(frame)
-
-    while (true) {
-        c.encode()?.use { packet ->
-            println("Write packet (size=${packet.size})")
-            outputStream.write(packet.data)
-        } ?: break
     }
 }

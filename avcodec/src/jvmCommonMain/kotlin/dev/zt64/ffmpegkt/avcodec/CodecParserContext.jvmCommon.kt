@@ -34,6 +34,7 @@ public actual class CodecParserContext(
         val inputPointer = BytePointer(*input)
         val outputPointer = BytePointer(5.toByte())
         val outputSizePointer = IntPointer(0)
+        val packet = Packet()
 
         // Call the native function
         val read = av_parser_parse2(
@@ -108,7 +109,7 @@ public actual class CodecParserContext(
 
                     dataSize -= parsedPacket.bytesRead
                 } catch (e: FfmpegException) {
-                    if (e.code == -541478725) { // AVERROR_EOF
+                    if (e.code == -ERROR_EOF) { // AVERROR_EOF
                         shouldContinue = false
                         continue
                     }
@@ -116,10 +117,10 @@ public actual class CodecParserContext(
                 }
             }
 
-            if (dataSize > 0) {
-                currentPosition += (currentChunkSize - dataSize)
+            currentPosition += if (dataSize > 0) {
+                (currentChunkSize - dataSize)
             } else {
-                currentPosition += currentChunkSize
+                currentChunkSize
             }
         }
 

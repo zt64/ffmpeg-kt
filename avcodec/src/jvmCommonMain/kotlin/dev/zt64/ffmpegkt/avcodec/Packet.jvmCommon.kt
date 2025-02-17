@@ -1,5 +1,6 @@
 package dev.zt64.ffmpegkt.avcodec
 
+import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.avutil.toNative
 import org.bytedeco.ffmpeg.global.avcodec.*
@@ -51,6 +52,10 @@ public actual value class Packet(public val native: NativeAVPacket) : AutoClosea
 
     public actual fun rescaleTs(src: Rational, dst: Rational) {
         return av_packet_rescale_ts(native, src.toNative(), dst.toNative())
+    }
+
+    public actual fun decode(): Frame {
+        TODO("Decode using streams codec")
     }
 
     actual override fun close() {

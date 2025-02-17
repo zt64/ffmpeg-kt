@@ -60,6 +60,9 @@ public actual sealed class CodecContext protected constructor(internal val nativ
             native.frame_num(value)
         }
 
+    public actual val isOpen: Boolean
+        get() = avcodec_is_open(native).checkTrue()
+
     public actual fun open(options: AVDictionary?) {
         avcodec_open2(native, codec.native, options?.toNative()).checkError()
     }
@@ -67,8 +70,6 @@ public actual sealed class CodecContext protected constructor(internal val nativ
     public actual fun flushBuffers() {
         avcodec_flush_buffers(native)
     }
-
-    public actual fun isOpen(): Boolean = avcodec_is_open(native).checkTrue()
 
     protected actual fun sendFrame(frame: Frame?) {
         avcodec_send_frame(native, frame?.native).checkError()
@@ -187,10 +188,17 @@ public actual class AudioDecoder actual constructor(codec: AVCodec) :
         sendPacket(packet)
     }
 
-    public actual fun decode(): AudioFrame {
-        val frame = AudioFrame()
-        avcodec_receive_frame(native, frame.native).checkError()
-        return frame
+    private val frame = AudioFrame()
+    public actual fun decode(): AudioFrame? {
+        val ret = avcodec_receive_frame(native, frame.native)
+        return when (ret) {
+            ERROR_AGAIN, ERROR_EOF -> null
+
+            else -> {
+                ret.checkError()
+                frame
+            }
+        }
     }
 }
 

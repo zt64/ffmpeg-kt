@@ -12,6 +12,5 @@ class HwDecodeTest {
     fun decode() {
         val type = AVHWDeviceType.VAAPI
         val hwCtx = HWDeviceContext(type)
-        val packet = Packet()
     }
 }

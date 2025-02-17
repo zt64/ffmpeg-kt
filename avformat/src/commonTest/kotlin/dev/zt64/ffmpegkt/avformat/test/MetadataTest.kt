@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avformat.test
 
-import dev.zt64.ffmpegkt.avformat.AVFormatContext
+import dev.zt64.ffmpegkt.avformat.Container
 import dev.zt64.ffmpegkt.test.TestResources
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -8,13 +8,9 @@ import kotlin.test.Test
 class MetadataTest {
     @Test
     fun testMetadata() = runTest {
-        val format = AVFormatContext.openInput(TestResources.RESOURCE_1.readBytes())
+        val container = Container.openInput(TestResources.RESOURCE_1.readBytes())
 
-        format.use { format ->
-            if (!format.findStreamInfo()) {
-                throw IllegalStateException("Failed to find stream info")
-            }
-
+        container.use { format ->
             println("Metadata:")
             println(format.metadata!!)
 
