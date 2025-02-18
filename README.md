@@ -4,7 +4,7 @@
 ![GitHub License](https://img.shields.io/github/license/zt64/ffmpeg-kt)
 
 Kotlin multiplatform wrapper for FFmpeg. This library aims to provide a Kotlin-friendly API for
-FFmpeg with a similar API to the original FFmpeg library.
+FFmpeg to make it easier to work with multimedia files. It is designed to be modular, so you can use only the parts of FFmpeg that you need.
 
 ## Supported Platforms
 
@@ -43,6 +43,11 @@ ffmpeg-kt-postproc = { module = "dev.zt64:ffmpeg-kt-postproc", version.ref = "ff
 ```
 
 </details>
+
+## Usage
+
+As of now, the API is still in development and is subject to change. See tests for examples on how to use the different modules. 
+Documentation will be added in the future.
 
 ## Contributing
 
