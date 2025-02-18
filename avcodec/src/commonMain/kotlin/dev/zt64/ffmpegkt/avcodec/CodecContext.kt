@@ -105,6 +105,7 @@ public interface Decoder {
 public expect class AudioEncoder(codec: Codec) : AudioCodecContext, Encoder {
     public constructor(codec: Codec, bitRate: Long, sampleFmt: SampleFormat, sampleRate: Int, channelLayout: ChannelLayout)
 
+    // TODO: Consider using Kotlin flow to emit packets, to conserve memory and avoid blocking
     public fun encode(frame: AudioFrame?): List<Packet>
 }
 

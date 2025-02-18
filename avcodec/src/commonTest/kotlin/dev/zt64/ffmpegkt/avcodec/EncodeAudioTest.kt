@@ -63,13 +63,11 @@ class EncodeAudioTest {
                 freq += 0.001
             }
 
-            codecContext.encode(frame)
-
-            while (true) {
-                codecContext.encode()?.use { packet ->
+            codecContext.encode(frame).forEach { packet ->
+                packet.use {
                     println("Write packet (size=${packet.size})")
                     buffer.write(packet.data)
-                } ?: break
+                }
             }
         }
 
