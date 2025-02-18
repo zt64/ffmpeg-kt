@@ -9,11 +9,15 @@ import okio.Path.Companion.toPath
 import kotlin.test.Test
 
 class EncodeVideoTest {
+    private val outputDir = "./build/test-output/encoded".toPath().apply {
+        FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
+        FileSystem.SYSTEM.createDirectory(this)
+    }
+
     @Test
     fun encodeVideo() = runTest {
         val frameRate = 25 // 25 frames per second
         val frames = 250 // 10 seconds of video
-        val filename = "output.mp4"
 
         val codec = Codec.findEncoder(CodecID.MPEG4)!!
 
@@ -79,7 +83,7 @@ class EncodeVideoTest {
         c.close()
 
         buffer.use {
-            FileSystem.SYSTEM.write(filename.toPath()) {
+            FileSystem.SYSTEM.write(outputDir.resolve("output.mp4")) {
                 writeAll(buffer)
             }
         }

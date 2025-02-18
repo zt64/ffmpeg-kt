@@ -3,11 +3,17 @@ package dev.zt64.ffmpegkt.avcodec
 import dev.zt64.ffmpegkt.avutil.AudioFrame
 import dev.zt64.ffmpegkt.avutil.SampleFormat
 import okio.*
+import okio.Path.Companion.toPath
 import kotlin.math.PI
 import kotlin.math.sin
 import kotlin.test.Test
 
 class EncodeAudioTest {
+    private val outputDir = "./build/test-output/encoded".toPath().apply {
+        FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
+        FileSystem.SYSTEM.createDirectory(this)
+    }
+
     @Test
     fun encodeAudio() {
         val codec = Codec.findEncoder(CodecID.MP3)!!
@@ -73,7 +79,7 @@ class EncodeAudioTest {
 
         // Write the buffer to a file
         buffer.use {
-            FileSystem.SYSTEM.write(FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("output.mp3")) {
+            FileSystem.SYSTEM.write(outputDir.resolve("output.mp3")) {
                 writeAll(buffer)
             }
         }
