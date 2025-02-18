@@ -26,15 +26,15 @@ public actual object LibSwScale : FfmpegLibrary {
     }
 
     public actual fun isSupportedInput(pixFmt: PixelFormat): Boolean {
-        return sws_isSupportedInput(pixFmt.value).checkTrue()
+        return sws_isSupportedInput(pixFmt.num).checkTrue()
     }
 
     public actual fun isSupportedOutput(pixFmt: PixelFormat): Boolean {
-        return sws_isSupportedOutput(pixFmt.value).checkTrue()
+        return sws_isSupportedOutput(pixFmt.num).checkTrue()
     }
 
     public actual fun isSupportedEndianness(pixFmt: PixelFormat): Boolean {
-        return sws_isSupportedEndiannessConversion(pixFmt.value).checkTrue()
+        return sws_isSupportedEndiannessConversion(pixFmt.num).checkTrue()
     }
 
     public actual fun allocContext(): SwsContext {
