@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avcodec.AVCodecID
+import dev.zt64.ffmpegkt.avcodec.CodecID
 import dev.zt64.ffmpegkt.avutil.AVClass
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.toKString
@@ -14,12 +14,12 @@ public actual class AVOutputFormat(public val native: ffmpeg.AVOutputFormat) {
         get() = native.mime_type!!.toKString()
     public actual inline val extensions: String
         get() = native.extensions!!.toKString()
-    public actual inline val audioCodec: AVCodecID
-        get() = AVCodecID(native.audio_codec.toInt())
-    public actual inline val videoCodec: AVCodecID
-        get() = AVCodecID(native.video_codec.toInt())
-    public actual inline val subtitleCodec: AVCodecID
-        get() = AVCodecID(native.subtitle_codec.toInt())
+    public actual inline val audioCodec: CodecID
+        get() = CodecID(native.audio_codec.toInt())
+    public actual inline val videoCodec: CodecID
+        get() = CodecID(native.video_codec.toInt())
+    public actual inline val subtitleCodec: CodecID
+        get() = CodecID(native.subtitle_codec.toInt())
     public actual inline val flags: Int
         get() = native.flags
     public actual inline val codecTag: List<AVCodecTag>

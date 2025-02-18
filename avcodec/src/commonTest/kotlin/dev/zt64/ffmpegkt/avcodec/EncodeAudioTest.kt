@@ -10,14 +10,14 @@ import kotlin.test.Test
 class EncodeAudioTest {
     @Test
     fun encodeAudio() {
-        val codec = AVCodec.findEncoder(AVCodecID.MP3)!!
-        val codecContext = AudioEncoder(codec).apply {
-            bitRate = 192000 // 192 kbps
-            sampleFmt = SampleFormat.S32P // 32-bit signed planar
-            sampleRate = codec.supportedSampleRates.max()
+        val codec = Codec.findEncoder(CodecID.MP3)!!
+        val codecContext = AudioEncoder(
+            codec = codec,
+            bitRate = 192000, // 192 kbps
+            sampleFmt = SampleFormat.S32P, // 32-bit signed planar
+            sampleRate = codec.supportedSampleRates.max(),
             channelLayout = codec.channelLayouts.maxBy { it.nbChannels }
-        }
-
+        )
         codecContext.open()
 
         val frame = AudioFrame(

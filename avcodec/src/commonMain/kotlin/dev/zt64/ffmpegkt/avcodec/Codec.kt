@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.avcodec
 
-import dev.zt64.ffmpegkt.avcodec.AVCodec.Companion.findDecoder
-import dev.zt64.ffmpegkt.avcodec.AVCodec.Companion.findEncoder
+import dev.zt64.ffmpegkt.avcodec.Codec.Companion.findDecoder
+import dev.zt64.ffmpegkt.avcodec.Codec.Companion.findEncoder
 import dev.zt64.ffmpegkt.avutil.*
 
 internal expect class NativeAVCodec
@@ -12,15 +12,15 @@ internal expect class NativeAVCodec
  *
  * Get a codec by calling [findEncoder] or [findDecoder] with the name of the codec.
  *
- * Or get a codec by calling [findEncoder] or [findDecoder] with the [AVCodecID] of the codec.
+ * Or get a codec by calling [findEncoder] or [findDecoder] with the [CodecID] of the codec.
  *
  * @property native
  */
-public expect value class AVCodec internal constructor(internal val native: NativeAVCodec) : AutoCloseable {
+public expect value class Codec internal constructor(internal val native: NativeAVCodec) : AutoCloseable {
     public val name: String
     public val longName: String
     public val type: MediaType
-    public val id: AVCodecID
+    public val id: CodecID
     public val capabilities: Int
     public val maxLowres: Byte
     public val supportedFrameRates: List<Rational>
@@ -32,10 +32,10 @@ public expect value class AVCodec internal constructor(internal val native: Nati
     public val wrapperName: String
 
     public companion object {
-        public fun findEncoder(name: String): AVCodec?
-        public fun findDecoder(name: String): AVCodec?
+        public fun findEncoder(name: String): Codec?
+        public fun findDecoder(name: String): Codec?
 
-        public fun findEncoder(id: AVCodecID): AVCodec?
-        public fun findDecoder(id: AVCodecID): AVCodec?
+        public fun findEncoder(id: CodecID): Codec?
+        public fun findDecoder(id: CodecID): Codec?
     }
 }

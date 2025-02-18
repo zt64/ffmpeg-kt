@@ -9,11 +9,11 @@ internal const val ERROR_AGAIN = -11
  * Base class for all encoders and decoders. Contains common properties and methods.
  */
 public expect sealed class CodecContext : AutoCloseable {
-    internal val codec: AVCodec
+    internal val codec: Codec
 
     public var codecTag: Int
     public var codecType: MediaType
-    public var codecId: AVCodecID
+    public var codecId: CodecID
     public var bitRate: Long
 
     public var flags: Int
@@ -89,6 +89,9 @@ public interface Encoder {
 }
 
 public interface Decoder {
+    /**
+     * Receive a new decoded frame of data
+     */
     public fun decode(packet: Packet?)
 }
 
@@ -99,10 +102,10 @@ public interface Decoder {
  *
  * @param codec
  */
-public expect class AudioEncoder(codec: AVCodec) :
-    AudioCodecContext,
-    Encoder {
-    public fun encode(frame: AudioFrame?)
+public expect class AudioEncoder(codec: Codec) : AudioCodecContext, Encoder {
+    public constructor(codec: Codec, bitRate: Long, sampleFmt: SampleFormat, sampleRate: Int, channelLayout: ChannelLayout)
+
+    public fun encode(frame: AudioFrame?): List<Packet>
 }
 
 /**
@@ -112,9 +115,7 @@ public expect class AudioEncoder(codec: AVCodec) :
  *
  * @param codec
  */
-public expect class AudioDecoder(codec: AVCodec) :
-    AudioCodecContext,
-    Decoder {
+public expect class AudioDecoder(codec: Codec) : AudioCodecContext, Decoder {
     public fun decode(): AudioFrame?
 }
 
@@ -125,9 +126,26 @@ public expect class AudioDecoder(codec: AVCodec) :
  *
  * @param codec
  */
-public expect class VideoEncoder(codec: AVCodec) :
-    VideoCodecContext,
-    Encoder {
+public expect class VideoEncoder(codec: Codec) : VideoCodecContext, Encoder {
+    public constructor(
+        codec: Codec,
+        bitRate: Long,
+        width: Int,
+        height: Int,
+    )
+
+    public constructor(
+        codec: Codec,
+        bitRate: Long,
+        width: Int,
+        height: Int,
+        timeBase: Rational,
+        framerate: Rational,
+        gopSize: Int,
+        maxBFrames: Int,
+        pixFmt: PixelFormat = PixelFormat.YUV420P
+    )
+
     public fun encode(frame: VideoFrame?): List<Packet>
 }
 
@@ -138,9 +156,7 @@ public expect class VideoEncoder(codec: AVCodec) :
  *
  * @param codec
  */
-public expect class VideoDecoder(codec: AVCodec) :
-    VideoCodecContext,
-    Decoder {
+public expect class VideoDecoder(codec: Codec) : VideoCodecContext, Decoder {
     /**
      * Receive a new decoded frame of video data.
      *

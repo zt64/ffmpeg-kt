@@ -11,8 +11,8 @@ import kotlin.test.fail
 class DecodeVideoTest {
     @Test
     fun decodeVideo() {
-        val codecId = AVCodecID.MPEG1VIDEO
-        val codec = AVCodec.findDecoder(codecId)!!
+        val codecId = CodecID.MPEG1VIDEO
+        val codec = Codec.findDecoder(codecId)!!
 
         val parser = CodecParserContext(codecId)
         val codecContext = VideoDecoder(codec)

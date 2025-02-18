@@ -1,8 +1,6 @@
 package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.*
-import dev.zt64.ffmpegkt.avutil.ChannelLayout
-import dev.zt64.ffmpegkt.avutil.MediaType
 import ffmpeg.*
 import kotlinx.cinterop.get
 import kotlinx.cinterop.pointed
@@ -10,15 +8,15 @@ import kotlinx.cinterop.toKString
 
 internal actual typealias NativeAVCodec = ffmpeg.AVCodec
 
-public actual value class AVCodec(public val native: NativeAVCodec) : AutoCloseable {
+public actual value class Codec(public val native: NativeAVCodec) : AutoCloseable {
     public actual inline val name: String
         get() = native.name?.toKString().orEmpty()
     public actual inline val longName: String
         get() = native.long_name?.toKString().orEmpty()
     public actual inline val type: MediaType
         get() = MediaType(native.type)
-    public actual inline val id: AVCodecID
-        get() = AVCodecID(native.id.toInt())
+    public actual inline val id: CodecID
+        get() = CodecID(native.id.toInt())
     public actual inline val capabilities: Int
         get() = native.capabilities
     public actual inline val maxLowres: Byte
@@ -61,20 +59,20 @@ public actual value class AVCodec(public val native: NativeAVCodec) : AutoClosea
         get() = native.wrapper_name?.toKString().orEmpty()
 
     public actual companion object {
-        public actual fun findEncoder(name: String): AVCodec? {
-            return avcodec_find_encoder_by_name(name)?.let { AVCodec(it.pointed) }
+        public actual fun findEncoder(name: String): Codec? {
+            return avcodec_find_encoder_by_name(name)?.let { Codec(it.pointed) }
         }
 
-        public actual fun findDecoder(name: String): AVCodec? {
-            return avcodec_find_decoder_by_name(name)?.let { AVCodec(it.pointed) }
+        public actual fun findDecoder(name: String): Codec? {
+            return avcodec_find_decoder_by_name(name)?.let { Codec(it.pointed) }
         }
 
-        public actual fun findEncoder(id: AVCodecID): AVCodec? {
-            return avcodec_find_encoder(id.num.toUInt())?.let { AVCodec(it.pointed) }
+        public actual fun findEncoder(id: CodecID): Codec? {
+            return avcodec_find_encoder(id.num.toUInt())?.let { Codec(it.pointed) }
         }
 
-        public actual fun findDecoder(id: AVCodecID): AVCodec? {
-            return avcodec_find_decoder(id.num.toUInt())?.let { AVCodec(it.pointed) }
+        public actual fun findDecoder(id: CodecID): Codec? {
+            return avcodec_find_decoder(id.num.toUInt())?.let { Codec(it.pointed) }
         }
     }
 

@@ -15,17 +15,19 @@ class EncodeVideoTest {
         val frames = 250 // 10 seconds of video
         val filename = "output.mp4"
 
-        val codec = AVCodec.findEncoder(AVCodecID.MPEG4)!!
-        val c = VideoEncoder(codec).apply {
-            bitRate = 50000
-            width = 256
-            height = 256
-            timeBase = Rational(1, frameRate)
-            framerate = Rational(frames, 1)
-            gopSize = 10
-            maxBFrames = 1
+        val codec = Codec.findEncoder(CodecID.MPEG4)!!
+
+        val c = VideoEncoder(
+            codec = codec,
+            bitRate = 50000,
+            width = 256,
+            height = 256,
+            timeBase = Rational(1, frameRate),
+            framerate = Rational(frames, 1),
+            gopSize = 10,
+            maxBFrames = 1,
             pixFmt = PixelFormat.YUV420P
-        }
+        )
         c.open()
 
         val buffer = Buffer()

@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avcodec.AVCodec
+import dev.zt64.ffmpegkt.avcodec.Codec
 import dev.zt64.ffmpegkt.avcodec.Packet
 import dev.zt64.ffmpegkt.avutil.*
 
@@ -69,10 +69,10 @@ public expect class AVFormatContext(
     public val protocolBlacklist: List<String>
     public val ioRepositioned: Int
 
-    public var videoCodec: AVCodec?
-    public var audioCodec: AVCodec?
-    public var subtitleCodec: AVCodec?
-    public var dataCodec: AVCodec?
+    public var videoCodec: Codec?
+    public var audioCodec: Codec?
+    public var subtitleCodec: Codec?
+    public var dataCodec: Codec?
 
     public val metadataHeaderPadding: Int
 
@@ -90,7 +90,7 @@ public expect class AVFormatContext(
         type: Int,
         wantedStreamIndex: Int,
         relatedStreamIndex: Int,
-        codec: AVCodec,
+        codec: Codec,
         flags: Int
     ): Int
 

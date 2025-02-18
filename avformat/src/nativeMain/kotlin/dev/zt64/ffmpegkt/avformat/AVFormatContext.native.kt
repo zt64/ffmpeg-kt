@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avcodec.AVCodec
+import dev.zt64.ffmpegkt.avcodec.Codec
 import dev.zt64.ffmpegkt.avcodec.Packet
 import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.AVClass
@@ -198,23 +198,23 @@ public actual class AVFormatContext(
     public actual inline val ioRepositioned: Int
         get() = native.io_repositioned
 
-    public actual inline var videoCodec: AVCodec?
-        get() = native.video_codec?.pointed?.let(::AVCodec)
+    public actual inline var videoCodec: Codec?
+        get() = native.video_codec?.pointed?.let(::Codec)
         set(value) {
             native.video_codec = value?.native?.ptr
         }
-    public actual inline var audioCodec: AVCodec?
-        get() = native.audio_codec?.pointed?.let(::AVCodec)
+    public actual inline var audioCodec: Codec?
+        get() = native.audio_codec?.pointed?.let(::Codec)
         set(value) {
             native.audio_codec = value?.native?.ptr
         }
-    public actual inline var subtitleCodec: AVCodec?
-        get() = native.subtitle_codec?.pointed?.let(::AVCodec)
+    public actual inline var subtitleCodec: Codec?
+        get() = native.subtitle_codec?.pointed?.let(::Codec)
         set(value) {
             native.subtitle_codec = value?.native?.ptr
         }
-    public actual inline var dataCodec: AVCodec?
-        get() = native.data_codec?.pointed?.let(::AVCodec)
+    public actual inline var dataCodec: Codec?
+        get() = native.data_codec?.pointed?.let(::Codec)
         set(value) {
             native.data_codec = value?.native?.ptr
         }
@@ -260,7 +260,7 @@ public actual class AVFormatContext(
         type: Int,
         wantedStreamIndex: Int,
         relatedStreamIndex: Int,
-        codec: AVCodec,
+        codec: Codec,
         flags: Int
     ): Int {
         return av_find_best_stream(

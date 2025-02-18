@@ -4,7 +4,7 @@ import ffmpeg.*
 import kotlinx.cinterop.*
 
 public actual class CodecParserContext(private val native: AVCodecParserContext) : AutoCloseable {
-    public actual constructor(codec: AVCodecID) : this(av_parser_init(codec.num)!!.pointed)
+    public actual constructor(codec: CodecID) : this(av_parser_init(codec.num)!!.pointed)
 
     private val packet = Packet()
 

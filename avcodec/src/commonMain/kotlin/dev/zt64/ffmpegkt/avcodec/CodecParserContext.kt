@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.avcodec
 
 public expect class CodecParserContext : AutoCloseable {
-    public constructor(codec: AVCodecID)
+    public constructor(codec: CodecID)
 
     public val parser: AVCodecParser
     public val frameOffset: Long

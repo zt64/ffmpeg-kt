@@ -6,9 +6,9 @@ import org.bytedeco.ffmpeg.global.avcodec.*
 internal actual typealias NativeAVCodec = org.bytedeco.ffmpeg.avcodec.AVCodec
 
 @JvmInline
-public actual value class AVCodec(public val native: NativeAVCodec) : AutoCloseable {
-    public actual inline val id: AVCodecID
-        get() = AVCodecID(native.id())
+public actual value class Codec(public val native: NativeAVCodec) : AutoCloseable {
+    public actual inline val id: CodecID
+        get() = CodecID(native.id())
 
     public actual inline val name: String
         get() = native.name().string
@@ -110,20 +110,20 @@ public actual value class AVCodec(public val native: NativeAVCodec) : AutoClosea
     }
 
     public actual companion object {
-        public actual fun findEncoder(name: String): AVCodec? {
-            return avcodec_find_encoder_by_name(name)?.let(::AVCodec)
+        public actual fun findEncoder(name: String): Codec? {
+            return avcodec_find_encoder_by_name(name)?.let(::Codec)
         }
 
-        public actual fun findDecoder(name: String): AVCodec? {
-            return avcodec_find_decoder_by_name(name)?.let(::AVCodec)
+        public actual fun findDecoder(name: String): Codec? {
+            return avcodec_find_decoder_by_name(name)?.let(::Codec)
         }
 
-        public actual fun findEncoder(id: AVCodecID): AVCodec? {
-            return avcodec_find_encoder(id.num)?.let(::AVCodec)
+        public actual fun findEncoder(id: CodecID): Codec? {
+            return avcodec_find_encoder(id.num)?.let(::Codec)
         }
 
-        public actual fun findDecoder(id: AVCodecID): AVCodec? {
-            return avcodec_find_decoder(id.num)?.let(::AVCodec)
+        public actual fun findDecoder(id: CodecID): Codec? {
+            return avcodec_find_decoder(id.num)?.let(::Codec)
         }
     }
 }

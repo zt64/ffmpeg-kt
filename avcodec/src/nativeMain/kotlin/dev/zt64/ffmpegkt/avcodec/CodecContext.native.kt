@@ -9,7 +9,7 @@ import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
 import kotlinx.cinterop.*
 
-public actual sealed class CodecContext protected constructor(internal val native: AVCodecContext, internal actual val codec: AVCodec) :
+public actual sealed class CodecContext protected constructor(internal val native: AVCodecContext, internal actual val codec: Codec) :
     AutoCloseable {
     public actual var codecTag: Int
         get() = native.codec_tag.toInt()
@@ -21,8 +21,8 @@ public actual sealed class CodecContext protected constructor(internal val nativ
         set(value) {
             native.codec_type = value.num
         }
-    public actual var codecId: AVCodecID
-        get() = AVCodecID(native.codec_id.toInt())
+    public actual var codecId: CodecID
+        get() = CodecID(native.codec_id.toInt())
         set(value) {
             native.codec_id = value.num.toUInt()
         }
@@ -75,13 +75,13 @@ public actual sealed class CodecContext protected constructor(internal val nativ
     }
 
     internal companion object {
-        internal fun allocContext(codec: AVCodec?): AVCodecContext {
+        internal fun allocContext(codec: Codec?): AVCodecContext {
             return avcodec_alloc_context3(codec?.native?.ptr)!!.pointed
         }
     }
 }
 
-public actual sealed class AudioCodecContext protected constructor(codec: AVCodec) :
+public actual sealed class AudioCodecContext protected constructor(codec: Codec) :
     CodecContext(avcodec_alloc_context3(codec.native.ptr)!!.pointed, codec) {
 
     public actual var sampleFmt: SampleFormat
@@ -104,7 +104,7 @@ public actual sealed class AudioCodecContext protected constructor(codec: AVCode
         }
 }
 
-public actual sealed class VideoCodecContext protected constructor(codec: AVCodec) :
+public actual sealed class VideoCodecContext protected constructor(codec: Codec) :
     CodecContext(avcodec_alloc_context3(codec.native.ptr), codec) {
 
     public actual var pixFmt: PixelFormat
@@ -144,7 +144,7 @@ public actual sealed class VideoCodecContext protected constructor(codec: AVCode
         }
 }
 
-public actual class AudioEncoder actual constructor(codec: AVCodec) :
+public actual class AudioEncoder actual constructor(codec: Codec) :
     AudioCodecContext(codec),
     Encoder {
     private val packet = Packet()
@@ -165,7 +165,7 @@ public actual class AudioEncoder actual constructor(codec: AVCodec) :
     }
 }
 
-public actual class AudioDecoder actual constructor(codec: AVCodec) :
+public actual class AudioDecoder actual constructor(codec: Codec) :
     AudioCodecContext(codec),
     Decoder {
     override fun decode(packet: Packet?) {
@@ -179,7 +179,7 @@ public actual class AudioDecoder actual constructor(codec: AVCodec) :
     }
 }
 
-public actual class VideoEncoder actual constructor(codec: AVCodec) :
+public actual class VideoEncoder actual constructor(codec: Codec) :
     VideoCodecContext(codec),
     Encoder {
     private val packet = Packet()
@@ -200,7 +200,7 @@ public actual class VideoEncoder actual constructor(codec: AVCodec) :
     }
 }
 
-public actual class VideoDecoder actual constructor(codec: AVCodec) :
+public actual class VideoDecoder actual constructor(codec: Codec) :
     VideoCodecContext(codec),
     Decoder {
     private val frame = VideoFrame()

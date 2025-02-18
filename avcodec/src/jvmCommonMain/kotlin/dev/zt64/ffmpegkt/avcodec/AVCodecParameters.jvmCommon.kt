@@ -7,8 +7,8 @@ import org.bytedeco.ffmpeg.avcodec.AVCodecParameters
 public actual open class CodecParameters(public val native: AVCodecParameters) {
     public actual val codecType: MediaType
         get() = MediaType(native.codec_type())
-    public actual val codecId: AVCodecID
-        get() = AVCodecID(native.codec_id())
+    public actual val codecId: CodecID
+        get() = CodecID(native.codec_id())
     public actual var codecTag: Int
         get() = native.codec_tag()
         set(value) {

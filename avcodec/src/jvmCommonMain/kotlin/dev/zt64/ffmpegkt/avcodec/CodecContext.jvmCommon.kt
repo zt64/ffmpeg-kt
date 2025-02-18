@@ -8,7 +8,7 @@ import org.bytedeco.ffmpeg.global.avutil.av_channel_layout_copy
 
 private typealias NativeCodecContext = org.bytedeco.ffmpeg.avcodec.AVCodecContext
 
-public actual sealed class CodecContext protected constructor(internal val native: NativeCodecContext, internal actual val codec: AVCodec) :
+public actual sealed class CodecContext protected constructor(internal val native: NativeCodecContext, internal actual val codec: Codec) :
     AutoCloseable {
     protected val packet: Packet = Packet() // Shared packet for encoders
 
@@ -24,8 +24,8 @@ public actual sealed class CodecContext protected constructor(internal val nativ
             native.codec_type(value.num)
         }
 
-    public actual var codecId: AVCodecID
-        get() = AVCodecID(native.codec_id())
+    public actual var codecId: CodecID
+        get() = CodecID(native.codec_id())
         set(value) {
             native.codec_id(value.num)
         }
@@ -97,7 +97,7 @@ public actual sealed class CodecContext protected constructor(internal val nativ
     }
 }
 
-public actual sealed class AudioCodecContext protected constructor(codec: AVCodec) :
+public actual sealed class AudioCodecContext protected constructor(codec: Codec) :
     CodecContext(avcodec_alloc_context3(codec.native), codec) {
 
     public actual var sampleFmt: SampleFormat
@@ -125,7 +125,7 @@ public actual sealed class AudioCodecContext protected constructor(codec: AVCode
         }
 }
 
-public actual sealed class VideoCodecContext protected constructor(codec: AVCodec) :
+public actual sealed class VideoCodecContext protected constructor(codec: Codec) :
     CodecContext(avcodec_alloc_context3(codec.native), codec) {
 
     public actual var pixFmt: PixelFormat
@@ -171,19 +171,34 @@ public actual sealed class VideoCodecContext protected constructor(codec: AVCode
         }
 }
 
-public actual class AudioEncoder actual constructor(codec: AVCodec) :
-    AudioCodecContext(codec),
-    Encoder {
-    public actual fun encode(frame: AudioFrame?) {
+public actual class AudioEncoder actual constructor(codec: Codec) : AudioCodecContext(codec), Encoder {
+    public actual constructor(
+        codec: Codec,
+        bitRate: Long,
+        sampleFmt: SampleFormat,
+        sampleRate: Int,
+        channelLayout: ChannelLayout
+    ) : this(codec) {
+        this.bitRate = bitRate
+        this.sampleFmt = sampleFmt
+        this.sampleRate = sampleRate
+        this.channelLayout = channelLayout
+    }
+
+    public actual fun encode(frame: AudioFrame?): List<Packet> {
         super.sendFrame(frame)
+
+        return buildList {
+            while (true) {
+                add(receivePacket() ?: break)
+            }
+        }
     }
 
     override fun encode(): Packet? = receivePacket()
 }
 
-public actual class AudioDecoder actual constructor(codec: AVCodec) :
-    AudioCodecContext(codec),
-    Decoder {
+public actual class AudioDecoder actual constructor(codec: Codec) : AudioCodecContext(codec), Decoder {
     override fun decode(packet: Packet?) {
         sendPacket(packet)
     }
@@ -202,9 +217,39 @@ public actual class AudioDecoder actual constructor(codec: AVCodec) :
     }
 }
 
-public actual class VideoEncoder actual constructor(codec: AVCodec) :
-    VideoCodecContext(codec),
-    Encoder {
+public actual class VideoEncoder actual constructor(codec: Codec) : VideoCodecContext(codec), Encoder {
+    public actual constructor(
+        codec: Codec,
+        bitRate: Long,
+        width: Int,
+        height: Int,
+        timeBase: Rational,
+        framerate: Rational,
+        gopSize: Int,
+        maxBFrames: Int,
+        pixFmt: PixelFormat
+    ) : this(codec) {
+        this.bitRate = bitRate
+        this.width = width
+        this.height = height
+        this.timeBase = timeBase
+        this.framerate = framerate
+        this.gopSize = gopSize
+        this.maxBFrames = maxBFrames
+        this.pixFmt = pixFmt
+    }
+
+    public actual constructor(
+        codec: Codec,
+        bitRate: Long,
+        width: Int,
+        height: Int,
+    ) : this(codec) {
+        this.bitRate = bitRate
+        this.width = width
+        this.height = height
+    }
+
     public actual fun encode(frame: VideoFrame?): List<Packet> {
         super.sendFrame(frame)
 
@@ -218,9 +263,7 @@ public actual class VideoEncoder actual constructor(codec: AVCodec) :
     override fun encode(): Packet? = receivePacket()
 }
 
-public actual class VideoDecoder actual constructor(codec: AVCodec) :
-    VideoCodecContext(codec),
-    Decoder {
+public actual class VideoDecoder actual constructor(codec: Codec) : VideoCodecContext(codec), Decoder {
     private val frame = VideoFrame()
 
     override fun decode(packet: Packet?) {

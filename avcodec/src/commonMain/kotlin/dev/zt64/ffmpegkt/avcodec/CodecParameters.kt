@@ -4,7 +4,7 @@ import dev.zt64.ffmpegkt.avutil.*
 
 public expect open class CodecParameters {
     public val codecType: MediaType
-    public val codecId: AVCodecID
+    public val codecId: CodecID
     public var codecTag: Int
 
     // public val codedSideData: AVPacketSideData

@@ -12,7 +12,7 @@ public actual class CodecParserContext(
     @PublishedApi
     internal val native: NativeAVCodecParserContext
 ) : AutoCloseable {
-    public actual constructor(codec: AVCodecID) : this(av_parser_init(codec.num))
+    public actual constructor(codec: CodecID) : this(av_parser_init(codec.num))
 
     private val packet = Packet()
 

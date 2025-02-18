@@ -11,8 +11,8 @@ import kotlin.test.Test
 class DecodeAudioTest {
     @Test
     fun decodeAudio() {
-        val id = AVCodecID.MP2
-        val codec = AVCodec.findDecoder(id)!!
+        val id = CodecID.MP2
+        val codec = Codec.findDecoder(id)!!
         val parser = CodecParserContext(id)
         val codecContext = AudioDecoder(codec)
         codecContext.open()
