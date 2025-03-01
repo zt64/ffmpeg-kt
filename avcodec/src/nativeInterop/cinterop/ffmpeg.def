@@ -6,5 +6,5 @@ compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/inclu
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavcodec
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavcodec
 
-strictEnums =
+# strictEnums =
 nonStrictEnums = AVHWDeviceType
