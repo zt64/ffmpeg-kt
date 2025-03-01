@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 
 internal actual typealias NativeAVFrame = AVFrame
 
-public actual open class Frame internal constructor(internal open val native: NativeAVFrame) : AutoCloseable {
+public actual open class Frame internal constructor(public open val native: NativeAVFrame) : AutoCloseable {
     public actual val linesize: IntArray
         get() = IntArray(AV_NUM_DATA_POINTERS) { native.linesize[it] }
     public actual val data: FrameData
@@ -30,7 +30,7 @@ public actual open class Frame internal constructor(internal open val native: Na
     }
 }
 
-public actual class AudioFrame internal constructor(@PublishedApi public override val native: NativeAVFrame) : Frame(native) {
+public actual class AudioFrame internal constructor(override val native: NativeAVFrame) : Frame(native) {
     public actual constructor() : this(av_frame_alloc()!!.pointed)
     public actual constructor(nbSamples: Int, format: SampleFormat, channelLayout: ChannelLayout) : this(av_frame_alloc()!!.pointed) {
         this.nbSamples = nbSamples
@@ -62,7 +62,7 @@ public actual class AudioFrame internal constructor(@PublishedApi public overrid
         }
 }
 
-public actual class VideoFrame internal constructor(@PublishedApi public override val native: NativeAVFrame) : Frame(native) {
+public actual class VideoFrame internal constructor(override val native: NativeAVFrame) : Frame(native) {
     public actual constructor() : this(av_frame_alloc()!!.pointed)
     public actual constructor(width: Int, height: Int, format: PixelFormat) : this(av_frame_alloc()!!.pointed) {
         this.width = width

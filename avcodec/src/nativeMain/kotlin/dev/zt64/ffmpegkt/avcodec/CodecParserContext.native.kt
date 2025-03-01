@@ -44,6 +44,16 @@ public actual class CodecParserContext(private val native: AVCodecParserContext)
         }
     }
 
+    public actual fun parsePackets(
+        avCtx: CodecContext,
+        input: ByteArray,
+        pts: Long,
+        dts: Long,
+        pos: Long
+    ): List<ParsedPacket> {
+        TODO()
+    }
+
     override fun close() {
         av_parser_close(native.ptr)
     }
