@@ -9,9 +9,9 @@ import kotlin.test.fail
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class DecodeVideoTest {
-    private val outputDir = "./build/test-output/encoded".toPath().apply {
+    private val outputDir = "./build/test-output/encoded/frames".toPath().apply {
         FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
-        FileSystem.SYSTEM.createDirectory(this)
+        FileSystem.SYSTEM.createDirectories(this)
     }
 
     @Test
@@ -40,7 +40,7 @@ class DecodeVideoTest {
                     val buf = frame.data[0].toUByteArray().asByteArray()
                     val wrap = frame.linesize[0]
 
-                    FileSystem.SYSTEM.write(outputDir.resolve("./frames/frame-${codecContext.frameNum}.pgm")) {
+                    FileSystem.SYSTEM.write(outputDir.resolve("./frame-${codecContext.frameNum}.pgm")) {
                         writeUtf8("P5\n${frame.width} ${frame.height}\n255\n")
 
                         for (i in 0 until frame.height) {

@@ -11,7 +11,7 @@ import kotlin.test.Test
 class EncodeAudioTest {
     private val outputDir = "./build/test-output/encoded".toPath().apply {
         FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
-        FileSystem.SYSTEM.createDirectory(this)
+        FileSystem.SYSTEM.createDirectories(this)
     }
 
     @Test

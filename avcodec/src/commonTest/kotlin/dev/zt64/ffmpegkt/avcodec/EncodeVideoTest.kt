@@ -11,7 +11,7 @@ import kotlin.test.Test
 class EncodeVideoTest {
     private val outputDir = "./build/test-output/encoded".toPath().apply {
         FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
-        FileSystem.SYSTEM.createDirectory(this)
+        FileSystem.SYSTEM.createDirectories(this)
     }
 
     @Test
@@ -85,21 +85,6 @@ class EncodeVideoTest {
         buffer.use {
             FileSystem.SYSTEM.write(outputDir.resolve("output.mp4")) {
                 writeAll(buffer)
-            }
-        }
-    }
-
-    private fun encode(
-        c: VideoEncoder,
-        frame: VideoFrame?,
-        outputStream: Buffer
-    ) {
-        if (frame != null) println("Send frame ${frame.pts}")
-
-        c.encode(frame).forEach { packet ->
-            packet.use {
-                println("Write packet (size=${packet.size})")
-                outputStream.write(packet.data)
             }
         }
     }
