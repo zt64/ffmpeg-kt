@@ -9,6 +9,11 @@ import kotlin.test.fail
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class DecodeVideoTest {
+    private val outputDir = "./build/test-output/encoded".toPath().apply {
+        FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
+        FileSystem.SYSTEM.createDirectory(this)
+    }
+
     @Test
     fun decodeVideo() {
         val codecId = CodecID.MPEG1VIDEO
@@ -17,8 +22,6 @@ class DecodeVideoTest {
         val parser = CodecParserContext(codecId)
         val codecContext = VideoDecoder(codec)
         codecContext.open()
-
-        FileSystem.SYSTEM.createDirectory("./frames".toPath())
 
         parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
@@ -37,7 +40,7 @@ class DecodeVideoTest {
                     val buf = frame.data[0].toUByteArray().asByteArray()
                     val wrap = frame.linesize[0]
 
-                    FileSystem.SYSTEM.write("./frames/frame-${codecContext.frameNum}.pgm".toPath()) {
+                    FileSystem.SYSTEM.write(outputDir.resolve("./frames/frame-${codecContext.frameNum}.pgm")) {
                         writeUtf8("P5\n${frame.width} ${frame.height}\n255\n")
 
                         for (i in 0 until frame.height) {
