@@ -9,8 +9,8 @@ fun KotlinMultiplatformExtension.native(configure: KotlinNativeTarget.() -> Unit
         os.contains("win") -> listOf(mingwX64())
 
         os.contains("linux") -> listOf(
-            linuxX64(),
-            linuxArm64()
+            linuxX64()
+            // linuxArm64() disabled due to `/usr/include/bits/floatn.h:97:9: error: __float128 is not supported on this target`
         )
 
         os.contains("mac") -> listOf(
