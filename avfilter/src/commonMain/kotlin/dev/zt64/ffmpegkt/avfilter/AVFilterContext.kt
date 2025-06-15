@@ -1,13 +1,11 @@
 package dev.zt64.ffmpegkt.avfilter
 
-import dev.zt64.ffmpegkt.avutil.AVClass
 import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 
 internal expect class NativeAVFilterContext
 
 public expect value class AVFilterContext internal constructor(internal val native: NativeAVFilterContext) : AutoCloseable {
-    public val avClass: AVClass
     public val name: String
     public val width: Int
     public val height: Int

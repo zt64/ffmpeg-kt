@@ -19,16 +19,3 @@ public actual value class FilterGraph actual constructor(private actual val nati
         TODO("Not yet implemented")
     }
 }
-
-public actual typealias FilterGraph2 = AVFilterGraph
-
-public actual fun FilterGraph2D(): FilterGraph2 {
-    return avfilter_graph_alloc()
-}
-
-public actual fun FilterGraph2.close() {
-    avfilter.avfilter_graph_free(this)
-}
-
-public actual val FilterGraph2.threads: Int
-    get() = this.nb_threads()

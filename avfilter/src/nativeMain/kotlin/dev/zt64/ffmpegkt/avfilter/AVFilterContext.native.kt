@@ -18,11 +18,8 @@ public actual value class AVFilterContext actual constructor(
         TODO("Not yet implemented")
     }
 
-    public actual fun getSamples(samples: Int) {
-    }
-
-    override fun close() {
-        ffmpeg.avfilter_free(native)
+    actual override fun close() {
+        ffmpeg.avfilter_free(native.ptr)
     }
 
     public actual fun getFrame(): Frame {

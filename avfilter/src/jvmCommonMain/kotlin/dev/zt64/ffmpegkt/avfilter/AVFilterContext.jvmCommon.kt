@@ -1,6 +1,5 @@
 package dev.zt64.ffmpegkt.avfilter
 
-import dev.zt64.ffmpegkt.avutil.AVClass
 import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 import dev.zt64.ffmpegkt.avutil.util.checkError
@@ -13,8 +12,6 @@ public actual value class AVFilterContext(
     @PublishedApi
     internal actual val native: NativeAVFilterContext
 ) : AutoCloseable {
-    public actual val avClass: AVClass
-        get() = AVClass(native.av_class())
     public actual val name: String
         get() = native.name().string
     public actual val width: Int

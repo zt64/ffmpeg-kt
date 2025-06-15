@@ -6,16 +6,33 @@ import kotlin.test.Test
 class FilterAudioTest {
     @Test
     fun filterAudio() {
-        val graph = FilterGraph2D()
+        /**
+         *                 [main]
+         * input --> split ---------------------> overlay --> output
+         *             |                             ^
+         *             |[tmp]                  [flip]|
+         *             +-----> crop --> vflip -------+
+         *
+         */
+        val graph = FilterGraph {
+            filter("split") {
+                val tmp = output {
+                    filter("crop") {
+                        option("out_w", "iw")
+                        option("out_h", "ih/2")
+                        option("x", 0)
+                        option("y", 0)
+                    }
 
-        println(graph.threads)
-        graph.use {
-            println(graph.threads)
+                    filter("vflip")
+                }
+
+                output {
+                    filter("overlay", tmp)
+                }
+            }
         }
 
-        println(graph.threads)
-        println(graph.close())
-
-        println(graph.threads)
+        graph.close()
     }
 }
