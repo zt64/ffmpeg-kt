@@ -45,7 +45,7 @@ public expect sealed class CodecContext : AutoCloseable {
      * @param codec The codec to open the context with.
      * @param options
      */
-    public fun open(options: AVDictionary? = null)
+    public fun open(options: Dictionary? = null)
 
     /**
      * Flush the buffers of the codec context.
@@ -107,6 +107,7 @@ public expect class AudioEncoder(codec: Codec) : AudioCodecContext, Encoder {
 
     // TODO: Consider using Kotlin flow to emit packets, to conserve memory and avoid blocking
     public fun encode(frame: AudioFrame?): List<Packet>
+    public override fun encode(): Packet?
 }
 
 /**
@@ -118,6 +119,7 @@ public expect class AudioEncoder(codec: Codec) : AudioCodecContext, Encoder {
  */
 public expect class AudioDecoder(codec: Codec) : AudioCodecContext, Decoder {
     public fun decode(): AudioFrame?
+    public override fun decode(packet: Packet?)
 }
 
 /**
@@ -132,7 +134,7 @@ public expect class VideoEncoder(codec: Codec) : VideoCodecContext, Encoder {
         codec: Codec,
         bitRate: Long,
         width: Int,
-        height: Int,
+        height: Int
     )
 
     public constructor(
@@ -148,6 +150,7 @@ public expect class VideoEncoder(codec: Codec) : VideoCodecContext, Encoder {
     )
 
     public fun encode(frame: VideoFrame?): List<Packet>
+    public override fun encode(): Packet?
 }
 
 /**
@@ -164,4 +167,5 @@ public expect class VideoDecoder(codec: Codec) : VideoCodecContext, Decoder {
      * NOTE: This frame should not be modified or closed by the user.
      */
     public fun decode(): VideoFrame?
+    public override fun decode(packet: Packet?)
 }

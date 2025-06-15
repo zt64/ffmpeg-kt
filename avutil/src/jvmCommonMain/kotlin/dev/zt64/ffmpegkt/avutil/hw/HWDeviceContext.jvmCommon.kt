@@ -9,7 +9,7 @@ public actual class HWDeviceContext actual constructor(
     deviceType: AVHWDeviceType,
     device: String?,
     allowSoftwareFallback: Boolean,
-    options: dev.zt64.ffmpegkt.avutil.AVDictionary?
+    options: dev.zt64.ffmpegkt.avutil.Dictionary?
 ) : AutoCloseable {
     private val ptr = AVBufferRef()
 

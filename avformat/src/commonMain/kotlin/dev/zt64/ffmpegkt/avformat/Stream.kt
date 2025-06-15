@@ -1,8 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avcodec.AudioCodecParameters
-import dev.zt64.ffmpegkt.avcodec.CodecParameters
-import dev.zt64.ffmpegkt.avcodec.VideoCodecParameters
+import dev.zt64.ffmpegkt.avcodec.*
 import dev.zt64.ffmpegkt.avutil.Rational
 
 /**
@@ -38,7 +36,8 @@ public expect class VideoStream : Stream {
     public override var codecParameters: VideoCodecParameters
 }
 
-internal fun Stream.commonToString(): String {
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun Stream.commonToString(): String {
     return "Stream(" +
         "index=$index, " +
         "id=$id, " +

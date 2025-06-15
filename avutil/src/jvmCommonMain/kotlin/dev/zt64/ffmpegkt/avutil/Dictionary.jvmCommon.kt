@@ -3,10 +3,10 @@ package dev.zt64.ffmpegkt.avutil
 import org.bytedeco.ffmpeg.avutil.AVDictionaryEntry
 import org.bytedeco.ffmpeg.global.avutil.*
 
-internal actual typealias AVDictionaryNative = org.bytedeco.ffmpeg.avutil.AVDictionary
+internal actual typealias NativeAVDictionary = org.bytedeco.ffmpeg.avutil.AVDictionary
 
-public actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
-    val dict: AVDictionary = LinkedHashMap<String, String>(av_dict_count(nativeDict)).apply {
+public actual fun Dictionary(nativeDict: NativeAVDictionary): Dictionary {
+    val dict: Dictionary = LinkedHashMap<String, String>(av_dict_count(nativeDict)).apply {
         var entry: AVDictionaryEntry? = null
         while (true) {
             entry = av_dict_iterate(nativeDict, entry) ?: break
@@ -20,8 +20,8 @@ public actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
     return dict
 }
 
-public actual fun AVDictionary.toNative(): AVDictionaryNative {
-    val nativeDict = AVDictionaryNative()
+public actual fun Dictionary.toNative(): NativeAVDictionary {
+    val nativeDict = NativeAVDictionary()
 
     this.forEach {
         av_dict_set(nativeDict, it.key, it.value, 0)

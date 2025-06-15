@@ -42,13 +42,9 @@ class EncodeVideoTest {
         )
 
         for (i in 0 until frames) {
-            frame.makeWritable()
-
             val frameData = frame.data
 
-            val linesize0 = frame.linesize[0]
-            val linesize1 = frame.linesize[1]
-            val linesize2 = frame.linesize[2]
+            val (linesize0, linesize1, linesize2) = frame.linesize
 
             // Y
             for (y in 0 until c.height) {

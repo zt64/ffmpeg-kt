@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avutil.AVDictionary
+import dev.zt64.ffmpegkt.avutil.Dictionary
 import dev.zt64.ffmpegkt.avutil.Rational
 
 public expect class NativeAVChapter
@@ -19,5 +19,5 @@ public expect value class Chapter(internal val native: NativeAVChapter) {
     public val start: Long
     public val end: Long
     public val timeBase: Rational
-    public val metadata: AVDictionary
+    public val metadata: Dictionary
 }

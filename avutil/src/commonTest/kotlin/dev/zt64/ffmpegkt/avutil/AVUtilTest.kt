@@ -11,7 +11,7 @@ class AVUtilTest {
 
     @Test
     fun testDictionary() {
-        val dictionary: AVDictionary = mapOf(
+        val dictionary: Dictionary = mapOf(
             "key1" to "value1",
             "key2" to "value2",
             "key3" to "value3",
@@ -20,7 +20,7 @@ class AVUtilTest {
         )
 
         val toNative = dictionary.toNative()
-        val fromNative = AVDictionary(toNative)
+        val fromNative = Dictionary(toNative)
 
         assertEquals(
             expected = dictionary,

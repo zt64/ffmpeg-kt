@@ -23,7 +23,7 @@ public actual open class Stream(public val native: AVStream) {
     public actual open val codecParameters: CodecParameters
         get() = CodecParameters(native.codecpar())
 
-    override fun toString(): String {
+    public override fun toString(): String {
         return "Stream(" +
             "native=$native, " +
             "index=$index, " +

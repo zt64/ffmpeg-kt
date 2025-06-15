@@ -3,9 +3,9 @@ package dev.zt64.ffmpegkt.avutil
 import ffmpeg.av_dict_set
 import kotlinx.cinterop.*
 
-internal actual typealias AVDictionaryNative = ffmpeg.AVDictionary
+internal actual typealias NativeAVDictionary = ffmpeg.AVDictionary
 
-internal actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
+public actual fun Dictionary(nativeDict: NativeAVDictionary): Dictionary {
     return buildMap {
         repeat(nativeDict.count) {
             val entry = nativeDict.elems!![it]
@@ -14,8 +14,8 @@ internal actual fun AVDictionary(nativeDict: AVDictionaryNative): AVDictionary {
     }
 }
 
-internal actual fun AVDictionary.toNative(): AVDictionaryNative {
-    return nativeHeap.alloc<AVDictionaryNative> {
+public actual fun Dictionary.toNative(): NativeAVDictionary {
+    return nativeHeap.alloc<NativeAVDictionary> {
         for ((key, value) in this@toNative) {
             av_dict_set(cValuesOf(ptr), key, value, 0)
         }

@@ -1,12 +1,12 @@
 package dev.zt64.ffmpegkt.avutil.hw
 
-import dev.zt64.ffmpegkt.avutil.AVDictionary
+import dev.zt64.ffmpegkt.avutil.Dictionary
 
 public expect class HWDeviceContext(
     deviceType: AVHWDeviceType,
     device: String? = null,
     allowSoftwareFallback: Boolean = true,
-    options: AVDictionary? = null
+    options: Dictionary? = null
 ) : AutoCloseable {
     override fun close()
 }

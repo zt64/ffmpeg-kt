@@ -78,10 +78,15 @@ public expect class VideoFrame() : Frame {
  * while the inner arrays are the data of each plane.
  */
 public expect class FrameData : AbstractList<FrameData.FrameDataSegment> {
+    public override val size: Int
+    public override fun get(index: Int): FrameDataSegment
+
     /**
      * A single plane of the frame, represented as a list of bytes.
      */
     public inner class FrameDataSegment : AbstractList<UByte> {
+        public override val size: Int
+        public override fun get(index: Int): UByte
         public operator fun set(index: Int, value: UByte)
     }
 }

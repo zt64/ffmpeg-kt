@@ -97,9 +97,9 @@ public actual class VideoFrame(override val native: NativeAVFrame) : Frame(nativ
 }
 
 public actual class FrameData(private val native: NativeAVFrame) : AbstractList<FrameData.FrameDataSegment>() {
-    override val size: Int = AV_NUM_DATA_POINTERS
+    public actual override val size: Int = AV_NUM_DATA_POINTERS
 
-    public override operator fun get(index: Int): FrameDataSegment {
+    public actual override operator fun get(index: Int): FrameDataSegment {
         val pointer = BytePointer(native.data().get(index.toLong()))
         return FrameDataSegment(pointer, calculatePlaneSize(index))
     }
@@ -108,8 +108,11 @@ public actual class FrameData(private val native: NativeAVFrame) : AbstractList<
         return av_image_get_linesize(native.format(), native.width(), index) * native.height()
     }
 
-    public actual inner class FrameDataSegment(private val pointer: BytePointer, override val size: Int) : AbstractList<UByte>() {
-        public override operator fun get(index: Int): UByte {
+    public actual inner class FrameDataSegment(
+        private val pointer: BytePointer,
+        actual override val size: Int
+    ) : AbstractList<UByte>() {
+        public actual override operator fun get(index: Int): UByte {
             return pointer[index.toLong()].toUByte()
         }
 

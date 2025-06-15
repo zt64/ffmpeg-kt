@@ -17,7 +17,7 @@ public actual value class AVIOContext(
 
     public actual constructor(bytes: ByteArray) : this(open(bytes).native)
 
-    override fun close() {
+    public actual override fun close() {
         avio_close(native)
     }
 

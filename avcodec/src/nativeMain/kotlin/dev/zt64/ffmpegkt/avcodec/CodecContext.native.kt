@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.avcodec
 
 import dev.zt64.ffmpegkt.avutil.*
-import dev.zt64.ffmpegkt.avutil.AVDictionary
+import dev.zt64.ffmpegkt.avutil.Dictionary
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
@@ -55,7 +55,7 @@ public actual sealed class CodecContext protected constructor(internal val nativ
     public actual val isOpen: Boolean
         get() = avcodec_is_open(native.ptr).checkTrue()
 
-    public actual fun open(options: AVDictionary?) {
+    public actual fun open(options: Dictionary?) {
         avcodec_open2(native.ptr, codec.native.ptr, null).checkError()
     }
 

@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avutil.AVDictionary
+import dev.zt64.ffmpegkt.avutil.Dictionary
 import dev.zt64.ffmpegkt.avutil.Rational
 import org.bytedeco.ffmpeg.avformat.AVChapter
 
@@ -19,6 +19,6 @@ public actual value class Chapter(
         get() = native.end()
     public actual inline val timeBase: Rational
         get() = Rational(native.time_base())
-    public actual inline val metadata: AVDictionary
-        get() = AVDictionary(native.metadata())
+    public actual inline val metadata: Dictionary
+        get() = Dictionary(native.metadata())
 }
