@@ -49,6 +49,14 @@ class KmpBasePlugin : Plugin<Project> {
                         }
                     }
                 }
+
+                nativeMain {
+                    kotlin {
+                        compilerOptions {
+                            freeCompilerArgs.addAll("-Xopt-in=kotlinx.cinterop.ExperimentalForeignApi")
+                        }
+                    }
+                }
             }
         }
     }
