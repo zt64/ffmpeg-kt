@@ -21,6 +21,7 @@ allprojects {
 
     configure<KtlintExtension> {
         version = rootProject.libs.versions.ktlint
+        verbose = true
     }
 
     group = "dev.zt64.ffmpeg-kt"
