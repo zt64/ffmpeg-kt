@@ -3,8 +3,10 @@ package dev.zt64.ffmpegkt.gradle
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
@@ -40,9 +42,14 @@ class KmpBasePlugin : Plugin<Project> {
             }
 
             sourceSets.apply {
+                val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs")
+
                 commonTest {
                     dependencies {
                         implementation(kotlin("test"))
+
+                        implementation(libs.findLibrary("okio").get())
+                        implementation(libs.findLibrary("okio-fakefilesystem").get())
 
                         if (target.name != "testing") {
                             implementation(project(":testing"))
