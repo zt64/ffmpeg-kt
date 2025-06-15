@@ -1,33 +1,31 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avcodec.Packet
+import dev.zt64.ffmpegkt.avcodec.*
 import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
+import org.bytedeco.ffmpeg.avformat.AVFormatContext
 import org.bytedeco.ffmpeg.avformat.AVProbeData
+import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.ffmpeg.global.avformat.*
+import org.bytedeco.ffmpeg.global.avutil.av_dict_free
 import org.bytedeco.javacpp.BytePointer
+import org.bytedeco.javacpp.PointerPointer
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
-internal typealias NativeAVFormatContext2 = org.bytedeco.ffmpeg.avformat.AVFormatContext
+internal typealias NativeAVFormatContext2 = AVFormatContext
 
 public actual abstract class Container(@PublishedApi internal val native: NativeAVFormatContext2) : AutoCloseable {
-    public actual inline val metadata: Map<String, String>?
-        get() = native.metadata()?.let { AVDictionary(it) }
+    public actual open val metadata: Map<String, String>
+        get() = native.metadata()?.let { Dictionary(it) }.orEmpty()
+
+    @Suppress("PropertyName")
+    @PublishedApi
+    internal val _streams: MutableList<Stream> = mutableListOf()
 
     public actual inline val streams: StreamContainer
-        get() {
-            val streams = List(native.nb_streams()) {
-                val stream = native.streams(it)
-
-                when (MediaType(stream.codecpar().codec_type())) {
-                    MediaType.AUDIO -> AudioStream(stream)
-                    MediaType.VIDEO -> VideoStream(stream)
-                    else -> Stream(stream)
-                }
-            }
-
-            return StreamContainer(streams)
-        }
+        get() = StreamContainer(_streams)
 
     public actual inline val chapters: List<Chapter>
         get() = List(native.nb_chapters()) {
@@ -48,7 +46,7 @@ public actual abstract class Container(@PublishedApi internal val native: Native
         public actual fun openInput(
             url: String,
             format: AVInputFormat?,
-            options: AVDictionary?
+            options: Dictionary?
         ): InputContainer {
             val formatContext = avformat_alloc_context()
 
@@ -65,7 +63,7 @@ public actual abstract class Container(@PublishedApi internal val native: Native
         public actual fun openInput(
             byteArray: ByteArray,
             format: AVInputFormat?,
-            options: AVDictionary?
+            options: Dictionary?
         ): InputContainer {
             val formatContext = avformat_alloc_context()
 
@@ -102,6 +100,14 @@ public actual abstract class Container(@PublishedApi internal val native: Native
             return InputContainer(formatContext)
         }
 
+        public fun openInput(
+            path: Path,
+            format: AVInputFormat? = null,
+            options: Dictionary? = null
+        ): InputContainer {
+            return openInput(path.absolutePathString(), format, options)
+        }
+
         public actual fun openOutput(
             format: AVOutputFormat?,
             formatName: String?,
@@ -113,8 +119,11 @@ public actual abstract class Container(@PublishedApi internal val native: Native
         public actual fun openOutput(filename: String): OutputContainer {
             return OutputContainer(null, null, filename)
         }
-    }
 
+        public fun openOutput(path: Path): OutputContainer {
+            return openOutput(path.absolutePathString())
+        }
+    }
 }
 
 public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx) {
@@ -135,15 +144,15 @@ public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx)
         }
 
     init {
-        val options: AVDictionary? = null
-        avformat_find_stream_info(ctx, options?.toNative()).checkTrue()
+        val options: org.bytedeco.ffmpeg.avutil.AVDictionary? = null
+        avformat_find_stream_info(ctx, options).checkTrue()
     }
 
     public actual fun demux(): List<Packet> {
         val packets = mutableListOf<Packet>()
         while (true) {
             val packet = try {
-                Packet().apply {  av_read_frame(this@InputContainer.native, native) }
+                Packet().apply { av_read_frame(this@InputContainer.native, native) }
             } catch (e: Exception) {
                 break
             }
@@ -170,6 +179,46 @@ public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx)
 }
 
 public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx) {
+    private val _metadata = mutableMapOf<String, String>()
+
+    public actual override val metadata: MutableMap<String, String> = object : MutableMap<String, String> by _metadata {
+        override fun put(key: String, value: String): String? {
+            val previous = _metadata.put(key, value)
+            updateNativeMetadata()
+            return previous
+        }
+
+        override fun putAll(from: Map<out String, String>) {
+            _metadata.putAll(from)
+            updateNativeMetadata()
+        }
+
+        override fun remove(key: String): String? {
+            val previous = _metadata.remove(key)
+            updateNativeMetadata()
+            return previous
+        }
+
+        override fun clear() {
+            _metadata.clear()
+            updateNativeMetadata()
+        }
+    }
+
+    private fun updateNativeMetadata() {
+        // Free any existing metadata dictionary
+        if (native.metadata() != null) {
+            av_dict_free(native.metadata())
+        }
+
+        // Create a new dictionary from current metadata
+        if (_metadata.isNotEmpty()) {
+            val dict = _metadata.toNative()
+            native.metadata(dict)
+        } else {
+            native.metadata(null)
+        }
+    }
     public actual constructor(
         format: AVOutputFormat?,
         formatName: String?,
@@ -178,12 +227,110 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
         avformat_alloc_output_context2(native, format?.native, formatName, filename).checkError()
     }
 
-    public actual fun addStream(stream: Stream) {
+    public actual fun <T : Stream> addStream(stream: T): T {
+        val avStream = avformat_new_stream(native, null)
+            ?: throw IllegalStateException("Failed to create new stream")
+
+        // Copy codec parameters from the source stream
+        avcodec_parameters_copy(avStream.codecpar(), stream.native.codecpar()).checkError()
+
+        @Suppress("UNCHECKED_CAST")
+        return when (MediaType(avStream.codecpar().codec_type())) {
+            MediaType.AUDIO -> AudioStream(avStream) as T
+            MediaType.VIDEO -> VideoStream(avStream) as T
+            else -> Stream(avStream, null) as T
+        }
+    }
+
+    public actual inline fun <reified T : Stream> newStream(codec: Codec, streamIndex: Int): T {
+        if (!avformat_query_codec(native.oformat(), codec.id.num, FF_COMPLIANCE_NORMAL).checkTrue()) {
+            throw IllegalArgumentException("Codec ${codec.id} is not supported by the output format ${native.oformat().name()}")
+        }
+
+        val avStream = avformat_new_stream(native, codec.native)
+            ?: throw IllegalStateException("Failed to create new stream")
+
+        val codecContext = when (codec.type) {
+            MediaType.AUDIO -> AudioEncoder(codec)
+            MediaType.VIDEO -> VideoEncoder(codec)
+            else -> CodecContext(codec)
+        }
+
+        when (codecContext) {
+            is AudioCodecContext -> {
+                codecContext.sampleFmt = SampleFormat(codec.native.sample_fmts().get(0))
+                codecContext.bitRate = 0
+                codecContext.bitRateTolerance = 32000
+                codecContext.sampleRate = 48000
+
+                avStream.time_base(codecContext.timeBase.toNative())
+            }
+
+            is VideoCodecContext -> {
+                codecContext.pixFmt = PixelFormat.YUV420P
+                codecContext.width = 640
+                codecContext.height = 480
+                codecContext.bitRate = 0
+                codecContext.bitRateTolerance = 128000
+
+                avStream.time_base(codecContext.timeBase.toNative())
+            }
+
+            else -> {
+                // For other codecs, we can just use the default context
+                avStream.time_base(codecContext.timeBase.toNative())
+            }
+        }
+
+        if ((native.oformat().flags() and AVFMT_GLOBALHEADER) != 0) {
+            codecContext.flags = codecContext.flags or AV_CODEC_FLAG_GLOBAL_HEADER
+        }
+
+        avcodec_parameters_from_context(avStream.codecpar(), codecContext.native).checkError()
+
+        val streamObj = when (codec.type) {
+            MediaType.AUDIO -> AudioStream(avStream, codecContext)
+            MediaType.VIDEO -> VideoStream(avStream, codecContext)
+            else -> Stream(avStream, codecContext)
+        } as T
+
+        _streams.add(streamObj)
+        return streamObj
+    }
+
+    public actual fun writeHeader() {
+        for (stream in streams) {
+            val ctx = stream.codecContext ?: throw IllegalStateException("Stream ${stream.index} does not have a codec context")
+
+            if (!ctx.isOpen) {
+                ctx.open()
+            }
+        }
+
+        if (native.pb() == null && (native.oformat().flags() and AVFMT_NOFILE) == 0) {
+            val pb = PointerPointer<org.bytedeco.ffmpeg.avformat.AVIOContext>(1)
+
+            avio_open(pb, BytePointer(native.url().string), AVIO_FLAG_WRITE).checkError()
+
+            val ioContext = pb.get(org.bytedeco.ffmpeg.avformat.AVIOContext::class.java)
+            native.pb(ioContext)
+        }
+
+        avformat_write_header(native, metadata.toNative()).checkError()
+    }
+
+    public actual fun mux(packet: Packet) {
+        av_interleaved_write_frame(native, packet.native).checkError()
+    }
+
+    public actual fun mux(packets: List<Packet>) {
+        packets.forEach { mux(it) }
     }
 
     actual override fun close() {
+        av_write_trailer(native).checkError()
         if (native.pb() != null) avio_context_free(native.pb())
 
-        TODO("Not yet implemented")
+        // TODO: Write trailer and finalize the output container
     }
 }

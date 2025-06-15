@@ -1,13 +1,11 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avcodec.AudioCodecParameters
-import dev.zt64.ffmpegkt.avcodec.CodecParameters
-import dev.zt64.ffmpegkt.avcodec.VideoCodecParameters
+import dev.zt64.ffmpegkt.avcodec.*
 import dev.zt64.ffmpegkt.avutil.Rational
 import org.bytedeco.ffmpeg.avformat.AVStream
 import org.bytedeco.ffmpeg.global.avcodec.avcodec_parameters_copy
 
-public actual open class Stream(public val native: AVStream) {
+public actual open class Stream(public val native: AVStream, public actual val codecContext: CodecContext? = null) {
     public actual inline val index: Int
         get() = native.index()
     public actual inline val id: Int
@@ -37,7 +35,7 @@ public actual open class Stream(public val native: AVStream) {
     }
 }
 
-public actual class AudioStream(native: AVStream) : Stream(native) {
+public actual class AudioStream(native: AVStream, codecContext: CodecContext? = null) : Stream(native, codecContext) {
     public actual override var codecParameters: AudioCodecParameters
         get() = AudioCodecParameters(native.codecpar())
         set(value) {
@@ -45,7 +43,7 @@ public actual class AudioStream(native: AVStream) : Stream(native) {
         }
 }
 
-public actual class VideoStream(native: AVStream) : Stream(native) {
+public actual class VideoStream(native: AVStream, codecContext: CodecContext? = null) : Stream(native, codecContext) {
     public actual override var codecParameters: VideoCodecParameters
         get() = VideoCodecParameters(native.codecpar())
         set(value) {

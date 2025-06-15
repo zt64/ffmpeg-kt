@@ -1,7 +1,5 @@
 package dev.zt64.ffmpegkt.avformat
 
-import dev.zt64.ffmpegkt.avutil.AVClass
-
 internal actual typealias NativeAVInputFormat = org.bytedeco.ffmpeg.avformat.AVInputFormat
 
 @JvmInline
@@ -18,8 +16,6 @@ public actual value class AVInputFormat(public val native: NativeAVInputFormat) 
         get() = native.flags()
     public actual inline val codecTag: List<AVCodecTag>
         get() = emptyList()
-    public actual inline val privClass: AVClass
-        get() = AVClass(native.priv_class())
 
     override fun toString(): String = commonToString()
 }

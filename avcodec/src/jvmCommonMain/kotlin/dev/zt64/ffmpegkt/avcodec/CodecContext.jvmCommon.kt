@@ -8,11 +8,14 @@ import org.bytedeco.ffmpeg.global.avutil.av_channel_layout_copy
 
 private typealias NativeCodecContext = org.bytedeco.ffmpeg.avcodec.AVCodecContext
 
-public actual sealed class CodecContext protected constructor(internal val native: NativeCodecContext, internal actual val codec: Codec) :
-    AutoCloseable {
+public actual open class CodecContext protected constructor(
+    public val native: NativeCodecContext,
+    internal actual val codec: Codec
+) : AutoCloseable {
     protected val packet: Packet = Packet() // Shared packet for encoders
 
-    public actual var codecTag: Int
+    public actual constructor(codec: Codec) : this(avcodec_alloc_context3(codec.native), codec)
+
     public actual inline var codecTag: Int
         get() = native.codec_tag()
         set(value) {
@@ -37,7 +40,13 @@ public actual sealed class CodecContext protected constructor(internal val nativ
             native.bit_rate(value)
         }
 
-    public actual var flags: Int
+    public actual inline var bitRateTolerance: Int
+        get() = native.bit_rate_tolerance()
+        set(value) {
+            native.bit_rate_tolerance(value)
+        }
+
+    public actual inline var flags: Int
         get() = native.flags()
         set(value) {
             native.flags(value)

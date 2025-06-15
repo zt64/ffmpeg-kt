@@ -26,6 +26,7 @@ public expect open class Stream {
      */
     public val frames: Long
     public open val codecParameters: CodecParameters
+    public val codecContext: CodecContext?
 }
 
 public expect class AudioStream : Stream {

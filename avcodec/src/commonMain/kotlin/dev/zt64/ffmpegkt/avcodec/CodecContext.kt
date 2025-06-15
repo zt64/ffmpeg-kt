@@ -8,13 +8,14 @@ internal const val ERROR_AGAIN = -11
 /**
  * Base class for all encoders and decoders. Contains common properties and methods.
  */
-public expect sealed class CodecContext : AutoCloseable {
+public expect open class CodecContext(codec: Codec) : AutoCloseable {
     internal val codec: Codec
 
     public var codecTag: Int
     public var codecType: MediaType
     public var codecId: CodecID
     public var bitRate: Long
+    public var bitRateTolerance: Int
 
     public var flags: Int
     public var timeBase: Rational
