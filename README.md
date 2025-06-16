@@ -8,9 +8,9 @@ FFmpeg to make it easier to work with multimedia files. It is designed to be mod
 
 ## Supported Platforms
 
-- Linux (x86_64, arm64)
+- Linux (x86_64)
 - Windows (x86_64)
-- macOS (x86_64, arm64)
+- macOS (x86_64)
 - Android (armeabi-v7a, arm64-v8a, x86, x86_64)
 - JVM
 
@@ -28,18 +28,15 @@ FFmpegKt is split up into multiple modules to keep modularization and dependenci
 ffmpeg-kt = "x.y.z"
 
 [libraries]
-# To keep things simple, use the complete module to add all modules
-ffmpeg-kt-complete = { module = "dev.zt64:ffmpeg-kt-complete", version.ref = "ffmpeg-kt" }
+# Required
+ffmpeg-kt-core = { module = "dev.zt64:ffmpeg-kt-core", version.ref = "ffmpeg-kt" } # Core media handling: encoding, decoding, and container format support
 
-# Or use each module as needed
-ffmpeg-kt-avutil = { module = "dev.zt64:ffmpeg-kt-avutil", version.ref = "ffmpeg-kt" }
-ffmpeg-kt-avcodec = { module = "dev.zt64:ffmpeg-kt-avcodec", version.ref = "ffmpeg-kt" }
-ffmpeg-kt-avformat = { module = "dev.zt64:ffmpeg-kt-avformat", version.ref = "ffmpeg-kt" }
-ffmpeg-kt-avfilter = { module = "dev.zt64:ffmpeg-kt-avfilter", version.ref = "ffmpeg-kt" }
-ffmpeg-kt-avdevice = { module = "dev.zt64:ffmpeg-kt-avdevice", version.ref = "ffmpeg-kt" }
-ffmpeg-kt-swscale = { module = "dev.zt64:ffmpeg-kt-swscale", version.ref = "ffmpeg-kt" }
-ffmpeg-kt-swresample = { module = "dev.zt64:ffmpeg-kt-swresample", version.ref = "ffmpeg-kt" }
-ffmpeg-kt-postproc = { module = "dev.zt64:ffmpeg-kt-postproc", version.ref = "ffmpeg-kt" }
+# Optional
+ffmpeg-kt-filter = { module = "dev.zt64:ffmpeg-kt-filter", version.ref = "ffmpeg-kt" } # Audio/Video filtering
+ffmpeg-kt-device = { module = "dev.zt64:ffmpeg-kt-device", version.ref = "ffmpeg-kt" } # Multimedia device input/output
+ffmpeg-kt-swscale = { module = "dev.zt64:ffmpeg-kt-swscale", version.ref = "ffmpeg-kt" } # Image scaling and format conversion
+ffmpeg-kt-swresample = { module = "dev.zt64:ffmpeg-kt-swresample", version.ref = "ffmpeg-kt" } # Audio resampling
+ffmpeg-kt-postproc = { module = "dev.zt64:ffmpeg-kt-postproc", version.ref = "ffmpeg-kt" } # Post-processing
 ```
 
 </details>

@@ -23,16 +23,12 @@ dependencyResolutionManagement {
 rootProject.name = "ffmpeg-kt"
 
 include(
-    "common",
-    "avcodec",
-    "avdevice",
-    "avfilter",
-    "avformat",
-    "avutil",
+    "core",
+    "device",
+    "filter",
     "postproc",
     "swresample",
     "swscale",
-    "complete"
+    "testing"
 )
-include("testing")
 include("ksp:ksp-processor", "ksp:annotations")

@@ -1,7 +1,0 @@
-headers = libavformat/avformat.h
-headerFilter = libavformat/**
-package = ffmpeg
-
-compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/ffmpeg
-linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavformat
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavformat

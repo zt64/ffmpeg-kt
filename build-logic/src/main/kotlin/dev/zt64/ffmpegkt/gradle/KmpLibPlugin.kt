@@ -34,10 +34,8 @@ class KmpLibPlugin : Plugin<Project> {
             sourceSets.apply {
                 commonMain {
                     dependencies {
-                        api(project(":common"))
-
-                        if (target.name != "avutil") {
-                            implementation(project(":avutil"))
+                        if (target.name != "core") {
+                            api(project(":core"))
                         }
                     }
                 }
