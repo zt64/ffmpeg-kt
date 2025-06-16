@@ -1,7 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avcodec.CodecID
-import dev.zt64.ffmpegkt.avutil.AVClass
 
 internal expect class NativeAVOutputFormat
 
@@ -15,7 +14,6 @@ public expect value class AVOutputFormat internal constructor(internal val nativ
     public val subtitleCodec: CodecID
     public val flags: Int
     public val codecTag: List<AVCodecTag>
-    public val privClass: AVClass
 }
 
 internal inline fun AVOutputFormat.commonToString(): String {

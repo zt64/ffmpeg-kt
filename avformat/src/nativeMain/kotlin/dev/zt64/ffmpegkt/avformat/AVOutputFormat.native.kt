@@ -1,8 +1,6 @@
 package dev.zt64.ffmpegkt.avformat
 
 import dev.zt64.ffmpegkt.avcodec.CodecID
-import dev.zt64.ffmpegkt.avutil.AVClass
-import kotlinx.cinterop.pointed
 import kotlinx.cinterop.toKString
 
 public actual typealias NativeAVOutputFormat = ffmpeg.AVOutputFormat
@@ -26,6 +24,4 @@ public actual value class AVOutputFormat(public val native: NativeAVOutputFormat
         get() = native.flags
     public actual inline val codecTag: List<AVCodecTag>
         get() = TODO()
-    public actual inline val privClass: AVClass
-        get() = AVClass(native.priv_class!!.pointed)
 }
