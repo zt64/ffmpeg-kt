@@ -35,3 +35,4 @@ include(
     "complete"
 )
 include("testing")
+include("ksp:ksp-processor", "ksp:annotations")
