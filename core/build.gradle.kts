@@ -6,6 +6,12 @@ description = "FFmpeg-kt core functionality, including the FFmpeg API and common
 
 kotlin {
     sourceSets {
+        commonMain {
+            dependencies {
+                api(libs.coroutines.core)
+            }
+        }
+
         jvmCommonMain {
             dependencies {
                 api(libs.ffmpeg)

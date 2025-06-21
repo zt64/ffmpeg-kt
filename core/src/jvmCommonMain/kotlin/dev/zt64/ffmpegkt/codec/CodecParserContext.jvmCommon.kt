@@ -2,6 +2,8 @@ package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.util.FfmpegException
 import dev.zt64.ffmpegkt.avutil.util.checkError
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.IntPointer
@@ -65,66 +67,66 @@ public actual class CodecParserContext(
         pts: Long,
         dts: Long,
         pos: Long
-    ): List<ParsedPacket> {
+    ): Flow<ParsedPacket> {
         val packets = mutableListOf<ParsedPacket>()
         var currentPosition = 0
         val chunkSize = 4096
 
-        while (currentPosition < input.size) {
-            // Calculate how much data is left to process
-            val remainingBytes = input.size - currentPosition
-            val currentChunkSize = minOf(chunkSize, remainingBytes)
+        return flow {
+            while (currentPosition < input.size) {
+                // Calculate how much data is left to process
+                val remainingBytes = input.size - currentPosition
+                val currentChunkSize = minOf(chunkSize, remainingBytes)
 
-            // Create a chunk of data with padding
-            val chunk = ByteArray(currentChunkSize + 64) // 64 bytes padding
-            System.arraycopy(input, currentPosition, chunk, 0, currentChunkSize)
+                // Create a chunk of data with padding
+                val chunk = ByteArray(currentChunkSize + 64) // 64 bytes padding
+                System.arraycopy(input, currentPosition, chunk, 0, currentChunkSize)
 
-            var dataSize = currentChunkSize
-            var shouldContinue = true
+                var dataSize = currentChunkSize
+                var shouldContinue = true
 
-            while (dataSize > 0 && shouldContinue) {
-                try {
-                    val parsedPacket = parse(avCtx, chunk, dataSize)
+                while (dataSize > 0 && shouldContinue) {
+                    try {
+                        val parsedPacket = parse(avCtx, chunk, dataSize)
 
-                    if (parsedPacket.packet.size > 0) {
-                        // Add packet to list only if it has actual content
-                        packets.add(parsedPacket)
+                        if (parsedPacket.packet.size > 0) {
+                            // Add packet to list only if it has actual content
+                            emit(parsedPacket)
+                        }
+
+                        if (parsedPacket.bytesRead <= 0) {
+                            shouldContinue = false
+                            continue
+                        }
+
+                        // Shift remaining data to start of buffer
+                        if (parsedPacket.bytesRead < dataSize) {
+                            System.arraycopy(
+                                chunk,
+                                parsedPacket.bytesRead,
+                                chunk,
+                                0,
+                                dataSize - parsedPacket.bytesRead
+                            )
+                        }
+
+                        dataSize -= parsedPacket.bytesRead
+                    } catch (e: FfmpegException) {
+                        if (e.code == -ERROR_EOF) { // AVERROR_EOF
+                            shouldContinue = false
+                            continue
+                        }
+                        throw e
                     }
+                }
 
-                    if (parsedPacket.bytesRead <= 0) {
-                        shouldContinue = false
-                        continue
-                    }
-
-                    // Shift remaining data to start of buffer
-                    if (parsedPacket.bytesRead < dataSize) {
-                        System.arraycopy(
-                            chunk,
-                            parsedPacket.bytesRead,
-                            chunk,
-                            0,
-                            dataSize - parsedPacket.bytesRead
-                        )
-                    }
-
-                    dataSize -= parsedPacket.bytesRead
-                } catch (e: FfmpegException) {
-                    if (e.code == -ERROR_EOF) { // AVERROR_EOF
-                        shouldContinue = false
-                        continue
-                    }
-                    throw e
+                currentPosition += if (dataSize > 0) {
+                    (currentChunkSize - dataSize)
+                } else {
+                    currentChunkSize
                 }
             }
-
-            currentPosition += if (dataSize > 0) {
-                (currentChunkSize - dataSize)
-            } else {
-                currentChunkSize
-            }
         }
-
-        return packets
     }
 
     public override fun close() {

@@ -13,7 +13,7 @@ class DecodeVideoTest {
     private val outputDir = TestUtil.getOutputPath("encoded/frames")
 
     @Test
-    fun decodeVideo() {
+    fun decodeVideo() = runTest {
         val codecId = CodecID.MPEG1VIDEO
         val codec = Codec.findDecoder(codecId)!!
 
@@ -21,7 +21,7 @@ class DecodeVideoTest {
         val codecContext = VideoDecoder(codec)
         codecContext.open()
 
-        parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
+        parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).collect { (packet) ->
             println("Parsed packet size: ${packet.size}")
             if (packet.size > 0) {
                 try {

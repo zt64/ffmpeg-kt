@@ -2,6 +2,7 @@ package dev.zt64.ffmpegkt.codec
 
 import ffmpeg.*
 import kotlinx.cinterop.*
+import kotlinx.coroutines.flow.Flow
 
 public actual class CodecParserContext(private val native: AVCodecParserContext) : AutoCloseable {
     public actual constructor(codec: CodecID) : this(av_parser_init(codec.num)!!.pointed)
@@ -50,7 +51,7 @@ public actual class CodecParserContext(private val native: AVCodecParserContext)
         pts: Long,
         dts: Long,
         pos: Long
-    ): List<ParsedPacket> {
+    ): Flow<ParsedPacket> {
         TODO()
     }
 

@@ -2,6 +2,7 @@ package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.bytesPerSample
 import dev.zt64.ffmpegkt.test.TestResources
+import kotlinx.coroutines.test.runTest
 import okio.Buffer
 import okio.FileSystem
 import okio.SYSTEM
@@ -10,7 +11,7 @@ import kotlin.test.Test
 @OptIn(ExperimentalUnsignedTypes::class)
 class DecodeAudioTest {
     @Test
-    fun decodeAudio() {
+    fun decodeAudio() = runTest {
         val id = CodecID.MP2
         val codec = Codec.findDecoder(id)!!
         val parser = CodecParserContext(id)
@@ -18,10 +19,10 @@ class DecodeAudioTest {
         codecContext.open()
 
         val out = Buffer()
-        parser.parsePackets(codecContext, TestResources.WAV_AUDIO.readBytes()).forEach { (packet) ->
+        parser.parsePackets(codecContext, TestResources.WAV_AUDIO.readBytes()).collect { (packet) ->
             // println("Parsed packet size: ${packet.size}")
 
-            if (packet.size <= 0) return@forEach
+            if (packet.size <= 0) return@collect
 
             codecContext.decode(packet)
 
