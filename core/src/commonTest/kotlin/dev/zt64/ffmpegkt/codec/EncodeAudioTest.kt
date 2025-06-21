@@ -2,17 +2,14 @@ package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.AudioFrame
 import dev.zt64.ffmpegkt.avutil.SampleFormat
+import dev.zt64.ffmpegkt.test.TestUtil
 import okio.*
-import okio.Path.Companion.toPath
 import kotlin.math.PI
 import kotlin.math.sin
 import kotlin.test.Test
 
 class EncodeAudioTest {
-    private val outputDir = "./build/test-output/encoded".toPath().apply {
-        FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
-        FileSystem.SYSTEM.createDirectories(this)
-    }
+    private val outputDir = TestUtil.getOutputPath("encoded")
 
     @Test
     fun encodeAudio() {

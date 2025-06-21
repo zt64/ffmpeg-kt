@@ -12,6 +12,8 @@ kotlin {
                 api(libs.kotlin.test)
                 api(libs.coroutines.test)
                 api(libs.resources.test)
+                api(libs.okio)
+                api(libs.okio.fakefilesystem)
             }
         }
     }

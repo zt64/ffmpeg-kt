@@ -3,16 +3,14 @@ package dev.zt64.ffmpegkt.codec
 import dev.zt64.ffmpegkt.avutil.PixelFormat
 import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.avutil.VideoFrame
+import dev.zt64.ffmpegkt.container.Container
+import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
 import okio.*
-import okio.Path.Companion.toPath
 import kotlin.test.Test
 
 class EncodeVideoTest {
-    private val outputDir = "./build/test-output/encoded".toPath().apply {
-        FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
-        FileSystem.SYSTEM.createDirectories(this)
-    }
+    private val outputDir = TestUtil.getOutputPath("encoded")
 
     @Test
     fun encodeVideo() = runTest {

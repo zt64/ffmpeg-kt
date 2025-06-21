@@ -1,18 +1,16 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.test.TestResources
+import dev.zt64.ffmpegkt.test.TestUtil
+import kotlinx.coroutines.test.runTest
 import okio.FileSystem
-import okio.Path.Companion.toPath
 import okio.SYSTEM
 import kotlin.test.Test
 import kotlin.test.fail
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class DecodeVideoTest {
-    private val outputDir = "./build/test-output/encoded/frames".toPath().apply {
-        FileSystem.SYSTEM.deleteRecursively(this) // Clean up any previous test runs
-        FileSystem.SYSTEM.createDirectories(this)
-    }
+    private val outputDir = TestUtil.getOutputPath("encoded/frames")
 
     @Test
     fun decodeVideo() {
