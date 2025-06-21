@@ -10,14 +10,14 @@ public actual object CRC {
 
     public actual fun init(
         ctx: List<AVCRC>,
-        le: Int,
+        le: Boolean,
         bits: Int,
         poly: Int,
         ctxSize: Int
     ) {
         av_crc_init(
             ctx.toIntArray(),
-            le,
+            if (le) 1 else 0,
             bits,
             poly,
             ctxSize
