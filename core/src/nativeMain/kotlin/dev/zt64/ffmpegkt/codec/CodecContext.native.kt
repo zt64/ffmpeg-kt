@@ -1,13 +1,12 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
-import dev.zt64.ffmpegkt.avutil.Dictionary
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
 import kotlinx.cinterop.*
 
-public actual open class CodecContext protected constructor(
+public actual abstract class CodecContext protected constructor(
     internal val native: AVCodecContext,
     internal actual val codec: Codec
 ) : AutoCloseable {
@@ -32,6 +31,11 @@ public actual open class CodecContext protected constructor(
         get() = native.bit_rate
         set(value) {
             native.bit_rate = value
+        }
+    public actual var bitRateTolerance: Int
+        get() = native.bit_rate_tolerance
+        set(value) {
+            native.bit_rate_tolerance = value
         }
     public actual var flags: Int
         get() = native.flags
@@ -67,14 +71,17 @@ public actual open class CodecContext protected constructor(
         avcodec_flush_buffers(native.ptr)
     }
 
-    protected actual open fun sendFrame(frame: Frame?) {
+    public actual fun sendFrame(frame: Frame?) {
         avcodec_send_frame(native.ptr, frame?.native?.ptr).checkError()
     }
 
-    protected fun receivePacket(): Packet? {
+    public actual fun sendPacket(packet: Packet?) {
+        avcodec_send_packet(native.ptr, packet?.native?.ptr).checkError()
+    }
+
+    public actual fun receivePacket(): Packet? {
         val pkt = av_packet_alloc()!!
-        val ret = avcodec_receive_packet(native.ptr, pkt)
-        return when (ret) {
+        return when (val ret = avcodec_receive_packet(native.ptr, pkt)) {
             ERROR_AGAIN, ERROR_EOF -> null
 
             else -> {
@@ -83,6 +90,8 @@ public actual open class CodecContext protected constructor(
             }
         }
     }
+
+    public actual abstract fun decode(): Frame?
 
     actual override fun close() {
         avcodec_free_context(cValuesOf(native.ptr))
@@ -95,12 +104,12 @@ public actual open class CodecContext protected constructor(
     }
 }
 
-public actual sealed class AudioCodecContext protected constructor(codec: Codec) :
-    CodecContext(avcodec_alloc_context3(codec.native.ptr)!!.pointed, codec) {
-
+public actual sealed class AudioCodecContext protected actual constructor(codec: Codec) : CodecContext(codec) {
     public actual var sampleFmt: SampleFormat
         get() = SampleFormat(native.sample_fmt)
-        set(value) {}
+        set(value) {
+            native.sample_fmt = value.num
+        }
     public actual var sampleRate: Int
         get() = native.sample_rate
         set(value) {
@@ -116,10 +125,22 @@ public actual sealed class AudioCodecContext protected constructor(codec: Codec)
         set(value) {
             native.frame_size = value
         }
+
+    public actual override fun decode(): AudioFrame? {
+        val frame = AudioFrame()
+        return when (val ret = avcodec_receive_frame(native.ptr, frame.native.ptr)) {
+            ERROR_AGAIN, ERROR_EOF -> null
+
+            else -> {
+                ret.checkError()
+                frame
+            }
+        }
+    }
 }
 
-public actual sealed class VideoCodecContext protected constructor(codec: Codec) :
-    CodecContext(avcodec_alloc_context3(codec.native.ptr)!!.pointed, codec) {
+public actual sealed class VideoCodecContext protected actual constructor(codec: Codec) :
+    CodecContext(codec) {
 
     public actual var pixFmt: PixelFormat
         get() = PixelFormat(native.pix_fmt)
@@ -156,149 +177,16 @@ public actual sealed class VideoCodecContext protected constructor(codec: Codec)
         set(value) {
             value.asNative().readValue().place(native.framerate.ptr)
         }
-}
 
-public actual class AudioEncoder actual constructor(codec: Codec) :
-    AudioCodecContext(codec),
-    Encoder {
-    public actual constructor(
-        codec: Codec,
-        bitRate: Long,
-        sampleFmt: SampleFormat,
-        sampleRate: Int,
-        channelLayout: ChannelLayout
-    ) : this(codec) {
-        this.bitRate = bitRate
-        this.sampleFmt = sampleFmt
-        this.sampleRate = sampleRate
-        this.channelLayout = channelLayout
-    }
-
-    private val packet = Packet()
-
-    public actual fun encode(frame: AudioFrame?): List<Packet> {
-        super.sendFrame(frame)
-
-        return buildList {
-            while (true) {
-                add(receivePacket() ?: break)
-            }
-        }
-    }
-
-    public actual override fun encode(): Packet? {
-        val ret = avcodec_receive_packet(native.ptr, packet.native.ptr)
-
-        return if (ret == ERROR_AGAIN || ret == ERROR_EOF) {
-            null
-        } else {
-            ret.checkError()
-            packet
-        }
-    }
-}
-
-public actual class AudioDecoder actual constructor(codec: Codec) :
-    AudioCodecContext(codec),
-    Decoder {
-
-    public actual override fun decode(packet: Packet?): List<AudioFrame> {
-        avcodec_send_packet(native.ptr, packet?.native?.ptr).checkError()
-
-        return buildList {
-            while (true) {
-                val frame = decode() ?: break
-                add(frame)
-            }
-        }
-    }
-
-    private val frame = AudioFrame()
-    public actual fun decode(): AudioFrame? {
-        val ret = avcodec_receive_frame(native.ptr, frame.native.ptr)
-        return when (ret) {
+    public actual override fun decode(): VideoFrame? {
+        val frame = VideoFrame()
+        return when (val ret = avcodec_receive_frame(native.ptr, frame.native.ptr)) {
             ERROR_AGAIN, ERROR_EOF -> null
 
             else -> {
                 ret.checkError()
                 frame
             }
-        }
-    }
-}
-
-public actual class VideoEncoder actual constructor(codec: Codec) :
-    VideoCodecContext(codec),
-    Encoder {
-    public actual constructor(
-        codec: Codec,
-        bitRate: Long,
-        width: Int,
-        height: Int,
-        timeBase: Rational,
-        framerate: Rational,
-        gopSize: Int,
-        maxBFrames: Int,
-        pixFmt: PixelFormat
-    ) : this(codec) {
-        this.bitRate = bitRate
-        this.width = width
-        this.height = height
-        this.timeBase = timeBase
-        this.framerate = framerate
-        this.gopSize = gopSize
-        this.maxBFrames = maxBFrames
-        this.pixFmt = pixFmt
-    }
-
-    public actual constructor(
-        codec: Codec,
-        bitRate: Long,
-        width: Int,
-        height: Int
-    ) : this(codec) {
-        this.bitRate = bitRate
-        this.width = width
-        this.height = height
-    }
-
-    public actual fun encode(frame: VideoFrame?): List<Packet> {
-        super.sendFrame(frame)
-
-        return buildList {
-            while (true) {
-                add(receivePacket() ?: break)
-            }
-        }
-    }
-
-    override fun encode(): Packet? = receivePacket()
-}
-
-public actual class VideoDecoder actual constructor(codec: Codec) :
-    VideoCodecContext(codec),
-    Decoder {
-    private val frame = VideoFrame()
-
-    public actual override fun decode(packet: Packet?): List<VideoFrame> {
-        avcodec_send_packet(native.ptr, packet?.native?.ptr).checkError()
-
-        return buildList {
-            while (true) {
-                val frame = decode() ?: break
-                add(frame)
-            }
-        }
-    }
-
-    public actual fun decode(): VideoFrame? {
-        val ret = avcodec_receive_frame(native.ptr, frame.native.ptr)
-
-        return if (ret == ERROR_AGAIN || ret == ERROR_EOF) {
-            null
-        } else {
-            ret.checkError()
-            frame
         }
     }
 }
