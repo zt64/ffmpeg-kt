@@ -50,11 +50,11 @@ public actual class CodecParserContext(private val native: AVCodecParserContext)
         pts: Long,
         dts: Long,
         pos: Long
-    ): Flow<ParsedPacket> {
+    ): List<ParsedPacket> {
         TODO()
     }
 
-    override fun close() {
+    public actual override fun close() {
         av_parser_close(native.ptr)
     }
 }

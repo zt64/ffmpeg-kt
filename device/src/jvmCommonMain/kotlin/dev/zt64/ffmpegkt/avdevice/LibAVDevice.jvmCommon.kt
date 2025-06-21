@@ -47,9 +47,7 @@ public actual object LibAVDevice : FfmpegLibrary {
             }
         }
 
-    override fun version(): Int = avdevice_version()
-
-    override fun configuration(): String = avdevice_configuration().string
-
-    override fun license(): String = avdevice_license().string
+    public actual override fun version(): Int = avdevice_version()
+    public actual override fun configuration(): String = avdevice_configuration().string
+    public actual override fun license(): String = avdevice_license().string
 }

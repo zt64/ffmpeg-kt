@@ -6,13 +6,13 @@ import ffmpeg.*
 import kotlinx.cinterop.*
 
 public actual object LibAVUtil : FfmpegLibrary {
-    override fun version(): Int = avutil_version().toInt()
+    public actual override fun version(): Int = avutil_version().toInt()
 
-    override fun configuration(): String {
+    public actual override fun configuration(): String {
         return avutil_configuration()?.toKString().orEmpty()
     }
 
-    override fun license(): String {
+    public actual override fun license(): String {
         return avutil_license()?.toKString().orEmpty()
     }
 

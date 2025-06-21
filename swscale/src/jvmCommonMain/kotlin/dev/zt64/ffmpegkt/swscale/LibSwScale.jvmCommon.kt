@@ -6,11 +6,9 @@ import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import org.bytedeco.ffmpeg.global.swscale.*
 
 public actual object LibSwScale : FfmpegLibrary {
-    public override fun version(): Int = swscale_version()
-
-    override fun configuration(): String = swscale_configuration().string
-
-    override fun license(): String = swscale_license().string
+    public actual override fun version(): Int = swscale_version()
+    public actual override fun configuration(): String = swscale_configuration().string
+    public actual override fun license(): String = swscale_license().string
 
     public actual fun getCoefficients(colorspace: Int): Int {
         return sws_getCoefficients(colorspace).get()

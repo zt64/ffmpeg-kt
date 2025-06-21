@@ -12,17 +12,16 @@ public actual object LibAVUtil : FfmpegLibrary {
     init {
         // Disable pointer garbage collection
         // This is necessary because the JVM does not know how to handle the pointers allocated by FFmpeg
-        // As all the libraries depend on avutil, this is the best place to set this property
         System.setProperty("org.bytedeco.javacpp.nopointergc", "true")
     }
 
-    public override fun version(): Int = avutil_version()
+    public actual override fun version(): Int = avutil_version()
 
-    public override fun configuration(): String {
+    public actual override fun configuration(): String {
         return avutil_configuration()?.string.orEmpty()
     }
 
-    public override fun license(): String = avutil_license().string
+    public actual override fun license(): String = avutil_license().string
 
     public actual fun versionInfo(): String = av_version_info().string
 

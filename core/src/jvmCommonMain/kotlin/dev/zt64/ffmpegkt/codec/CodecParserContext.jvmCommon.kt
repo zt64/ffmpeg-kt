@@ -133,7 +133,7 @@ public actual class CodecParserContext(
         return packets
     }
 
-    public override fun close() {
+    public actual override fun close() {
         av_parser_close(native)
         packet.close()
     }

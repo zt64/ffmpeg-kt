@@ -9,4 +9,8 @@ public expect object LibAVDevice : FfmpegLibrary {
     public val audioOutputDevices: List<AVOutputFormat>
     public val videoInputDevices: List<AVInputFormat>
     public val videoOutputDevices: List<AVOutputFormat>
+
+    public override fun version(): Int
+    public override fun configuration(): String
+    public override fun license(): String
 }

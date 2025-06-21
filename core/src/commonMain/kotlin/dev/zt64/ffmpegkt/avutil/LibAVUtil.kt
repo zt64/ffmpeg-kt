@@ -3,6 +3,10 @@ package dev.zt64.ffmpegkt.avutil
 import dev.zt64.ffmpegkt.FfmpegLibrary
 
 public expect object LibAVUtil : FfmpegLibrary {
+    public override fun version(): Int
+    public override fun configuration(): String
+    public override fun license(): String
+
     public fun versionInfo(): String
 
     public fun getTimeBaseQ(): Rational
@@ -83,4 +87,4 @@ public expect object LibAVUtil : FfmpegLibrary {
     ): Int
 }
 
-public val LibAVUtil.logging get() = Logging
+public val LibAVUtil.logging: Logging get() = Logging

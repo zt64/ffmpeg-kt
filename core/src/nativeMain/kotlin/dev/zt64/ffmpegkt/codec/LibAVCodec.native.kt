@@ -7,15 +7,7 @@ import ffmpeg.avcodec_version
 import kotlinx.cinterop.toKString
 
 public actual object LibAVCodec : FfmpegLibrary {
-    override fun version(): Int {
-        return avcodec_version().toInt()
-    }
-
-    override fun configuration(): String {
-        return avcodec_configuration()?.toKString().orEmpty()
-    }
-
-    override fun license(): String {
-        return avcodec_license()?.toKString().orEmpty()
-    }
+    public actual override fun version(): Int = avcodec_version().toInt()
+    public actual override fun configuration(): String = avcodec_configuration()?.toKString().orEmpty()
+    public actual override fun license(): String = avcodec_license()?.toKString().orEmpty()
 }

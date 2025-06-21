@@ -9,15 +9,15 @@ import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 
 public actual object LibSwScale : FfmpegLibrary {
-    override fun version(): Int {
+    public override fun version(): Int {
         return swscale_version().toInt()
     }
 
-    override fun configuration(): String {
+    public override fun configuration(): String {
         return swscale_configuration()?.toKString().orEmpty()
     }
 
-    override fun license(): String {
+    public override fun license(): String {
         return swscale_license()?.toKString().orEmpty()
     }
 
