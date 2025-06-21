@@ -11,6 +11,12 @@ internal actual typealias NativeAVPacket = org.bytedeco.ffmpeg.avcodec.AVPacket
 public actual value class Packet(public val native: NativeAVPacket) : AutoCloseable {
     public actual constructor() : this(av_packet_alloc())
 
+    public actual constructor(data: ByteArray) : this(
+        av_packet_alloc().apply {
+            av_packet_from_data(this, data, data.size)
+        }
+    )
+
     public actual inline val pts: Long
         get() = native.pts()
 

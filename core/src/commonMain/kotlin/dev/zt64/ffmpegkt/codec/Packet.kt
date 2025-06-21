@@ -15,6 +15,13 @@ public expect value class Packet internal constructor(internal val native: Nativ
     public constructor()
 
     /**
+     * Create a packet with the given data
+     *
+     * @param data The data to initialize the packet with
+     */
+    public constructor(data: ByteArray)
+
+    /**
      * The presentation timestamp
      */
     public val pts: Long
@@ -36,7 +43,7 @@ public expect value class Packet internal constructor(internal val native: Nativ
     public var pos: Long
     public val timeBase: Rational
 
-    public fun rescaleTs(src: Rational, dst: Rational)
+    public fun rescaleTs(dst: Rational)
 
     public fun decode(): Frame
 

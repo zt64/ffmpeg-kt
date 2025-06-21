@@ -3,15 +3,17 @@ package dev.zt64.ffmpegkt.codec
 import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.avutil.asNative
-import ffmpeg.av_packet_alloc
-import ffmpeg.av_packet_rescale_ts
-import ffmpeg.av_packet_unref
+import ffmpeg.*
 import kotlinx.cinterop.*
 
 public actual typealias NativeAVPacket = ffmpeg.AVPacket
 
 public actual value class Packet(public val native: NativeAVPacket) : AutoCloseable {
     public actual constructor() : this(av_packet_alloc()!!.pointed)
+
+    public actual constructor(data: ByteArray) : this(av_packet_alloc()!!.pointed) {
+        av_packet_from_data(native.ptr, data.asUByteArray().refTo(0), data.size)
+    }
 
     public actual inline val pts: Long
         get() = native.pts
