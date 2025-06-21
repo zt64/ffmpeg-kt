@@ -17,7 +17,7 @@ internal expect class NativeAVCodec
  *
  * @property native
  */
-public expect value class Codec internal constructor(internal val native: NativeAVCodec) : AutoCloseable {
+public expect value class Codec internal constructor(internal val native: NativeAVCodec) {
     public val name: String
     public val longName: String
     public val type: MediaType

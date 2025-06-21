@@ -6,7 +6,7 @@ import org.bytedeco.ffmpeg.global.avcodec.*
 internal actual typealias NativeAVCodec = org.bytedeco.ffmpeg.avcodec.AVCodec
 
 @JvmInline
-public actual value class Codec(public val native: NativeAVCodec) : AutoCloseable {
+public actual value class Codec(public val native: NativeAVCodec) {
     public actual inline val id: CodecID
         get() = CodecID(native.id())
 
@@ -104,10 +104,6 @@ public actual value class Codec(public val native: NativeAVCodec) : AutoCloseabl
 
     public actual inline val wrapperName: String
         get() = native.wrapper_name().string
-
-    public override fun close() {
-        native.close()
-    }
 
     public actual companion object {
         public actual fun findEncoder(name: String): Codec? {

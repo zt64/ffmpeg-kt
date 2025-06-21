@@ -6,9 +6,9 @@ import kotlinx.cinterop.get
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.toKString
 
-internal actual typealias NativeAVCodec = ffmpeg.AVCodec
+internal actual typealias NativeAVCodec = AVCodec
 
-public actual value class Codec(public val native: NativeAVCodec) : AutoCloseable {
+public actual value class Codec(public val native: NativeAVCodec) {
     public actual inline val name: String
         get() = native.name?.toKString().orEmpty()
     public actual inline val longName: String
@@ -74,9 +74,5 @@ public actual value class Codec(public val native: NativeAVCodec) : AutoCloseabl
         public actual fun findDecoder(id: CodecID): Codec? {
             return avcodec_find_decoder(id.num.toUInt())?.let { Codec(it.pointed) }
         }
-    }
-
-    override fun close() {
-        TODO("Not yet implemented")
     }
 }
