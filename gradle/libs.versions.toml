@@ -19,7 +19,7 @@ ffmpeg = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpeg" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
-kotlinpoet = { module = "com.squareup:kotlinpoet", version = "2.1.0" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version = "2.2.0" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
