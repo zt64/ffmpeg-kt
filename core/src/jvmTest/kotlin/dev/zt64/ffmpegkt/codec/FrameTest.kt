@@ -13,7 +13,7 @@ class FrameTest {
     private val outputDir = TestUtil.getOutputPath("frames")
 
     @Test
-    fun encodeVideo() = runTest {
+    fun decodeVideoFrames() = runTest {
         val codecId = CodecID.MPEG1VIDEO
         val codec = Codec.findDecoder(codecId)!!
 
@@ -21,7 +21,7 @@ class FrameTest {
         val codecContext = VideoDecoder(codec)
         codecContext.open()
 
-        parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).collect { (packet) ->
+        parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
             if (packet.size > 0) {
                 try {
@@ -34,9 +34,6 @@ class FrameTest {
                     val frame = codecContext.decode() ?: break
 
                     println("Saving frame ${codecContext.frameNum}")
-
-                    val buf = frame.data[0].toUByteArray().asByteArray()
-                    val wrap = frame.linesize[0]
 
                     ImageIO.write(frame.toImage(), "png", File(outputDir.toFile(), "frame_${codecContext.frameNum}.png"))
                 }

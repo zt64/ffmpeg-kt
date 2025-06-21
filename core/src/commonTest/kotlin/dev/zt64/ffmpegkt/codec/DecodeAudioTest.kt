@@ -27,8 +27,6 @@ class DecodeAudioTest {
             while (true) {
                 val frame = codecContext.decode() ?: break
 
-                frame.makeWritable()
-
                 // println("Saving frame ${codecContext.frameNum}")
 
                 val dataSize = codecContext.sampleFmt.bytesPerSample

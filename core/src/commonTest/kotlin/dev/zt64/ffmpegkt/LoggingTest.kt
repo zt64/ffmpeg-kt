@@ -5,6 +5,7 @@ import dev.zt64.ffmpegkt.avutil.LogLevel
 import dev.zt64.ffmpegkt.avutil.logging
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class LoggingTest {
     @Test
@@ -13,9 +14,10 @@ class LoggingTest {
 
         LibAVUtil.logging.setCallback { level, message ->
             if (callbackCalled) {
-                throw IllegalStateException("Callback was already called")
+                fail("Callback was already called")
             }
 
+            @Suppress("AssignedValueIsNeverRead")
             callbackCalled = true
 
             println("[$level] $message")

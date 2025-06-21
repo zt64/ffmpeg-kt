@@ -3,6 +3,7 @@ package dev.zt64.ffmpegkt.codec
 import dev.zt64.ffmpegkt.avutil.AudioFrame
 import dev.zt64.ffmpegkt.avutil.SampleFormat
 import dev.zt64.ffmpegkt.test.TestUtil
+import kotlinx.coroutines.test.runTest
 import okio.*
 import kotlin.math.PI
 import kotlin.math.sin
@@ -12,7 +13,7 @@ class EncodeAudioTest {
     private val outputDir = TestUtil.getOutputPath("encoded")
 
     @Test
-    fun encodeAudio() {
+    fun encodeAudio() = runTest {
         val codec = Codec.findEncoder(CodecID.MP3)!!
         val codecContext = AudioEncoder(
             codec = codec,

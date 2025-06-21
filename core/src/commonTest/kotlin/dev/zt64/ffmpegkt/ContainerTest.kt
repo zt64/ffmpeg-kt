@@ -9,10 +9,10 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class MetadataTest {
+class ContainerTest {
     @Test
     fun testMetadata() = runTest {
-        val container = Container.Companion.openInput(TestResources.RESOURCE_1.readBytes())
+        val container = Container.openInput(TestResources.RESOURCE_1.readBytes())
 
         container.use { format ->
             println("Metadata:")
@@ -38,18 +38,34 @@ class MetadataTest {
             "artist" to "FFmpegKT"
         )
 
-        Container.Companion.openOutput(path).use { output ->
+        Container.openOutput(path).use { output ->
             output.metadata.putAll(values)
-            output.newStream<VideoStream>(Codec.Companion.findEncoder(CodecID.Companion.MPEG4)!!)
+            output.newStream<VideoStream>(Codec.findEncoder(CodecID.MPEG4)!!)
             output.writeHeader()
         }
 
-        Container.Companion.openInput(path).use { input ->
+        Container.openInput(path).use { input ->
             val metadata = input.metadata
 
             values.forEach { (key, value) ->
                 assertEquals(value, metadata[key])
             }
+        }
+    }
+
+    @Test
+    fun testAddStreams() = runTest {
+        val path = "./build/test-output/streams-test.mp4"
+
+        Container.openOutput(path).use { output ->
+            output.newStream<VideoStream>(Codec.findEncoder(CodecID.MPEG4)!!)
+            output.writeHeader()
+
+            // output.mux(Packet(byteArrayOf(4)))
+        }
+
+        Container.openInput(path).use { input ->
+            assertEquals(2, input.streams.size, "Expected 2 streams in the container")
         }
     }
 }

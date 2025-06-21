@@ -1,6 +1,5 @@
 package dev.zt64.ffmpegkt.codec
 
-import dev.zt64.ffmpegkt.avutil.PixelFormat
 import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.avutil.VideoFrame
 import dev.zt64.ffmpegkt.container.Container
@@ -17,28 +16,23 @@ class EncodeVideoTest {
         val frameRate = 25 // 25 frames per second
         val frames = 250 // 10 seconds of video
 
-        val codec = Codec.findEncoder(CodecID.MPEG4)!!
-
         val c = VideoEncoder(
-            codec = codec,
+            codec = Codec.findEncoder(CodecID.MPEG4)!!,
             bitRate = 50000,
             width = 256,
             height = 256,
             timeBase = Rational(1, frameRate),
-            framerate = Rational(frames, 1),
-            gopSize = 10,
-            maxBFrames = 1,
-            pixFmt = PixelFormat.YUV420P
+            framerate = Rational(frames, 1)
         )
         c.open()
 
-        val buffer = Buffer()
         val frame = VideoFrame(
             width = c.width,
             height = c.height,
             format = c.pixFmt
         )
 
+        val buffer = Buffer()
         for (i in 0 until frames) {
             val frameData = frame.data
 
@@ -81,5 +75,7 @@ class EncodeVideoTest {
                 writeAll(buffer)
             }
         }
+
+        val input = Container.openInput(outputDir.resolve("output.mp4").toString())
     }
 }
