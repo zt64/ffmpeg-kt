@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.codec
 
 public expect class CodecParserContext : AutoCloseable {
-    public constructor(codec: CodecID)
+    public constructor(codec: CodecContext)
 
     public val parser: AVCodecParser
     public val frameOffset: Long
@@ -9,14 +9,13 @@ public expect class CodecParserContext : AutoCloseable {
     /**
      * Parse a packet.
      *
-     * @param avCtx
+     * @param input
      * @param pts
      * @param dts
      * @param pos
      * @return the number of bytes of the input bitstream used.
      */
     public fun parse(
-        avCtx: CodecContext,
         input: ByteArray,
         dataSize: Int,
         pts: Long = 0x800000000000000,
@@ -24,13 +23,7 @@ public expect class CodecParserContext : AutoCloseable {
         pos: Long = 0
     ): ParsedPacket
 
-    public fun parsePackets(
-        avCtx: CodecContext,
-        input: ByteArray,
-        pts: Long = 0x800000000000000,
-        dts: Long = 0x800000000000000,
-        pos: Long = 0
-    ): List<ParsedPacket>
+    public fun parsePackets(input: ByteArray): List<ParsedPacket>
 
     public override fun close()
 }

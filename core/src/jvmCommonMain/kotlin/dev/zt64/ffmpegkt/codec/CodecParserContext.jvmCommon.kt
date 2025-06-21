@@ -10,11 +10,14 @@ import org.bytedeco.javacpp.Pointer
 internal typealias NativeAVCodecParserContext = org.bytedeco.ffmpeg.avcodec.AVCodecParserContext
 
 public actual class CodecParserContext(
+    public val codecContext: CodecContext,
     @PublishedApi
     internal val native: NativeAVCodecParserContext
 ) : AutoCloseable {
-    public actual constructor(codec: CodecID) : this(av_parser_init(codec.num))
-
+    public actual constructor(codec: CodecContext) : this(
+        codec,
+        av_parser_init(codec.native.codec_id())
+    )
     private val packet = Packet()
 
     public actual inline val parser: AVCodecParser
@@ -24,7 +27,6 @@ public actual class CodecParserContext(
         get() = native.frame_offset()
 
     public actual fun parse(
-        avCtx: CodecContext,
         input: ByteArray,
         dataSize: Int,
         pts: Long,
@@ -38,7 +40,7 @@ public actual class CodecParserContext(
         try {
             val read = av_parser_parse2(
                 /* s = */ native,
-                /* avctx = */ avCtx.native,
+                /* avctx = */ codecContext.native,
                 /* poutbuf = */ outputPointer,
                 /* poutbuf_size = */ outputSizePointer,
                 /* buf = */ inputPointer,
@@ -65,16 +67,10 @@ public actual class CodecParserContext(
         }
     }
 
-    public actual fun parsePackets(
-        avCtx: CodecContext,
-        input: ByteArray,
-        pts: Long,
-        dts: Long,
-        pos: Long
-    ): List<ParsedPacket> {
+    public actual fun parsePackets(input: ByteArray): List<ParsedPacket> {
         val packets = mutableListOf<ParsedPacket>()
         var currentPosition = 0
-        val chunkSize = 4096
+        val chunkSize = 4096 // TODO: Hardcode this? or make it configurable?
 
         while (currentPosition < input.size) {
             // Calculate how much data is left to process
@@ -90,12 +86,10 @@ public actual class CodecParserContext(
 
             while (dataSize > 0 && shouldContinue) {
                 try {
-                    val parsedPacket = parse(avCtx, chunk, dataSize)
+                    val parsedPacket = parse(chunk, dataSize)
 
-                    if (parsedPacket.packet.size > 0) {
-                        // Add packet to list only if it has actual content
-                        packets.add(parsedPacket)
-                    }
+                    // Add packet to list only if it has actual content
+                    if (parsedPacket.packet.size > 0) packets += parsedPacket
 
                     if (parsedPacket.bytesRead <= 0) {
                         shouldContinue = false
@@ -115,7 +109,7 @@ public actual class CodecParserContext(
 
                     dataSize -= parsedPacket.bytesRead
                 } catch (e: FfmpegException) {
-                    if (e.code == -ERROR_EOF) { // AVERROR_EOF
+                    if (e.code == -ERROR_EOF) {
                         shouldContinue = false
                         continue
                     }

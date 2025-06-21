@@ -208,6 +208,10 @@ public actual class AudioEncoder actual constructor(codec: Codec) : AudioCodecCo
 }
 
 public actual class AudioDecoder actual constructor(codec: Codec) : AudioCodecContext(codec), Decoder {
+    public actual override val parser: CodecParserContext by lazy {
+        CodecParserContext(this)
+    }
+
     public actual override fun decode(packet: Packet?): List<AudioFrame> {
         sendPacket(packet)
 
@@ -279,6 +283,10 @@ public actual class VideoEncoder actual constructor(codec: Codec) : VideoCodecCo
 }
 
 public actual class VideoDecoder actual constructor(codec: Codec) : VideoCodecContext(codec), Decoder {
+    public actual override val parser: CodecParserContext by lazy {
+        CodecParserContext(this)
+    }
+
     public actual override fun decode(packet: Packet?): List<VideoFrame> {
         sendPacket(packet)
 

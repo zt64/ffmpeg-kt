@@ -14,12 +14,11 @@ class DecodeAudioTest {
     fun decodeAudio() = runTest {
         val id = CodecID.MP2
         val codec = Codec.findDecoder(id)!!
-        val parser = CodecParserContext(id)
         val codecContext = AudioDecoder(codec)
         codecContext.open()
 
         val out = Buffer()
-        parser.parsePackets(codecContext, TestResources.WAV_AUDIO.readBytes()).forEach { (packet) ->
+        codecContext.parser.parsePackets(TestResources.WAV_AUDIO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
 
             codecContext.decode(packet)

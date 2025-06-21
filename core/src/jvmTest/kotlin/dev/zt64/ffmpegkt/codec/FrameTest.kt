@@ -17,11 +17,10 @@ class FrameTest {
         val codecId = CodecID.MPEG1VIDEO
         val codec = Codec.findDecoder(codecId)!!
 
-        val parser = CodecParserContext(codecId)
         val codecContext = VideoDecoder(codec)
         codecContext.open()
 
-        parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
+        codecContext.parser.parsePackets(TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
             if (packet.size > 0) {
                 try {
@@ -42,6 +41,5 @@ class FrameTest {
 
         codecContext.decode(null)
         codecContext.close()
-        parser.close()
     }
 }

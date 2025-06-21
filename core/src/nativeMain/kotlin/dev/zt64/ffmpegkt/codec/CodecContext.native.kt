@@ -7,8 +7,12 @@ import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
 import kotlinx.cinterop.*
 
-public actual sealed class CodecContext protected constructor(internal val native: AVCodecContext, internal actual val codec: Codec) :
-    AutoCloseable {
+public actual open class CodecContext protected constructor(
+    internal val native: AVCodecContext,
+    internal actual val codec: Codec
+) : AutoCloseable {
+    public actual constructor(codec: Codec) : this(allocContext(codec), codec)
+
     public actual var codecTag: Int
         get() = native.codec_tag.toInt()
         set(value) {
