@@ -182,7 +182,7 @@ public actual class AudioEncoder actual constructor(codec: Codec) :
         }
     }
 
-    override fun encode(): Packet? {
+    public actual override fun encode(): Packet? {
         val ret = avcodec_receive_packet(native.ptr, packet.native.ptr)
 
         return if (ret == ERROR_AGAIN || ret == ERROR_EOF) {
@@ -198,8 +198,15 @@ public actual class AudioDecoder actual constructor(codec: Codec) :
     AudioCodecContext(codec),
     Decoder {
 
-    override fun decode(packet: Packet?) {
+    public actual override fun decode(packet: Packet?): List<AudioFrame> {
         avcodec_send_packet(native.ptr, packet?.native?.ptr).checkError()
+
+        return buildList {
+            while (true) {
+                val frame = decode() ?: break
+                add(frame)
+            }
+        }
     }
 
     private val frame = AudioFrame()
@@ -269,8 +276,15 @@ public actual class VideoDecoder actual constructor(codec: Codec) :
     Decoder {
     private val frame = VideoFrame()
 
-    override fun decode(packet: Packet?) {
+    public actual override fun decode(packet: Packet?): List<VideoFrame> {
         avcodec_send_packet(native.ptr, packet?.native?.ptr).checkError()
+
+        return buildList {
+            while (true) {
+                val frame = decode() ?: break
+                add(frame)
+            }
+        }
     }
 
     public actual fun decode(): VideoFrame? {

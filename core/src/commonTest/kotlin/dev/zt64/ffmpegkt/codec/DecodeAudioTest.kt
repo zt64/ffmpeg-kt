@@ -19,10 +19,8 @@ class DecodeAudioTest {
         codecContext.open()
 
         val out = Buffer()
-        parser.parsePackets(codecContext, TestResources.WAV_AUDIO.readBytes()).collect { (packet) ->
-            // println("Parsed packet size: ${packet.size}")
-
-            if (packet.size <= 0) return@collect
+        parser.parsePackets(codecContext, TestResources.WAV_AUDIO.readBytes()).forEach { (packet) ->
+            println("Parsed packet size: ${packet.size}")
 
             codecContext.decode(packet)
 

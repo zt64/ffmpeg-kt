@@ -1,12 +1,12 @@
 package dev.zt64.ffmpegkt.codec
 
+import dev.zt64.ffmpegkt.avutil.VideoFrame
 import dev.zt64.ffmpegkt.test.TestResources
 import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.SYSTEM
 import kotlin.test.Test
-import kotlin.test.fail
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class DecodeVideoTest {
@@ -21,36 +21,37 @@ class DecodeVideoTest {
         val codecContext = VideoDecoder(codec)
         codecContext.open()
 
-        parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).collect { (packet) ->
+        var frameCount = 0
+
+        parser.parsePackets(codecContext, TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
-            if (packet.size > 0) {
-                try {
-                    codecContext.decode(packet)
-                } catch (e: Exception) {
-                    fail("Error sending a packet for decoding", e)
-                }
 
-                while (true) {
-                    val frame = codecContext.decode() ?: break
+            if (packet.size <= 0) return@forEach
 
-                    println("Saving frame ${codecContext.frameNum}")
+            codecContext.decode(packet).forEach { frame ->
+                saveFrame(frame, frameCount++)
 
-                    val buf = frame.data[0].toUByteArray().asByteArray()
-                    val wrap = frame.linesize[0]
-
-                    FileSystem.SYSTEM.write(outputDir.resolve("./frame-${codecContext.frameNum}.pgm")) {
-                        writeUtf8("P5\n${frame.width} ${frame.height}\n255\n")
-
-                        for (i in 0 until frame.height) {
-                            write(buf, i * wrap, frame.width)
-                        }
-                    }
-                }
+                frame.close()
             }
         }
 
         codecContext.decode(null)
         codecContext.close()
         parser.close()
+    }
+
+    private fun saveFrame(frame: VideoFrame, frameNum: Int) {
+        println("Saving frame $frameNum")
+
+        val buf = frame.data[0].toUByteArray().asByteArray()
+        val wrap = frame.linesize[0]
+
+        FileSystem.SYSTEM.write(outputDir.resolve("./frame-$frameNum.pgm")) {
+            writeUtf8("P5\n${frame.width} ${frame.height}\n255\n")
+
+            for (i in 0 until frame.height) {
+                write(buf, i * wrap, frame.width)
+            }
+        }
     }
 }

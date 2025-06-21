@@ -1,7 +1,5 @@
 package dev.zt64.ffmpegkt.codec
 
-import kotlinx.coroutines.flow.Flow
-
 public expect class CodecParserContext : AutoCloseable {
     public constructor(codec: CodecID)
 
@@ -32,7 +30,7 @@ public expect class CodecParserContext : AutoCloseable {
         pts: Long = 0x800000000000000,
         dts: Long = 0x800000000000000,
         pos: Long = 0
-    ): Flow<ParsedPacket>
+    ): List<ParsedPacket>
 
     public override fun close()
 }

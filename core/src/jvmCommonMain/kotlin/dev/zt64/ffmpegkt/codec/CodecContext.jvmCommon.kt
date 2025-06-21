@@ -106,9 +106,9 @@ public actual open class CodecContext protected constructor(
     }
 }
 
-public actual sealed class AudioCodecContext protected constructor(codec: Codec) :
-    CodecContext(avcodec_alloc_context3(codec.native), codec) {
-
+public actual sealed class AudioCodecContext protected constructor(
+    codec: Codec
+) : CodecContext(avcodec_alloc_context3(codec.native), codec) {
     public actual var sampleFmt: SampleFormat
         get() = SampleFormat(native.sample_fmt())
         set(value) {
@@ -134,9 +134,9 @@ public actual sealed class AudioCodecContext protected constructor(codec: Codec)
         }
 }
 
-public actual sealed class VideoCodecContext protected constructor(codec: Codec) :
-    CodecContext(avcodec_alloc_context3(codec.native), codec) {
-
+public actual sealed class VideoCodecContext protected constructor(
+    codec: Codec
+) : CodecContext(avcodec_alloc_context3(codec.native), codec) {
     public actual var pixFmt: PixelFormat
         get() = PixelFormat(native.pix_fmt())
         set(value) {
@@ -208,8 +208,15 @@ public actual class AudioEncoder actual constructor(codec: Codec) : AudioCodecCo
 }
 
 public actual class AudioDecoder actual constructor(codec: Codec) : AudioCodecContext(codec), Decoder {
-    public actual override fun decode(packet: Packet?) {
+    public actual override fun decode(packet: Packet?): List<AudioFrame> {
         sendPacket(packet)
+
+        return buildList {
+            while (true) {
+                val frame = decode() ?: break
+                add(frame)
+            }
+        }
     }
 
     private val frame = AudioFrame()
@@ -272,13 +279,19 @@ public actual class VideoEncoder actual constructor(codec: Codec) : VideoCodecCo
 }
 
 public actual class VideoDecoder actual constructor(codec: Codec) : VideoCodecContext(codec), Decoder {
-    private val frame = VideoFrame()
-
-    public actual override fun decode(packet: Packet?) {
+    public actual override fun decode(packet: Packet?): List<VideoFrame> {
         sendPacket(packet)
+
+        return buildList {
+            while (true) {
+                val frame = decode() ?: break
+                add(frame)
+            }
+        }
     }
 
     public actual fun decode(): VideoFrame? {
+        val frame = VideoFrame()
         return when (val ret = avcodec_receive_frame(native, frame.native)) {
             ERROR_AGAIN, ERROR_EOF -> null
 

@@ -91,9 +91,12 @@ public interface Encoder {
 
 public interface Decoder {
     /**
-     * Receive a new decoded frame of data
+     * Decode a packet into a list of frames.
+     *
+     * @param packet The packet to decode.
+     * @return A list of frames decoded from the packet. If the packet is null, it indicates the end of the stream.
      */
-    public fun decode(packet: Packet?)
+    public fun decode(packet: Packet?): List<Frame>
 }
 
 /**
@@ -106,7 +109,6 @@ public interface Decoder {
 public expect class AudioEncoder(codec: Codec) : AudioCodecContext, Encoder {
     public constructor(codec: Codec, bitRate: Long, sampleFmt: SampleFormat, sampleRate: Int, channelLayout: ChannelLayout)
 
-    // TODO: Consider using Kotlin flow to emit packets, to conserve memory and avoid blocking
     public fun encode(frame: AudioFrame?): List<Packet>
     public override fun encode(): Packet?
 }
@@ -120,11 +122,11 @@ public expect class AudioEncoder(codec: Codec) : AudioCodecContext, Encoder {
  */
 public expect class AudioDecoder(codec: Codec) : AudioCodecContext, Decoder {
     public fun decode(): AudioFrame?
-    public override fun decode(packet: Packet?)
+    public override fun decode(packet: Packet?): List<AudioFrame>
 }
 
 /**
- * A video encoder.
+ * A video encoder used for encoding [VideoFrame]s into [Packet]s.
  *
  * @constructor Create a new video encoder with the given codec.
  *
@@ -145,8 +147,8 @@ public expect class VideoEncoder(codec: Codec) : VideoCodecContext, Encoder {
         height: Int,
         timeBase: Rational,
         framerate: Rational,
-        gopSize: Int,
-        maxBFrames: Int,
+        gopSize: Int = 25,
+        maxBFrames: Int = 2,
         pixFmt: PixelFormat = PixelFormat.YUV420P
     )
 
@@ -168,5 +170,5 @@ public expect class VideoDecoder(codec: Codec) : VideoCodecContext, Decoder {
      * NOTE: This frame should not be modified or closed by the user.
      */
     public fun decode(): VideoFrame?
-    public override fun decode(packet: Packet?)
+    public override fun decode(packet: Packet?): List<VideoFrame>
 }
