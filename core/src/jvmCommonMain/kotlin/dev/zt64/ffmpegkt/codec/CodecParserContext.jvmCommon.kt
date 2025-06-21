@@ -5,6 +5,7 @@ import dev.zt64.ffmpegkt.avutil.util.checkError
 import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.IntPointer
+import org.bytedeco.javacpp.Pointer
 
 internal typealias NativeAVCodecParserContext = org.bytedeco.ffmpeg.avcodec.AVCodecParserContext
 
@@ -30,33 +31,38 @@ public actual class CodecParserContext(
         dts: Long,
         pos: Long
     ): ParsedPacket {
-        // Initialize BytePointer and IntPointer
         val inputPointer = BytePointer(*input)
-        val outputPointer = BytePointer(5.toByte())
-        val outputSizePointer = IntPointer(0)
-        val packet = Packet()
+        val outputPointer = BytePointer()
+        val outputSizePointer = IntPointer(1)
 
-        // Call the native function
-        val read = av_parser_parse2(
-            /* s = */ native,
-            /* avctx = */ avCtx.native,
-            /* poutbuf = */ outputPointer,
-            /* poutbuf_size = */ outputSizePointer,
-            /* buf = */ inputPointer,
-            /* buf_size = */ dataSize,
-            /* pts = */ pts,
-            /* dts = */ dts,
-            /* pos = */ pos
-        ).checkError()
+        try {
+            val read = av_parser_parse2(
+                /* s = */ native,
+                /* avctx = */ avCtx.native,
+                /* poutbuf = */ outputPointer,
+                /* poutbuf_size = */ outputSizePointer,
+                /* buf = */ inputPointer,
+                /* buf_size = */ dataSize,
+                /* pts = */ pts,
+                /* dts = */ dts,
+                /* pos = */ pos
+            ).checkError()
 
-        packet.native.data(outputPointer)
-        packet.native.size(outputSizePointer.get())
+            val packet = Packet()
+            val parsedSize = outputSizePointer.get()
 
-        // inputPointer.deallocate()
-        outputPointer.deallocate()
-        outputSizePointer.deallocate()
+            if (parsedSize > 0) {
+                // Allocate a new buffer owned by the packet
+                av_new_packet(packet.native, parsedSize).checkError()
+                // Copy data from the parser's temporary buffer to the packet's buffer
+                Pointer.memcpy(packet.native.data(), outputPointer, parsedSize.toLong())
+            }
 
-        return ParsedPacket(packet, read)
+            return ParsedPacket(packet, read)
+        } finally {
+            inputPointer.deallocate()
+            outputSizePointer.deallocate()
+        }
     }
 
     public actual fun parsePackets(
