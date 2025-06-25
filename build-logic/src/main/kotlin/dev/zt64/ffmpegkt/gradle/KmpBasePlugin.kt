@@ -35,7 +35,11 @@ class KmpBasePlugin : Plugin<Project> {
             jvm()
             androidTarget()
 
-            native()
+            native {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
+                }
+            }
 
             compilerOptions {
                 freeCompilerArgs.addAll("-Xexpect-actual-classes")
@@ -53,14 +57,6 @@ class KmpBasePlugin : Plugin<Project> {
 
                         if (target.name != "testing") {
                             implementation(project(":testing"))
-                        }
-                    }
-                }
-
-                nativeMain {
-                    kotlin {
-                        compilerOptions {
-                            freeCompilerArgs.addAll("-Xopt-in=kotlinx.cinterop.ExperimentalForeignApi")
                         }
                     }
                 }
