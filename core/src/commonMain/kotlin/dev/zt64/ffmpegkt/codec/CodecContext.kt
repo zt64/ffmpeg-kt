@@ -25,7 +25,7 @@ public expect abstract class CodecContext(codec: Codec) : AutoCloseable {
     public var codecId: CodecID
 
     /** The average bitrate of the encoded output. */
-    public var bitRate: Long
+    public var bitrate: Long
 
     /** The allowed variance in the bitrate. */
     public var bitRateTolerance: Int

@@ -64,28 +64,21 @@ public actual abstract class Container(@PublishedApi internal val native: Native
             options: Dictionary?
         ): InputContainer {
             val formatContext = avformat_alloc_context()
-
-            val bufferPointer = BytePointer(*byteArray)
-            val bufferSize = byteArray.size
             val avioCtx = AVIOContext(byteArray)
             formatContext.pb(avioCtx.native)
 
             // Probe the input format if not provided
             if (format == null) {
+                val bufferPointer = BytePointer(*byteArray)
                 val probeData = AVProbeData().apply {
-                    buf_size(bufferSize.coerceAtMost(4096))
+                    buf_size(byteArray.size.coerceAtMost(4096))
                     filename(BytePointer("stream"))
                     buf(bufferPointer)
                 }
 
-                var inputFormat = av_probe_input_format(probeData, 1)
-                if (inputFormat == null) {
-                    inputFormat = av_probe_input_format(probeData, 0)
-                }
-
-                if (inputFormat == null) {
-                    throw IllegalArgumentException("Could not determine input format")
-                }
+                val inputFormat = av_probe_input_format(probeData, 1)
+                    ?: av_probe_input_format(probeData, 0)
+                    ?: throw IllegalArgumentException("Could not determine input format")
 
                 // inputFormat.flags(inputFormat.flags() or AVFMT_NOFILE)
                 formatContext.iformat(inputFormat)

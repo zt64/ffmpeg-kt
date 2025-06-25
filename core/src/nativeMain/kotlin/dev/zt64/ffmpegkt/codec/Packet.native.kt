@@ -53,8 +53,8 @@ public actual value class Packet(public val native: NativeAVPacket) : AutoClosea
     public actual inline val timeBase: Rational
         get() = Rational(native.time_base)
 
-    public actual fun rescaleTs(src: Rational, dst: Rational) {
-        av_packet_rescale_ts(native.ptr, src.asNative().readValue(), dst.asNative().readValue())
+    public actual fun rescaleTs(dst: Rational) {
+        av_packet_rescale_ts(native.ptr, native.time_base.readValue(), dst.asNative().readValue())
     }
 
     public actual fun decode(): Frame {

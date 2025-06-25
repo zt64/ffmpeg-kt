@@ -7,6 +7,7 @@ import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import dev.zt64.ffmpegkt.codec.Packet
 import ffmpeg.*
+import kotlinx.cinterop.cValuesOf
 import kotlinx.cinterop.ptr
 
 public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx) {
@@ -28,14 +29,14 @@ public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx)
 
     init {
         val options: Dictionary? = null
-        avformat_find_stream_info(ctx, options?.toNative()).checkTrue()
+        avformat_find_stream_info(ctx.ptr, cValuesOf(options?.toNative()?.ptr)).checkTrue()
     }
 
     public actual fun demux(): List<Packet> {
         val packets = mutableListOf<Packet>()
         while (true) {
             val packet = try {
-                Packet().apply { av_read_frame(this@InputContainer.native, native) }
+                Packet().apply { av_read_frame(this@InputContainer.native.ptr, native.ptr) }
             } catch (e: Exception) {
                 break
             }

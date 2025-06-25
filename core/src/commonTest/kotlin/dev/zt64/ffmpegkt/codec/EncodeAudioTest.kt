@@ -17,7 +17,7 @@ class EncodeAudioTest {
         val codec = Codec.findEncoder(CodecID.MP3)!!
         val codecContext = AudioEncoder(
             codec = codec,
-            bitRate = 192000, // 192 kbps
+            bitrate = 192000, // 192 kbps
             sampleFmt = SampleFormat.S32P, // 32-bit signed planar
             sampleRate = codec.supportedSampleRates.max(),
             channelLayout = codec.channelLayouts.maxBy { it.nbChannels }

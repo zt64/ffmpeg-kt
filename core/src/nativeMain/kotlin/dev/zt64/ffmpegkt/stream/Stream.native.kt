@@ -1,15 +1,13 @@
 package dev.zt64.ffmpegkt.stream
 
 import dev.zt64.ffmpegkt.avutil.Rational
-import dev.zt64.ffmpegkt.codec.AudioCodecParameters
-import dev.zt64.ffmpegkt.codec.CodecParameters
-import dev.zt64.ffmpegkt.codec.VideoCodecParameters
+import dev.zt64.ffmpegkt.codec.*
 import ffmpeg.AVStream
 import ffmpeg.avcodec_parameters_copy
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 
-public actual open class Stream(public val native: AVStream) {
+public actual open class Stream(public val native: AVStream, public actual val codecContext: CodecContext? = null) {
     public actual inline val index: Int
         get() = native.index
     public actual inline val id: Int

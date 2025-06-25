@@ -34,7 +34,7 @@ public actual abstract class CodecContext protected constructor(
             native.codec_id(value.num)
         }
 
-    public actual inline var bitRate: Long
+    public actual inline var bitrate: Long
         get() = native.bit_rate()
         set(value) {
             native.bit_rate(value)

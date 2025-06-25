@@ -90,9 +90,9 @@ public actual class VideoFrame internal constructor(override val native: NativeA
 }
 
 public actual class FrameData internal constructor(private val native: NativeAVFrame) : AbstractList<FrameData.FrameDataSegment>() {
-    override val size: Int = AV_NUM_DATA_POINTERS
+    public actual override val size: Int = AV_NUM_DATA_POINTERS
 
-    override fun get(index: Int): FrameDataSegment {
+    public actual override fun get(index: Int): FrameDataSegment {
         val size = av_image_get_buffer_size(
             native.format,
             native.width,
@@ -102,11 +102,11 @@ public actual class FrameData internal constructor(private val native: NativeAVF
         return FrameDataSegment(native.data[index]!!, size)
     }
 
-    public actual inner class FrameDataSegment(private val cPointer: CPointer<UByteVar>, override val size: Int) : AbstractList<UByte>() {
+    public actual inner class FrameDataSegment(private val cPointer: CPointer<UByteVar>, actual override val size: Int) : AbstractList<UByte>() {
         public actual operator fun set(index: Int, value: UByte) {
             cPointer[index] = value
         }
 
-        public override operator fun get(index: Int): UByte = cPointer[index]
+        public actual override operator fun get(index: Int): UByte = cPointer[index]
     }
 }

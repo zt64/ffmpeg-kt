@@ -17,8 +17,8 @@ class EncodeVideoTest {
         val frames = 250 // 10 seconds of video
 
         val c = VideoEncoder(
-            codec = Codec.findEncoder(CodecID.MPEG4)!!,
-            bitRate = 50000,
+            codec = CodecID.MPEG4,
+            bitrate = 50000,
             width = 256,
             height = 256,
             timeBase = Rational(1, frameRate),
