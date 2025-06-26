@@ -6,7 +6,10 @@ import org.bytedeco.ffmpeg.avformat.AVInputFormat
 internal actual typealias NativeAVInputFormat = AVInputFormat
 
 @JvmInline
-public actual value class AVInputFormat(public val native: NativeAVInputFormat) {
+public actual value class AVInputFormat(
+    @PublishedApi
+    internal val native: NativeAVInputFormat
+) {
     public actual inline val name: String
         get() = native.name().string
     public actual inline val longName: String
