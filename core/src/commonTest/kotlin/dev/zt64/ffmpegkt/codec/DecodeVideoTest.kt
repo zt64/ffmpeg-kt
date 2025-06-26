@@ -3,39 +3,38 @@ package dev.zt64.ffmpegkt.codec
 import dev.zt64.ffmpegkt.avutil.VideoFrame
 import dev.zt64.ffmpegkt.test.TestResources
 import dev.zt64.ffmpegkt.test.TestUtil
-import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.SYSTEM
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class DecodeVideoTest {
     private val outputDir = TestUtil.getOutputPath("encoded/frames")
 
     @Test
-    fun decodeVideo() = runTest {
-        val codecId = CodecID.MPEG1VIDEO
-        val codec = Codec.findDecoder(codecId)!!
-
-        val codecContext = VideoDecoder(codec)
-        codecContext.open()
+    fun decodeVideo() {
+        val decoder = VideoDecoder(CodecID.MPEG1VIDEO)
+        decoder.open()
 
         var frameCount = 0
 
-        codecContext.parser.parsePackets(TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
+        decoder.parser.parsePackets(TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
 
             if (packet.size <= 0) return@forEach
 
-            codecContext.decode(packet).forEach { frame ->
+            decoder.decode(packet).forEach { frame ->
                 saveFrame(frame, frameCount++)
 
                 frame.close()
             }
         }
 
-        codecContext.decode(null)
-        codecContext.close()
+        decoder.decode(null)
+        decoder.close()
+
+        assertEquals(396, frameCount, "Expected 396 frames, but got $frameCount")
     }
 
     private fun saveFrame(frame: VideoFrame, frameNum: Int) {

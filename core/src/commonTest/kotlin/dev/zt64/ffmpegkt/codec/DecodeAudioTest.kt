@@ -12,24 +12,23 @@ import kotlin.test.Test
 class DecodeAudioTest {
     @Test
     fun decodeAudio() = runTest {
-        val codec = Codec.findDecoder(CodecID.MP2)!!
-        val codecContext = AudioDecoder(codec)
-        codecContext.open()
+        val decoder = AudioDecoder(CodecID.MP2)
+        decoder.open()
 
         val out = Buffer()
-        codecContext.parser.parsePackets(TestResources.WAV_AUDIO.readBytes()).forEach { (packet) ->
+        decoder.parser.parsePackets(TestResources.WAV_AUDIO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
 
-            codecContext.decode(packet)
+            decoder.decode(packet)
 
             while (true) {
-                val frame = codecContext.decode() ?: break
+                val frame = decoder.decode() ?: break
 
                 // println("Saving frame ${codecContext.frameNum}")
 
-                val dataSize = codecContext.sampleFmt.bytesPerSample
+                val dataSize = decoder.sampleFmt.bytesPerSample
                 for (i in 0..frame.nbSamples) {
-                    for (ch in 0..codecContext.channelLayout.nbChannels) {
+                    for (ch in 0..decoder.channelLayout.nbChannels) {
                         frame.data[0]
                         // out.write(frame.data[ch].toUByteArray().toByteArray())
                     }

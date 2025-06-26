@@ -30,6 +30,8 @@ public class AudioDecoder(codec: Codec) : AudioCodecContext(codec), Decoder {
      */
     public override val parser: CodecParserContext by lazy { CodecParserContext(this) }
 
+    public constructor(codecID: CodecID) : this(Codec.findDecoder(codecID) ?: throw IllegalArgumentException("Codec not found: $codecID"))
+
     /**
      * Decodes a packet into a list of audio frames.
      *
@@ -60,6 +62,9 @@ public class VideoDecoder(codec: Codec) : VideoCodecContext(codec), Decoder {
      * It is created on-demand and its lifecycle is tied to this decoder.
      */
     public override val parser: CodecParserContext by lazy { CodecParserContext(this) }
+
+    // TODO: Implement proper checks for codec support
+    public constructor(codecID: CodecID) : this(Codec.findDecoder(codecID) ?: throw IllegalArgumentException("Codec not found: $codecID"))
 
     /**
      * Decodes a packet into a list of video frames.

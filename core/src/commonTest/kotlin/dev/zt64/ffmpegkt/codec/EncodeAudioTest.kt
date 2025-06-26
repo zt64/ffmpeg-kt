@@ -15,19 +15,19 @@ class EncodeAudioTest {
     @Test
     fun encodeAudio() = runTest {
         val codec = Codec.findEncoder(CodecID.MP3)!!
-        val codecContext = AudioEncoder(
+        val encoder = AudioEncoder(
             codec = codec,
             bitrate = 192000, // 192 kbps
             sampleFmt = SampleFormat.S32P, // 32-bit signed planar
             sampleRate = codec.supportedSampleRates.max(),
             channelLayout = codec.channelLayouts.maxBy { it.nbChannels }
         )
-        codecContext.open()
+        encoder.open()
 
         val frame = AudioFrame(
-            nbSamples = codecContext.frameSize,
-            format = codecContext.sampleFmt,
-            channelLayout = codecContext.channelLayout
+            nbSamples = encoder.frameSize,
+            format = encoder.sampleFmt,
+            channelLayout = encoder.channelLayout
         )
 
         val buffer = Buffer()
@@ -36,16 +36,16 @@ class EncodeAudioTest {
         var t = 0.0
         var freq = 440.0
         val length = 2 // seconds
-        for (i in 0 until (codecContext.sampleRate * length) / codecContext.frameSize) {
-            val tincr = 2 * PI * freq / codecContext.sampleRate
+        for (i in 0 until (encoder.sampleRate * length) / encoder.frameSize) {
+            val tincr = 2 * PI * freq / encoder.sampleRate
 
             /* Loop over the number of samples in the frame */
-            for (j in 0 until codecContext.frameSize) {
+            for (j in 0 until encoder.frameSize) {
                 /* Generate the sine wave sample value */
                 val sampleValue = (sin(t) * Int.MAX_VALUE / 10).toInt()
 
                 /* For each channel, write the sample value to the appropriate plane */
-                for (k in 0 until codecContext.channelLayout.nbChannels) {
+                for (k in 0 until encoder.channelLayout.nbChannels) {
                     val samples = frame.data[k] // Get the buffer for the k-th channel
                     val index = j * 4 // 4 bytes per 32-bit sample
 
@@ -61,7 +61,7 @@ class EncodeAudioTest {
                 freq += 0.001
             }
 
-            codecContext.encode(frame).forEach { packet ->
+            encoder.encode(frame).forEach { packet ->
                 packet.use {
                     println("Write packet (size=${packet.size})")
                     buffer.write(packet.data)
@@ -69,8 +69,8 @@ class EncodeAudioTest {
             }
         }
 
-        codecContext.flushBuffers()
-        codecContext.close()
+        encoder.flushBuffers()
+        encoder.close()
         frame.close()
 
         // Write the buffer to a file
