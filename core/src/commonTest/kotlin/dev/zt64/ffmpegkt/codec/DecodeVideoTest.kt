@@ -37,6 +37,22 @@ class DecodeVideoTest {
         assertEquals(396, frameCount, "Expected 396 frames, but got $frameCount")
     }
 
+    @Test
+    fun testCorruptedPacket() {
+        val decoder = VideoDecoder(CodecID.MPEG1VIDEO)
+        decoder.open()
+
+        // Create a packet with garbage data
+        val corruptedPacket = Packet(ByteArray(100))
+        val frames = decoder.decode(corruptedPacket)
+
+        // The decoder should handle the error gracefully, likely returning no frames
+        assertEquals(0, frames.size, "Decoder should not produce frames from a corrupted packet")
+
+        corruptedPacket.close()
+        decoder.close()
+    }
+
     private fun saveFrame(frame: VideoFrame, frameNum: Int) {
         println("Saving frame $frameNum")
 

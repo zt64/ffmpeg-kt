@@ -1,5 +1,6 @@
 package dev.zt64.ffmpegkt.codec
 
+import dev.zt64.ffmpegkt.avutil.MediaType
 import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.avutil.VideoFrame
 import dev.zt64.ffmpegkt.container.Container
@@ -7,6 +8,8 @@ import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
 import okio.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class EncodeVideoTest {
     private val outputDir = TestUtil.getOutputPath("encoded")
@@ -70,12 +73,19 @@ class EncodeVideoTest {
         c.encode(null)
         c.close()
 
+        assertTrue(buffer.size > 0, "Encoded buffer should not be empty")
+
+        val outputFile = outputDir.resolve("output.mp4")
         buffer.use {
-            FileSystem.SYSTEM.write(outputDir.resolve("output.mp4")) {
+            FileSystem.SYSTEM.write(outputFile) {
                 writeAll(buffer)
             }
         }
 
-        val input = Container.openInput(outputDir.resolve("output.mp4").toString())
+        val input = Container.openInput(outputFile.toString())
+        assertEquals(1, input.streams.size)
+
+        val videoStream = input.streams.first { it.codecParameters.codecType == MediaType.VIDEO }
+        assertEquals(CodecID.MPEG4, videoStream.codecParameters.codecId)
     }
 }
