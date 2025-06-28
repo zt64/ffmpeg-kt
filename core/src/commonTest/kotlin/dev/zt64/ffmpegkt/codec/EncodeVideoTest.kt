@@ -1,6 +1,5 @@
 package dev.zt64.ffmpegkt.codec
 
-import dev.zt64.ffmpegkt.avutil.MediaType
 import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.test.TestUtil
@@ -17,12 +16,14 @@ class EncodeVideoTest {
     fun encodeVideo() = runTest {
         val frameRate = 25 // 25 frames per second
         val frames = 250 // 10 seconds of video
+        val width = 256
+        val height = 256
 
         val c = VideoEncoder(
             codec = CodecID.MPEG4,
             bitrate = 50000,
-            width = 256,
-            height = 256,
+            width = width,
+            height = height,
             timeBase = Rational(1, frameRate),
             framerate = Rational(frames, 1)
         )
@@ -80,7 +81,12 @@ class EncodeVideoTest {
         val input = Container.openInput(outputFile.toString())
         assertEquals(1, input.streams.size)
 
-        val videoStream = input.streams.first { it.codecParameters.codecType == MediaType.VIDEO }
+        val videoStream = input.streams.video.first()
         assertEquals(CodecID.MPEG4, videoStream.codecParameters.codecId)
+
+        assertEquals(width, videoStream.codecParameters.width, "Width should match")
+        assertEquals(height, videoStream.codecParameters.height, "Height should match")
+        assertEquals(Rational(1, frameRate), videoStream.timeBase, "Time base should match")
+        assertEquals(Rational(frames, 1), videoStream.codecParameters.framerate, "Framerate should match")
     }
 }
