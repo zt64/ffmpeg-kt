@@ -14,8 +14,6 @@ internal expect class NativeAVCodec
  * Get a codec by calling [findEncoder] or [findDecoder] with the name of the codec.
  *
  * Or get a codec by calling [findEncoder] or [findDecoder] with the [CodecID] of the codec.
- *
- * @property native
  */
 public expect value class Codec internal constructor(internal val native: NativeAVCodec) {
     public val name: String

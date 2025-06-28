@@ -1,6 +1,9 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.toList
 import org.bytedeco.ffmpeg.global.avcodec.*
 
 internal actual typealias NativeAVCodec = org.bytedeco.ffmpeg.avcodec.AVCodec
@@ -26,81 +29,37 @@ public actual value class Codec(public val native: NativeAVCodec) {
         get() = native.max_lowres()
 
     public actual inline val supportedFrameRates: List<Rational>
-        get() = native.supported_framerates()?.run {
-            buildList {
-                var i = 0
-                while (true) {
-                    val rate = position(i.toLong()).takeUnless {
-                        it.num() == 0 && it.den() == 0
-                    } ?: break
-                    add(Rational(rate))
-                    i++
-                }
-            }
-        }.orEmpty()
+        get() = native.supported_framerates().toList(
+            isTerminator = { it.num() == 0 && it.den() == 0 },
+            transform = ::Rational
+        )
 
     public actual inline val pixFormats: List<PixelFormat>
-        get() = native.pix_fmts()?.run {
-            buildList {
-                var i = 0
-                while (true) {
-                    val format = position(i.toLong()).get().takeUnless { it == -1 } ?: break
-                    add(PixelFormat(format))
-                    i++
-                }
-            }
-        }.orEmpty()
+        get() = native.pix_fmts().toList(
+            terminator = -1,
+            transform = ::PixelFormat
+        )
 
     public actual inline val supportedSampleRates: IntArray
-        get() = native.supported_samplerates()?.run {
-            buildList {
-                var i = 0
-                while (true) {
-                    val rate = position(i.toLong()).get().takeUnless { it == 0 } ?: break
-                    add(rate)
-                    i++
-                }
-            }
-        }.orEmpty().toIntArray()
+        get() = native.supported_samplerates().toList<Int>(terminator = 0).toIntArray()
 
     public actual inline val sampleFormats: List<SampleFormat>
-        get() = native.sample_fmts()?.run {
-            buildList {
-                var i = 0
-                while (true) {
-                    val format = position(i.toLong()).get().takeUnless { it == -1 } ?: break
-                    add(SampleFormat(format))
-                    i++
-                }
-            }
-        }.orEmpty()
+        get() = native.sample_fmts().toList<SampleFormat>(
+            terminator = -1,
+            transform = ::SampleFormat
+        )
 
     public actual inline val profiles: List<AVProfile>
-        get() = native.profiles()?.run {
-            buildList {
-                var i = 0
-                while (true) {
-                    val profile = position(i.toLong()).takeUnless {
-                        it.profile() == AVProfileType.UNKNOWN
-                    } ?: break
-                    add(AVProfile(profile.profile(), profile.name().string))
-                    i++
-                }
-            }
-        }.orEmpty()
+        get() = native.profiles().toList(
+            isTerminator = { it.profile() == AVProfileType.UNKNOWN },
+            transform = { AVProfile(it.profile(), it.name().string) }
+        )
+
     public actual inline val channelLayouts: List<ChannelLayout>
-        get() = native.ch_layouts().run {
-            buildList {
-                var i = 0
-                while (true) {
-                    val layout = getPointer(i.toLong()).takeUnless {
-                        it.nb_channels() == 0 && it.order() == 0 && it.u_mask() == 0L
-                    } ?: break
-                    add(ChannelLayout(layout))
-                    i++
-                }
-            }
-        }
+        get() = native.ch_layouts().toList(
+            isTerminator = { it.nb_channels() == 0 && it.order() == 0 && it.u_mask() == 0L },
+            transform = ::ChannelLayout
+        )
 
     public actual inline val wrapperName: String
         get() = native.wrapper_name().string
