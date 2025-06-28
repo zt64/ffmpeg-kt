@@ -4,10 +4,14 @@ import dev.zt64.ffmpegkt.avformat.Chapter
 import dev.zt64.ffmpegkt.avutil.Dictionary
 import dev.zt64.ffmpegkt.avutil.toNative
 import dev.zt64.ffmpegkt.avutil.util.checkError
+import dev.zt64.ffmpegkt.stream.AudioStream
 import dev.zt64.ffmpegkt.stream.Stream
+import dev.zt64.ffmpegkt.stream.VideoStream
 import org.bytedeco.ffmpeg.avformat.AVFormatContext
 import org.bytedeco.ffmpeg.avformat.AVProbeData
 import org.bytedeco.ffmpeg.global.avformat.*
+import org.bytedeco.ffmpeg.global.avutil.AVMEDIA_TYPE_AUDIO
+import org.bytedeco.ffmpeg.global.avutil.AVMEDIA_TYPE_VIDEO
 import org.bytedeco.javacpp.BytePointer
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -20,7 +24,15 @@ public actual abstract class Container(@PublishedApi internal val native: Native
 
     @Suppress("PropertyName")
     @PublishedApi
-    internal val _streams: MutableList<Stream> = mutableListOf()
+    internal val _streams: MutableList<Stream> = List(native.nb_streams()) { i ->
+        val stream = native.streams(i)
+
+        when (stream.codecpar().codec_type()) {
+            AVMEDIA_TYPE_VIDEO -> VideoStream(stream)
+            AVMEDIA_TYPE_AUDIO -> AudioStream(stream)
+            else -> Stream(stream)
+        }
+    }.toMutableList()
 
     public actual inline val streams: StreamContainer
         get() = StreamContainer(_streams)
