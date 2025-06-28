@@ -1,6 +1,5 @@
 package dev.zt64.ffmpegkt.codec
 
-import dev.zt64.ffmpegkt.avutil.AudioFrame
 import dev.zt64.ffmpegkt.avutil.SampleFormat
 import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
@@ -24,11 +23,7 @@ class EncodeAudioTest {
         )
         encoder.open()
 
-        val frame = AudioFrame(
-            nbSamples = encoder.frameSize,
-            format = encoder.sampleFmt,
-            channelLayout = encoder.channelLayout
-        )
+        val frame = encoder.createFrame()
 
         val buffer = Buffer()
 

@@ -8,6 +8,8 @@ public sealed interface Encoder {
      * @return the packet or null if no more data
      */
     public fun encode(): Packet?
+
+    public fun createFrame(): Frame
 }
 
 /**
@@ -56,6 +58,12 @@ public class AudioEncoder(codec: Codec) : AudioCodecContext(codec), Encoder {
     }
 
     public override fun encode(): Packet? = receivePacket()
+
+    public override fun createFrame(): AudioFrame = AudioFrame(
+        nbSamples = frameSize,
+        format = sampleFmt,
+        channelLayout = channelLayout
+    )
 }
 
 /**
@@ -171,4 +179,10 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
     }
 
     public override fun encode(): Packet? = receivePacket()
+
+    public override fun createFrame(): VideoFrame = VideoFrame(
+        width = width,
+        height = height,
+        format = pixFmt
+    )
 }

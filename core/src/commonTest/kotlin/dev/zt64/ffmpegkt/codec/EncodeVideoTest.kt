@@ -2,7 +2,6 @@ package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.MediaType
 import dev.zt64.ffmpegkt.avutil.Rational
-import dev.zt64.ffmpegkt.avutil.VideoFrame
 import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
@@ -29,11 +28,7 @@ class EncodeVideoTest {
         )
         c.open()
 
-        val frame = VideoFrame(
-            width = c.width,
-            height = c.height,
-            format = c.pixFmt
-        )
+        val frame = c.createFrame()
 
         val buffer = Buffer()
         for (i in 0 until frames) {
