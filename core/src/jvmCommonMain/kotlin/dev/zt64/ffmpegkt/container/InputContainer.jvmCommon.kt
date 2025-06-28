@@ -8,21 +8,12 @@ import org.bytedeco.ffmpeg.avutil.AVDictionary
 import org.bytedeco.ffmpeg.global.avformat.*
 
 public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx) {
-    public actual inline var startTime: Long
+    public actual inline val startTime: Long
         get() = native.start_time()
-        set(value) {
-            native.start_time(value)
-        }
-    public actual inline var duration: Long
+    public actual inline val duration: Long
         get() = native.duration()
-        set(value) {
-            native.duration(value)
-        }
-    public actual inline var bitRate: Long
+    public actual inline val bitRate: Long
         get() = native.bit_rate()
-        set(value) {
-            native.bit_rate(value)
-        }
 
     init {
         val options: AVDictionary? = null

@@ -4,9 +4,9 @@ import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.codec.Packet
 
 public expect class InputContainer : Container {
-    public var startTime: Long
-    public var duration: Long
-    public var bitRate: Long
+    public val startTime: Long
+    public val duration: Long
+    public val bitRate: Long
 
     public fun demux(): List<Packet>
 
