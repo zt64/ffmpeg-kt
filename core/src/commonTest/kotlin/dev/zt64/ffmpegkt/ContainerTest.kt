@@ -2,6 +2,7 @@ package dev.zt64.ffmpegkt
 
 import dev.zt64.ffmpegkt.codec.Codec
 import dev.zt64.ffmpegkt.codec.CodecID
+import dev.zt64.ffmpegkt.codec.Packet
 import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.stream.VideoStream
 import dev.zt64.ffmpegkt.test.TestResources
@@ -61,11 +62,12 @@ class ContainerTest {
             output.newStream<VideoStream>(Codec.findEncoder(CodecID.MPEG4)!!)
             output.writeHeader()
 
-            // output.mux(Packet(byteArrayOf(4)))
+            // Seems to be necessary for streams to write at all
+            output.mux(Packet(byteArrayOf(4)))
         }
 
         Container.openInput(path).use { input ->
-            assertEquals(2, input.streams.size, "Expected 2 streams in the container")
+            assertEquals(1, input.streams.size, "Expected 1 stream in the container")
         }
     }
 }
