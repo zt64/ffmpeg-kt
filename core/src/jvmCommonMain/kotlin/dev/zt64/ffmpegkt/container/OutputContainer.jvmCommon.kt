@@ -4,10 +4,13 @@ import dev.zt64.ffmpegkt.avutil.*
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import dev.zt64.ffmpegkt.codec.*
+import dev.zt64.ffmpegkt.stream.AudioStream
 import dev.zt64.ffmpegkt.stream.Stream
+import dev.zt64.ffmpegkt.stream.VideoStream
 import org.bytedeco.ffmpeg.avformat.AVIOContext
 import org.bytedeco.ffmpeg.global.avcodec
 import org.bytedeco.ffmpeg.global.avcodec.avcodec_parameters_copy
+import org.bytedeco.ffmpeg.global.avcodec.avcodec_parameters_from_context
 import org.bytedeco.ffmpeg.global.avformat.*
 import org.bytedeco.ffmpeg.global.avutil
 import org.bytedeco.javacpp.BytePointer
@@ -54,6 +57,7 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
             native.metadata(null)
         }
     }
+
     public actual constructor(
         format: AVOutputFormat?,
         formatName: String?,
@@ -71,9 +75,9 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
 
         @Suppress("UNCHECKED_CAST")
         return when (MediaType(avStream.codecpar().codec_type())) {
-            MediaType.AUDIO -> dev.zt64.ffmpegkt.stream.AudioStream(avStream) as T
-            MediaType.VIDEO -> dev.zt64.ffmpegkt.stream.VideoStream(avStream) as T
-            else -> dev.zt64.ffmpegkt.stream.Stream(avStream, null) as T
+            MediaType.AUDIO -> AudioStream(avStream) as T
+            MediaType.VIDEO -> VideoStream(avStream) as T
+            else -> Stream(avStream, null) as T
         }
     }
 
@@ -88,13 +92,13 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
         val codecContext = when (codec.type) {
             MediaType.AUDIO -> AudioEncoder(codec)
             MediaType.VIDEO -> VideoEncoder(codec)
-            else -> CodecContext(codec)
+            else -> error("Unsupported codec type: ${codec.type}")
         }
 
         when (codecContext) {
             is AudioCodecContext -> {
                 codecContext.sampleFmt = SampleFormat(codec.native.sample_fmts().get(0))
-                codecContext.bitRate = 0
+                codecContext.bitrate = 50000
                 codecContext.bitRateTolerance = 32000
                 codecContext.sampleRate = 48000
 
@@ -105,9 +109,11 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
                 codecContext.pixFmt = PixelFormat.YUV420P
                 codecContext.width = 640
                 codecContext.height = 480
-                codecContext.bitRate = 0
+                codecContext.bitrate = 50000
                 codecContext.bitRateTolerance = 128000
+                codecContext.framerate = Rational(30, 1)
 
+                avStream.avg_frame_rate(codecContext.framerate.toNative())
                 avStream.time_base(codecContext.timeBase.toNative())
             }
 
@@ -121,12 +127,12 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
             codecContext.flags = codecContext.flags or avcodec.AV_CODEC_FLAG_GLOBAL_HEADER
         }
 
-        avcodec.avcodec_parameters_from_context(avStream.codecpar(), codecContext.native).checkError()
+        avcodec_parameters_from_context(avStream.codecpar(), codecContext.native).checkError()
 
         val streamObj = when (codec.type) {
-            MediaType.AUDIO -> dev.zt64.ffmpegkt.stream.AudioStream(avStream, codecContext)
-            MediaType.VIDEO -> dev.zt64.ffmpegkt.stream.VideoStream(avStream, codecContext)
-            else -> dev.zt64.ffmpegkt.stream.Stream(avStream, codecContext)
+            MediaType.AUDIO -> AudioStream(avStream, codecContext)
+            MediaType.VIDEO -> VideoStream(avStream, codecContext)
+            else -> Stream(avStream, codecContext)
         } as T
 
         _streams.add(streamObj)
@@ -140,6 +146,12 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
             if (!ctx.isOpen) {
                 ctx.open()
             }
+
+            if (stream.native.time_base() == null) {
+                stream.native.time_base(ctx.timeBase.toNative())
+            }
+
+            avcodec_parameters_from_context(stream.native.codecpar(), ctx.native).checkError()
         }
 
         if (native.pb() == null && (native.oformat().flags() and AVFMT_NOFILE) == 0) {
@@ -155,6 +167,10 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
     }
 
     public actual fun mux(packet: Packet) {
+        require(packet.streamIndex >= 0) { "Packet must have a valid stream index" }
+
+        packet.rescaleTs(streams[0].timeBase)
+
         av_interleaved_write_frame(native, packet.native).checkError()
     }
 
