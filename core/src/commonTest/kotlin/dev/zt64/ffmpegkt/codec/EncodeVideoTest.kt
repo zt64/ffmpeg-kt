@@ -24,8 +24,7 @@ class EncodeVideoTest {
             bitrate = 50000,
             width = width,
             height = height,
-            timeBase = Rational(1, frameRate),
-            framerate = Rational(frames, 1)
+            framerate = frameRate
         )
         c.open()
 

@@ -81,8 +81,8 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
      * @param bitrate The target bitrate.
      * @param width The video width.
      * @param height The video height.
+     * @param framerate The video framerate as frames per second.
      * @param timeBase The fundamental time unit.
-     * @param framerate The video framerate.
      * @param gopSize The group of pictures size.
      * @param maxBFrames The maximum number of B-frames.
      * @param pixFmt The pixel format.
@@ -92,8 +92,8 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
         bitrate: Long,
         width: Int,
         height: Int,
-        timeBase: Rational,
-        framerate: Rational,
+        framerate: Int,
+        timeBase: Rational = Rational(1, framerate),
         gopSize: Int = 12,
         maxBFrames: Int = 2,
         pixFmt: PixelFormat = PixelFormat.YUV420P
@@ -102,8 +102,8 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
         bitrate = bitrate,
         width = width,
         height = height,
+        framerate = Rational(framerate, 1),
         timeBase = timeBase,
-        framerate = framerate,
         gopSize = gopSize,
         maxBFrames = maxBFrames,
         pixFmt = pixFmt
@@ -116,8 +116,8 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
      * @param bitrate The target bitrate.
      * @param width The video width.
      * @param height The video height.
-     * @param timeBase The fundamental time unit.
      * @param framerate The video framerate.
+     * @param timeBase The fundamental time unit.
      * @param gopSize The group of pictures size.
      * @param maxBFrames The maximum number of B-frames.
      * @param pixFmt The pixel format.
@@ -127,8 +127,8 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
         bitrate: Long,
         width: Int,
         height: Int,
-        timeBase: Rational,
         framerate: Rational,
+        timeBase: Rational,
         gopSize: Int = 12,
         maxBFrames: Int = 2,
         pixFmt: PixelFormat = PixelFormat.YUV420P
