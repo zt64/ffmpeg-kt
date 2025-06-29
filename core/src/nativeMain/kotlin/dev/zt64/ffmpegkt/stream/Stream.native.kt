@@ -12,8 +12,12 @@ public actual open class Stream(public val native: AVStream, public actual val c
         get() = native.index
     public actual inline val id: Int
         get() = native.id
-    public actual inline val timeBase: Rational
+    public actual inline var timeBase: Rational
         get() = Rational(native.time_base)
+        set(value) {
+            native.time_base.num = value.num
+            native.time_base.den = value.den
+        }
     public actual val startTime: Long
         get() = native.start_time
     public actual val duration: Long

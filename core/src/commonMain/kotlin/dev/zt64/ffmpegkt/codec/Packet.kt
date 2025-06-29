@@ -43,7 +43,7 @@ public expect value class Packet internal constructor(internal val native: Nativ
     public var pos: Long
     public val timeBase: Rational
 
-    public fun rescaleTs(dst: Rational)
+    public fun rescaleTimestamp(src: Rational, dst: Rational)
 
     public fun decode(): Frame
 

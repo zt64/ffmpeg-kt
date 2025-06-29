@@ -17,7 +17,7 @@ public expect open class Stream {
      * The id of this stream
      */
     public val id: Int
-    public val timeBase: Rational
+    public var timeBase: Rational
     public val startTime: Long
     public val duration: Long
 

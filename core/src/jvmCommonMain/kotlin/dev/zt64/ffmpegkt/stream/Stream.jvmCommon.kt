@@ -1,6 +1,7 @@
 package dev.zt64.ffmpegkt.stream
 
 import dev.zt64.ffmpegkt.avutil.Rational
+import dev.zt64.ffmpegkt.avutil.toNative
 import dev.zt64.ffmpegkt.codec.*
 import org.bytedeco.ffmpeg.avformat.AVStream
 import org.bytedeco.ffmpeg.global.avcodec.avcodec_parameters_copy
@@ -10,8 +11,11 @@ public actual open class Stream(public val native: AVStream, public actual val c
         get() = native.index()
     public actual inline val id: Int
         get() = native.id()
-    public actual inline val timeBase: Rational
+    public actual inline var timeBase: Rational
         get() = Rational(native.time_base())
+        set(value) {
+            native.time_base(value.toNative())
+        }
     public actual inline val startTime: Long
         get() = native.start_time()
     public actual inline val duration: Long
