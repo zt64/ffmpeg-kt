@@ -2,20 +2,46 @@ package dev.zt64.ffmpegkt.avutil
 
 import dev.zt64.ffmpegkt.FfmpegLibrary
 
+/**
+ * A wrapper object for the FFmpeg libavutil library.
+ */
 public expect object LibAVUtil : FfmpegLibrary {
+    /**
+     * Returns the version number of the libavutil library.
+     * @return The library version integer.
+     */
     public override fun version(): Int
+
+    /**
+     * Returns the configuration string used to build the libavutil library.
+     * @return The build configuration string.
+     */
     public override fun configuration(): String
+
+    /**
+     * Returns the license of the libavutil library.
+     * @return The license string.
+     */
     public override fun license(): String
 
+    /**
+     * Returns a string containing detailed version information.
+     * @return The version information string.
+     */
     public fun versionInfo(): String
 
+    /**
+     * Gets the fundamental time base unit used internally by FFmpeg.
+     * This is equivalent to `AV_TIME_BASE_Q`.
+     * @return The rational number representing the time base.
+     */
     public fun getTimeBaseQ(): Rational
 
     /**
-     * Convert an error code into a string.
+     * Converts an FFmpeg error code into a human-readable string.
      *
-     * @param error
-     * @return error string
+     * @param error The integer error code (usually a negative value).
+     * @return A string describing the error.
      */
     public fun errorToString(error: Int): String
 

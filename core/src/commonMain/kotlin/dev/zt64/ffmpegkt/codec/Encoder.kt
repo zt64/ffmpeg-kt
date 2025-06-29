@@ -2,31 +2,50 @@ package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
 
+/**
+ * A sealed interface representing an encoder that converts raw [Frame]s into compressed [Packet]s.
+ * This provides a unified API for both audio and video encoding operations.
+ */
 public sealed interface Encoder {
     /**
-     * Receive a new encoded packet of data
-     * @return the packet or null if no more data
+     * Receives a single encoded packet from the encoder.
+     *
+     * This is a low-level function that retrieves one packet from the encoder's internal buffer.
+     * It should be called after sending one or more frames.
+     *
+     * @return The encoded [Packet], or `null` if no more packets are available at this time.
      */
     public fun encode(): Packet?
 
+    /**
+     * Creates a new [Frame] that is correctly configured for this encoder.
+     *
+     * This is a convenience method to allocate a frame with the appropriate properties
+     * (e.g., dimensions, sample format) required by the encoder.
+     *
+     * @return A new, empty [Frame] ready to be filled with data.
+     */
     public fun createFrame(): Frame
 }
 
 /**
- * An audio encoder for converting [AudioFrame]s into [Packet]s.
+ * An audio encoder for converting raw [AudioFrame]s into compressed [Packet]s.
  *
- * @constructor Create a new audio encoder with the given codec.
- * @param codec The codec to use for encoding.
+ * This class wraps an underlying FFmpeg audio `AVCodecContext` and provides a
+ * simplified API for the encoding process.
+ *
+ * @param codec The audio [Codec] to use for encoding. It must be an encoder.
+ * @constructor Creates a new audio encoder with the specified codec.
  */
 public class AudioEncoder(codec: Codec) : AudioCodecContext(codec), Encoder {
     /**
-     * Creates and configures a new audio encoder.
+     * Creates and configures a new audio encoder with detailed parameters.
      *
      * @param codec The codec to use for encoding.
-     * @param bitrate The target bitrate.
-     * @param sampleFmt The sample format.
-     * @param sampleRate The sample rate.
-     * @param channelLayout The channel layout.
+     * @param bitrate The target bitrate for the encoded audio (in bits per second).
+     * @param sampleFmt The desired audio sample format.
+     * @param sampleRate The audio sample rate (in Hz).
+     * @param channelLayout The layout of the audio channels.
      */
     public constructor(
         codec: Codec,
@@ -42,10 +61,15 @@ public class AudioEncoder(codec: Codec) : AudioCodecContext(codec), Encoder {
     }
 
     /**
-     * Encodes an audio frame.
+     * Encodes a single audio [Frame] into one or more [Packet]s.
      *
-     * @param frame The [AudioFrame] to encode. If null, the encoder is flushed, and any delayed packets are returned.
-     * @return A list of [Packet]s containing the encoded data.
+     * This is a high-level convenience function that handles sending a frame and
+     * receiving all resulting packets.
+     *
+     * @param frame The [AudioFrame] to encode. Passing `null` flushes the encoder,
+     *              returning any internally buffered packets.
+     * @return A list of packets encoded from the frame. The list may be empty if
+     *         the encoder needs more frames to produce a packet.
      */
     public fun encode(frame: AudioFrame?): List<Packet> {
         sendFrame(frame)
@@ -57,8 +81,18 @@ public class AudioEncoder(codec: Codec) : AudioCodecContext(codec), Encoder {
         }
     }
 
+    /**
+     * Receives a single encoded packet from the encoder's internal buffer.
+     *
+     * @return The encoded [Packet], or `null` if no more packets are available.
+     */
     public override fun encode(): Packet? = receivePacket()
 
+    /**
+     * Creates a new [AudioFrame] configured with this encoder's settings.
+     *
+     * @return A new, empty [AudioFrame] with the correct `nbSamples`, `format`, and `channelLayout`.
+     */
     public override fun createFrame(): AudioFrame = AudioFrame(
         nbSamples = frameSize,
         format = sampleFmt,
@@ -67,25 +101,29 @@ public class AudioEncoder(codec: Codec) : AudioCodecContext(codec), Encoder {
 }
 
 /**
- * A video encoder for converting [VideoFrame]s into [Packet]s.
+ * A video encoder for converting raw [VideoFrame]s into compressed [Packet]s.
  *
- * @constructor Create a new video encoder with the given codec.
- * @param codec The codec to use for encoding.
+ * This class wraps an underlying FFmpeg video `AVCodecContext` and provides a
+ * simplified API for the encoding process.
+ *
+ * @param codec The video [Codec] to use for encoding. It must be an encoder.
+ * @constructor Creates a new video encoder with the specified codec.
  */
 public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
 
     /**
-     * Creates and configures a new video encoder.
+     * Creates and configures a new video encoder by finding a registered encoder for the given [CodecID].
      *
-     * @param codec The codec to use for encoding.
-     * @param bitrate The target bitrate.
-     * @param width The video width.
-     * @param height The video height.
-     * @param framerate The video framerate as frames per second.
-     * @param timeBase The fundamental time unit.
-     * @param gopSize The group of pictures size.
-     * @param maxBFrames The maximum number of B-frames.
-     * @param pixFmt The pixel format.
+     * @param codec The ID of the desired video codec.
+     * @param bitrate The target bitrate for the encoded video (in bits per second).
+     * @param width The width of the video frame.
+     * @param height The height of the video frame.
+     * @param framerate The video framerate in frames per second.
+     * @param timeBase The fundamental time unit for frame timestamps.
+     * @param gopSize The Group of Pictures (GOP) size, i.e., the number of frames between keyframes.
+     * @param maxBFrames The maximum number of B-frames between non-B-frames.
+     * @param pixFmt The pixel format of the video frames.
+     * @throws IllegalArgumentException if no encoder is found for the specified ID.
      */
     public constructor(
         codec: CodecID,
@@ -113,14 +151,14 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
      * Creates and configures a new video encoder.
      *
      * @param codec The codec to use for encoding.
-     * @param bitrate The target bitrate.
-     * @param width The video width.
-     * @param height The video height.
-     * @param framerate The video framerate.
-     * @param timeBase The fundamental time unit.
-     * @param gopSize The group of pictures size.
+     * @param bitrate The target bitrate for the encoded video (in bits per second).
+     * @param width The width of the video frame.
+     * @param height The height of the video frame.
+     * @param framerate The video framerate as a rational number.
+     * @param timeBase The fundamental time unit for frame timestamps.
+     * @param gopSize The Group of Pictures (GOP) size.
      * @param maxBFrames The maximum number of B-frames.
-     * @param pixFmt The pixel format.
+     * @param pixFmt The pixel format of the video frames.
      */
     public constructor(
         codec: Codec,
@@ -145,11 +183,12 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
 
     /**
      * Creates and configures a new video encoder with minimal parameters.
+     * Other parameters will be set to default values.
      *
      * @param codec The codec to use for encoding.
-     * @param bitrate The target bitrate.
-     * @param width The video width.
-     * @param height The video height.
+     * @param bitrate The target bitrate for the encoded video (in bits per second).
+     * @param width The width of the video frame.
+     * @param height The height of the video frame.
      */
     public constructor(
         codec: Codec,
@@ -163,10 +202,15 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
     }
 
     /**
-     * Encodes a video frame.
+     * Encodes a single video [Frame] into one or more [Packet]s.
      *
-     * @param frame The [VideoFrame] to encode. If null, the encoder is flushed, and any delayed packets are returned.
-     * @return A list of [Packet]s containing the encoded data.
+     * This is a high-level convenience function that handles sending a frame and
+     * receiving all resulting packets.
+     *
+     * @param frame The [VideoFrame] to encode. Passing `null` flushes the encoder,
+     *              returning any internally buffered packets.
+     * @return A list of packets encoded from the frame. The list may be empty if
+     *         the encoder needs more frames to produce a packet.
      */
     public fun encode(frame: VideoFrame?): List<Packet> {
         sendFrame(frame)
@@ -178,8 +222,18 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
         }
     }
 
+    /**
+     * Receives a single encoded packet from the encoder's internal buffer.
+     *
+     * @return The encoded [Packet], or `null` if no more packets are available.
+     */
     public override fun encode(): Packet? = receivePacket()
 
+    /**
+     * Creates a new [VideoFrame] configured with this encoder's settings.
+     *
+     * @return A new, empty [VideoFrame] with the correct `width`, `height`, and `format`.
+     */
     public override fun createFrame(): VideoFrame = VideoFrame(
         width = width,
         height = height,
