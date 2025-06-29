@@ -20,6 +20,8 @@ public expect open class Frame : AutoCloseable {
      */
     public var pts: Long
 
+    public var timeBase: Rational
+
     /**
      * Allocates a buffer for the frame.
      *

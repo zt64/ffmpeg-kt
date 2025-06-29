@@ -17,6 +17,13 @@ public actual open class Frame internal constructor(public open val native: Nati
             native.pts = value
         }
 
+    public actual var timeBase: Rational
+        get() = Rational(native.time_base)
+        set(value) {
+            native.time_base.num = value.num
+            native.time_base.den = value.den
+        }
+
     public actual fun getBuffer(align: Int) {
         av_frame_get_buffer(native.ptr, align)
     }

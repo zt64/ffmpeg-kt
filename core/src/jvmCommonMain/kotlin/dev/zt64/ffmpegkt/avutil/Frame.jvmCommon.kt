@@ -20,6 +20,12 @@ public actual open class Frame(public open val native: NativeAVFrame) : AutoClos
             native.pts(value)
         }
 
+    public actual var timeBase: Rational
+        get() = Rational(native.time_base())
+        set(value) {
+            native.time_base(value.toNative())
+        }
+
     public actual fun getBuffer(align: Int) {
         av_frame_get_buffer(native, align)
     }
