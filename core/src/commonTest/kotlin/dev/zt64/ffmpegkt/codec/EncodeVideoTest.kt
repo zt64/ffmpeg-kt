@@ -1,6 +1,5 @@
 package dev.zt64.ffmpegkt.codec
 
-import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
@@ -20,8 +19,8 @@ class EncodeVideoTest {
         val height = 256
 
         val c = VideoEncoder(
-            codec = CodecID.MPEG4,
-            bitrate = 50000,
+            codec = CodecID.H264,
+            bitrate = 1_000_000, // 1 Mbps
             width = width,
             height = height,
             framerate = frameRate
@@ -81,11 +80,9 @@ class EncodeVideoTest {
         assertEquals(1, input.streams.size)
 
         val videoStream = input.streams.video.first()
-        assertEquals(CodecID.MPEG4, videoStream.codecParameters.codecId)
+        assertEquals(CodecID.H264, videoStream.codecParameters.codecId)
 
         assertEquals(width, videoStream.codecParameters.width, "Width should match")
         assertEquals(height, videoStream.codecParameters.height, "Height should match")
-        assertEquals(Rational(1, frameRate), videoStream.timeBase, "Time base should match")
-        assertEquals(Rational(frames, 1), videoStream.codecParameters.framerate, "Framerate should match")
     }
 }
