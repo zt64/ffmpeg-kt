@@ -116,12 +116,10 @@ public actual abstract class Container(@PublishedApi internal val native: Native
             formatName: String?,
             filename: String
         ): OutputContainer {
-            return OutputContainer(format, formatName, filename)
+            return OutputContainer(filename, format, formatName)
         }
 
-        public actual fun openOutput(filename: String): OutputContainer {
-            return OutputContainer(null, null, filename)
-        }
+        public actual fun openOutput(filename: String): OutputContainer = OutputContainer(filename)
 
         public fun openOutput(path: Path): OutputContainer {
             return openOutput(path.absolutePathString())

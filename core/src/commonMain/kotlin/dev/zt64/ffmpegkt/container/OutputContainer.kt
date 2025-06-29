@@ -8,9 +8,9 @@ public expect class OutputContainer : Container {
     public override val metadata: MutableMap<String, String>
 
     public constructor(
+        filename: String,
         format: AVOutputFormat? = null,
-        formatName: String? = null,
-        filename: String
+        formatName: String? = null
     )
 
     /**

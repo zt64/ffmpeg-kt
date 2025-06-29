@@ -52,9 +52,9 @@ public actual class OutputContainer(native: NativeAVFormatContext2) : Container(
     }
 
     public actual constructor(
+        filename: String,
         format: AVOutputFormat?,
-        formatName: String?,
-        filename: String
+        formatName: String?
     ) : this(avformat_alloc_context()!!.pointed) {
         avformat_alloc_output_context2(
             ctx = cValuesOf(native.ptr),

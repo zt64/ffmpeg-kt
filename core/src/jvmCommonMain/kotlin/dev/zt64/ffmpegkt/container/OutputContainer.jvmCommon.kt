@@ -59,9 +59,9 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
     }
 
     public actual constructor(
+        filename: String,
         format: AVOutputFormat?,
-        formatName: String?,
-        filename: String
+        formatName: String?
     ) : this(NativeAVFormatContext2()) {
         avformat_alloc_output_context2(native, format?.native, formatName, filename).checkError()
     }
@@ -168,8 +168,6 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
 
     public actual fun mux(packet: Packet) {
         require(packet.streamIndex >= 0) { "Packet must have a valid stream index" }
-
-        packet.rescaleTs(streams[0].timeBase)
 
         av_interleaved_write_frame(native, packet.native).checkError()
     }
