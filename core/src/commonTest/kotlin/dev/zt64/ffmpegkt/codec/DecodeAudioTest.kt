@@ -19,13 +19,9 @@ class DecodeAudioTest {
         decoder.parser.parsePackets(TestResources.WAV_AUDIO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
 
-            decoder.decode(packet)
+            if (packet.size <= 0) return@forEach
 
-            while (true) {
-                val frame = decoder.decode() ?: break
-
-                // println("Saving frame ${codecContext.frameNum}")
-
+            decoder.decode(packet).forEach { frame ->
                 val dataSize = decoder.sampleFmt.bytesPerSample
                 for (i in 0..frame.nbSamples) {
                     for (ch in 0..decoder.channelLayout.nbChannels) {
@@ -33,14 +29,6 @@ class DecodeAudioTest {
                         // out.write(frame.data[ch].toUByteArray().toByteArray())
                     }
                 }
-
-                // FileSystem.SYSTEM.write("./frames/frame-${codecContext.frameNum}.pgm".toPath()) {
-                //     writeUtf8("P5\n${frame.width} ${frame.height}\n255\n")
-                //
-                //     for (i in 0 until frame.height) {
-                //         write(buf, i * wrap, frame.width)
-                //     }
-                // }
             }
         }
 

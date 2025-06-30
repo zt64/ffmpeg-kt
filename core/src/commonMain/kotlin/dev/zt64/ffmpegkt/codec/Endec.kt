@@ -16,7 +16,7 @@ public expect sealed class AudioCodecContext(codec: Codec) : CodecContext {
     public var channelLayout: ChannelLayout
     public var frameSize: Int
 
-    public override fun decode(): AudioFrame?
+    override fun decode(): AudioFrame?
 }
 
 /**
@@ -43,5 +43,5 @@ public expect sealed class VideoCodecContext(codec: Codec) : CodecContext {
      */
     public var framerate: Rational
 
-    public override fun decode(): VideoFrame?
+    override fun decode(): VideoFrame?
 }

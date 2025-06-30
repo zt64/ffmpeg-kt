@@ -8,16 +8,6 @@ import dev.zt64.ffmpegkt.avutil.*
  */
 public sealed interface Encoder {
     /**
-     * Receives a single encoded packet from the encoder.
-     *
-     * This is a low-level function that retrieves one packet from the encoder's internal buffer.
-     * It should be called after sending one or more frames.
-     *
-     * @return The encoded [Packet], or `null` if no more packets are available at this time.
-     */
-    public fun encode(): Packet?
-
-    /**
      * Creates a new [Frame] that is correctly configured for this encoder.
      *
      * This is a convenience method to allocate a frame with the appropriate properties
@@ -78,19 +68,8 @@ public class AudioEncoder(
     public fun encode(frame: AudioFrame?): List<Packet> {
         sendFrame(frame)
 
-        return buildList {
-            while (true) {
-                add(receivePacket() ?: break)
-            }
-        }
+        return receivePackets()
     }
-
-    /**
-     * Receives a single encoded packet from the encoder's internal buffer.
-     *
-     * @return The encoded [Packet], or `null` if no more packets are available.
-     */
-    public override fun encode(): Packet? = receivePacket()
 
     /**
      * Creates a new [AudioFrame] configured with this encoder's settings.
@@ -219,19 +198,8 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
     public fun encode(frame: VideoFrame?): List<Packet> {
         sendFrame(frame)
 
-        return buildList {
-            while (true) {
-                add(receivePacket() ?: break)
-            }
-        }
+        return receivePackets()
     }
-
-    /**
-     * Receives a single encoded packet from the encoder's internal buffer.
-     *
-     * @return The encoded [Packet], or `null` if no more packets are available.
-     */
-    public override fun encode(): Packet? = receivePacket()
 
     /**
      * Creates a new [VideoFrame] configured with this encoder's settings.

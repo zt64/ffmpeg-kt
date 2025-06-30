@@ -77,28 +77,30 @@ public expect abstract class CodecContext(codec: Codec) : AutoCloseable {
      *
      * @param frame The frame to be encoded. A null frame flushes the encoder.
      */
-    public fun sendFrame(frame: Frame?)
+    protected fun sendFrame(frame: Frame?)
 
     /**
      * Sends a [Packet] to the decoder for decoding.
      *
      * @param packet The packet to be decoded. A null packet flushes the decoder.
      */
-    public fun sendPacket(packet: Packet?)
+    protected fun sendPacket(packet: Packet?)
 
     /**
      * Receives an encoded [Packet] from the encoder.
      *
      * @return The encoded packet, or null if no more packets are available.
      */
-    public fun receivePacket(): Packet?
+    protected fun receivePacket(): Packet?
+
+    protected fun receivePackets(): List<Packet>
 
     /**
      * Receives a decoded [Frame] from the decoder.
      *
      * @return The decoded frame, or null if no more frames are available.
      */
-    public abstract fun decode(): Frame?
+    protected abstract fun decode(): Frame?
 
     /**
      * Closes the codec context and releases all associated resources.

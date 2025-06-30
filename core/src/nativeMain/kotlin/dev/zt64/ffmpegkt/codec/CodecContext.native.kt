@@ -91,7 +91,16 @@ public actual abstract class CodecContext protected constructor(
         }
     }
 
-    public actual abstract fun decode(): Frame?
+    protected actual fun receivePackets(): List<Packet> {
+        return buildList {
+            while (true) {
+                val pkt = receivePacket() ?: break
+                add(pkt)
+            }
+        }
+    }
+
+    protected actual abstract fun decode(): Frame?
 
     actual override fun close() {
         avcodec_free_context(cValuesOf(native.ptr))
@@ -126,7 +135,7 @@ public actual sealed class AudioCodecContext protected actual constructor(codec:
             native.frame_size = value
         }
 
-    public actual override fun decode(): AudioFrame? {
+    actual override fun decode(): AudioFrame? {
         val frame = AudioFrame()
         return when (val ret = avcodec_receive_frame(native.ptr, frame.native.ptr)) {
             ERROR_AGAIN, ERROR_EOF -> null
@@ -178,7 +187,7 @@ public actual sealed class VideoCodecContext protected actual constructor(codec:
             value.asNative().readValue().place(native.framerate.ptr)
         }
 
-    public actual override fun decode(): VideoFrame? {
+    actual override fun decode(): VideoFrame? {
         val frame = VideoFrame()
         return when (val ret = avcodec_receive_frame(native.ptr, frame.native.ptr)) {
             ERROR_AGAIN, ERROR_EOF -> null

@@ -81,15 +81,15 @@ public actual abstract class CodecContext protected constructor(
         avcodec_flush_buffers(native)
     }
 
-    public actual fun sendFrame(frame: Frame?) {
+    protected actual fun sendFrame(frame: Frame?) {
         avcodec_send_frame(native, frame?.native).checkError()
     }
 
-    public actual fun sendPacket(packet: Packet?) {
+    protected actual fun sendPacket(packet: Packet?) {
         avcodec_send_packet(native, packet?.native).checkError()
     }
 
-    public actual fun receivePacket(): Packet? {
+    protected actual fun receivePacket(): Packet? {
         val pkt = av_packet_alloc()
         return when (val ret = avcodec_receive_packet(native, pkt)) {
             ERROR_AGAIN, ERROR_EOF -> null
@@ -101,7 +101,16 @@ public actual abstract class CodecContext protected constructor(
         }
     }
 
-    public actual abstract fun decode(): Frame?
+    protected actual fun receivePackets(): List<Packet> {
+        return buildList {
+            while (true) {
+                val packet = receivePacket() ?: break
+                add(packet)
+            }
+        }
+    }
+
+    protected actual abstract fun decode(): Frame?
 
     public actual override fun close() {
         avcodec_free_context(native)
@@ -135,7 +144,7 @@ public actual sealed class AudioCodecContext protected actual constructor(
             native.frame_size(value)
         }
 
-    public actual override fun decode(): AudioFrame? {
+    actual override fun decode(): AudioFrame? {
         val frame = AudioFrame()
         return when (val ret = avcodec_receive_frame(native, frame.native)) {
             ERROR_AGAIN, ERROR_EOF -> null
@@ -193,7 +202,7 @@ public actual sealed class VideoCodecContext protected actual constructor(
             native.framerate(value.toNative())
         }
 
-    public actual override fun decode(): VideoFrame? {
+    actual override fun decode(): VideoFrame? {
         val frame = VideoFrame()
         return when (val ret = avcodec_receive_frame(native, frame.native)) {
             ERROR_AGAIN, ERROR_EOF -> null

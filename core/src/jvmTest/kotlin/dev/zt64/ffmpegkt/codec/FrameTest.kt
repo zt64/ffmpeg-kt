@@ -7,7 +7,6 @@ import kotlinx.coroutines.test.runTest
 import java.io.File
 import javax.imageio.ImageIO
 import kotlin.test.Test
-import kotlin.test.fail
 
 class FrameTest {
     private val outputDir = TestUtil.getOutputPath("frames")
@@ -19,20 +18,14 @@ class FrameTest {
 
         decoder.parser.parsePackets(TestResources.MPEG_1_VIDEO.readBytes()).forEach { (packet) ->
             println("Parsed packet size: ${packet.size}")
-            if (packet.size > 0) {
-                try {
-                    decoder.decode(packet)
-                } catch (e: Exception) {
-                    fail("Error sending a packet for decoding", e)
-                }
+            if (packet.size <= 0) return@forEach
 
-                while (true) {
-                    val frame = decoder.decode() ?: break
+            decoder.decode(packet).forEach { frame ->
+                println("Saving frame ${decoder.frameNum}")
 
-                    println("Saving frame ${decoder.frameNum}")
+                ImageIO.write(frame.toImage(), "png", File(outputDir.toFile(), "frame_${decoder.frameNum}.png"))
 
-                    ImageIO.write(frame.toImage(), "png", File(outputDir.toFile(), "frame_${decoder.frameNum}.png"))
-                }
+                frame.close()
             }
         }
 
