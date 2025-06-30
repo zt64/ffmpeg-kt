@@ -7,9 +7,8 @@ import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.stream.VideoStream
 import dev.zt64.ffmpegkt.test.TestResources
 import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.fail
+import okio.FileSystem
+import kotlin.test.*
 
 class ContainerTest {
     @Test
@@ -43,7 +42,6 @@ class ContainerTest {
         Container.openOutput(path).use { output ->
             output.metadata.putAll(values)
             output.newStream<VideoStream>(Codec.findEncoder(CodecID.MPEG4)!!)
-            output.writeHeader()
         }
 
         Container.openInput(path).use { input ->
@@ -79,7 +77,6 @@ class ContainerTest {
             c.open()
 
             videoStream.timeBase = c.timeBase
-            output.writeHeader()
             val frame = c.createFrame()
 
             for (i in 0 until frames) {
@@ -133,6 +130,18 @@ class ContainerTest {
             assertEquals(CodecID.H264, videoStream.codecParameters.codecId, "Expected H.264 codec")
             assertEquals(256, videoStream.codecParameters.width, "Expected video width to be 256")
             assertEquals(256, videoStream.codecParameters.height, "Expected video height to be 256")
+        }
+    }
+
+    // Should test that closing a container without writing the header throws an exception
+    @Test
+    fun testImproperClose() {
+        val path = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("invalid_close_test.mp4").toString()
+
+        assertFails {
+            Container.openOutput(path).use { output ->
+                // Do not write header, just close immediately
+            }
         }
     }
 }

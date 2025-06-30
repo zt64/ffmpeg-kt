@@ -17,6 +17,7 @@ import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.PointerPointer
 
 public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx) {
+    private var started: Boolean = false
     private val _metadata = mutableMapOf<String, String>()
 
     public actual override val metadata: MutableMap<String, String> = object : MutableMap<String, String> by _metadata {
@@ -169,6 +170,11 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
     public actual fun mux(packet: Packet) {
         require(packet.streamIndex >= 0) { "Packet must have a valid stream index" }
 
+        if (!started) {
+            writeHeader()
+            started = true
+        }
+
         av_interleaved_write_frame(native, packet.native).checkError()
     }
 
@@ -177,9 +183,11 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
     }
 
     actual override fun close() {
+        if (!started) {
+            throw IllegalStateException("Cannot close container without writing header first")
+        }
+
         av_write_trailer(native).checkError()
         if (native.pb() != null) avio_context_free(native.pb())
-
-        // TODO: Write trailer and finalize the output container
     }
 }
