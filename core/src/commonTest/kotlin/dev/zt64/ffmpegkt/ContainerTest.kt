@@ -12,25 +12,6 @@ import kotlin.test.*
 
 class ContainerTest {
     @Test
-    fun testMetadata() = runTest {
-        val container = Container.openInput(TestResources.RESOURCE_1.readBytes())
-
-        container.use { format ->
-            println("Metadata:")
-            println(format.metadata)
-
-            println("Chapters:")
-            println(format.chapters.ifEmpty { "None" })
-
-            println("Audio streams:")
-            println(format.streams.audio.ifEmpty { "None" })
-
-            println("Video streams:")
-            println(format.streams.video.ifEmpty { "None" })
-        }
-    }
-
-    @Test
     fun testMetadataWrite() = runTest {
         val path = "./build/test-output/metadata_test.mp4"
 
@@ -141,6 +122,16 @@ class ContainerTest {
             Container.openOutput(path).use { output ->
                 // Do not write header, just close immediately
             }
+        }
+    }
+
+    @Test
+    fun testOpenInputFromByteArray() = runTest {
+        val byteArray = TestResources.RESOURCE_1.readBytes()
+
+        Container.openInput(byteArray).use { input ->
+            assertTrue(input.streams.audio.isNotEmpty(), "Expected at least one audio stream")
+            assertTrue(input.streams.video.isNotEmpty(), "Expected at least one video stream")
         }
     }
 }
