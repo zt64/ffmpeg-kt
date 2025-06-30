@@ -54,9 +54,4 @@ class AVUtilTest {
             message = "Alternate sample format should be S16"
         )
     }
-
-    @Test
-    fun testCrc() {
-        TODO()
-    }
 }
