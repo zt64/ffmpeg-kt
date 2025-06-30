@@ -69,7 +69,6 @@ class ContainerTest {
 
             val c = VideoEncoder(
                 codec = CodecID.H264,
-                bitrate = 900000,
                 width = width,
                 height = height,
                 framerate = frameRate

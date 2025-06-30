@@ -34,31 +34,35 @@ public sealed interface Encoder {
  * This class wraps an underlying FFmpeg audio `AVCodecContext` and provides a
  * simplified API for the encoding process.
  *
- * @param codec The audio [Codec] to use for encoding. It must be an encoder.
- * @constructor Creates a new audio encoder with the specified codec.
+ * @param codec The codec to use for encoding.
+ * @param bitrate The target bitrate for the encoded audio (in bits per second). Default is 0, which means the codec's default bitrate will be used.
+ * @param sampleFmt The desired audio sample format.
+ * @param sampleRate The audio sample rate (in Hz).
+ * @param channelLayout The layout of the audio channels.
  */
-public class AudioEncoder(codec: Codec) : AudioCodecContext(codec), Encoder {
-    /**
-     * Creates and configures a new audio encoder with detailed parameters.
-     *
-     * @param codec The codec to use for encoding.
-     * @param bitrate The target bitrate for the encoded audio (in bits per second).
-     * @param sampleFmt The desired audio sample format.
-     * @param sampleRate The audio sample rate (in Hz).
-     * @param channelLayout The layout of the audio channels.
-     */
-    public constructor(
-        codec: Codec,
-        bitrate: Long,
-        sampleFmt: SampleFormat,
-        sampleRate: Int,
-        channelLayout: ChannelLayout
-    ) : this(codec) {
+public class AudioEncoder(
+    codec: Codec,
+    bitrate: Long = 0,
+    sampleFmt: SampleFormat = codec.sampleFormats.first(),
+    sampleRate: Int = 48000,
+    channelLayout: ChannelLayout = codec.channelLayouts.maxBy { it.nbChannels }
+) : AudioCodecContext(codec), Encoder {
+    init {
         this.bitrate = bitrate
         this.sampleFmt = sampleFmt
         this.sampleRate = sampleRate
         this.channelLayout = channelLayout
     }
+
+    public constructor(
+        codecId: CodecID,
+        bitrate: Long = 0,
+        sampleRate: Int = 48000
+    ) : this(
+        codec = Codec.findEncoder(codecId) ?: throw IllegalArgumentException("Codec not found: $codecId"),
+        bitrate = bitrate,
+        sampleRate = sampleRate
+    )
 
     /**
      * Encodes a single audio [Frame] into one or more [Packet]s.
@@ -115,7 +119,7 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
      * Creates and configures a new video encoder by finding a registered encoder for the given [CodecID].
      *
      * @param codec The ID of the desired video codec.
-     * @param bitrate The target bitrate for the encoded video (in bits per second).
+     * @param bitrate The target bitrate for the encoded video (in bits per second). Default is 0, which means the codec's default bitrate will be used.
      * @param width The width of the video frame.
      * @param height The height of the video frame.
      * @param framerate The video framerate in frames per second.
@@ -127,7 +131,7 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
      */
     public constructor(
         codec: CodecID,
-        bitrate: Long,
+        bitrate: Long = 0,
         width: Int,
         height: Int,
         framerate: Int,

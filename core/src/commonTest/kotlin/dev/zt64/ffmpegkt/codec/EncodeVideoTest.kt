@@ -20,7 +20,6 @@ class EncodeVideoTest {
 
         val c = VideoEncoder(
             codec = CodecID.H264,
-            bitrate = 1_000_000, // 1 Mbps
             width = width,
             height = height,
             framerate = frameRate

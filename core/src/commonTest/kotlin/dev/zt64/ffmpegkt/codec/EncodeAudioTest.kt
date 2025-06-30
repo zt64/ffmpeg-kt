@@ -1,6 +1,5 @@
 package dev.zt64.ffmpegkt.codec
 
-import dev.zt64.ffmpegkt.avutil.SampleFormat
 import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
 import okio.*
@@ -13,14 +12,7 @@ class EncodeAudioTest {
 
     @Test
     fun encodeAudio() = runTest {
-        val codec = Codec.findEncoder(CodecID.MP3)!!
-        val encoder = AudioEncoder(
-            codec = codec,
-            bitrate = 192000, // 192 kbps
-            sampleFmt = SampleFormat.S32P, // 32-bit signed planar
-            sampleRate = codec.supportedSampleRates.max(),
-            channelLayout = codec.channelLayouts.maxBy { it.nbChannels }
-        )
+        val encoder = AudioEncoder(CodecID.MP3)
         encoder.open()
 
         val frame = encoder.createFrame()

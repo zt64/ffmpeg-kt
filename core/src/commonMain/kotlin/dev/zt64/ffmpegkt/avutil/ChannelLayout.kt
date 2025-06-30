@@ -11,6 +11,8 @@ public expect value class ChannelLayout internal constructor(internal val native
     public val order: AVChannelOrder
     public val nbChannels: Int
 
+    public constructor(channels: Int)
+
     public fun copyTo(dst: ChannelLayout)
 
     public companion object {
