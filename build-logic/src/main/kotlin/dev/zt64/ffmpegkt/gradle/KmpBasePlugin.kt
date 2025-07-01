@@ -38,7 +38,7 @@ class KmpBasePlugin : Plugin<Project> {
             native()
 
             compilerOptions {
-                freeCompilerArgs.addAll("-Xexpect-actual-classes")
+                freeCompilerArgs.addAll("-Xexpect-actual-classes", "-Xcontext-parameters")
             }
 
             sourceSets.apply {
