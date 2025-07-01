@@ -2,6 +2,7 @@ package dev.zt64.ffmpegkt.avutil
 
 import ffmpeg.*
 import kotlinx.cinterop.*
+import platform.posix.memcpy
 
 internal actual typealias NativeAVFrame = AVFrame
 
@@ -99,21 +100,42 @@ public actual class VideoFrame internal constructor(override val native: NativeA
 public actual class FrameData internal constructor(private val native: NativeAVFrame) : AbstractList<FrameData.FrameDataSegment>() {
     public actual override val size: Int = AV_NUM_DATA_POINTERS
 
-    public actual override fun get(index: Int): FrameDataSegment {
-        val size = av_image_get_buffer_size(
-            native.format,
-            native.width,
-            native.height,
-            1
-        )
-        return FrameDataSegment(native.data[index]!!, size)
+    private val segments = arrayOfNulls<FrameDataSegment>(AV_NUM_DATA_POINTERS)
+
+    public actual override operator fun get(index: Int): FrameDataSegment {
+        if (index !in 0..<size) throw IndexOutOfBoundsException("Index: $index, Size: $size")
+
+        return segments[index] ?: run {
+            val pointer = native.data[index.toLong()]!!
+            val newSegment = FrameDataSegment(pointer, calculatePlaneSize(index))
+            segments[index] = newSegment
+            newSegment
+        }
     }
 
-    public actual inner class FrameDataSegment(private val cPointer: CPointer<UByteVar>, actual override val size: Int) : AbstractList<UByte>() {
+    public actual operator fun set(index: Int, value: ByteArray) {
+        if (index !in 0..<size) throw IndexOutOfBoundsException("Index: $index, Size: $size")
+
+        val segment = get(index)
+        segment.put(value, 0, value.size)
+    }
+
+    private fun calculatePlaneSize(index: Int): Int {
+        val linesize = native.linesize[index]
+        if (linesize == 0) return 0
+        return linesize * native.height
+    }
+
+    public actual class FrameDataSegment(private val cPointer: CPointer<UByteVar>, actual override val size: Int) : AbstractList<UByte>() {
         public actual operator fun set(index: Int, value: UByte) {
             cPointer[index] = value
         }
 
         public actual override operator fun get(index: Int): UByte = cPointer[index]
+        public actual fun put(bytes: ByteArray, offset: Int, length: Int) {
+            bytes.usePinned { pinned ->
+                memcpy(cPointer, pinned.addressOf(offset), length.toULong())
+            }
+        }
     }
 }

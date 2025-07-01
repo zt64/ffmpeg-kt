@@ -105,16 +105,36 @@ public actual class VideoFrame(override val native: NativeAVFrame) : Frame(nativ
 public actual class FrameData(private val native: NativeAVFrame) : AbstractList<FrameData.FrameDataSegment>() {
     public actual override val size: Int = AV_NUM_DATA_POINTERS
 
+    private val segments = arrayOfNulls<FrameDataSegment>(AV_NUM_DATA_POINTERS)
+
     public actual override operator fun get(index: Int): FrameDataSegment {
-        val pointer = BytePointer(native.data().get(index.toLong()))
-        return FrameDataSegment(pointer, calculatePlaneSize(index))
+        if (index !in 0..<size) throw IndexOutOfBoundsException("Index: $index, Size: $size")
+
+        return segments[index] ?: run {
+            val pointer = BytePointer(native.data().get(index.toLong()))
+            val newSegment = FrameDataSegment(pointer, calculatePlaneSize(index))
+            segments[index] = newSegment
+            newSegment
+        }
+    }
+
+    public actual operator fun set(index: Int, value: ByteArray) {
+        if (index !in 0..<size) throw IndexOutOfBoundsException("Index: $index, Size: $size")
+
+        val segment = get(index)
+        if (value.size != segment.size) {
+            throw IllegalArgumentException("Value size (${value.size}) does not match segment size (${segment.size})")
+        }
+        segment.put(value, 0, value.size)
     }
 
     private fun calculatePlaneSize(index: Int): Int {
-        return av_image_get_linesize(native.format(), native.width(), index) * native.height()
+        val linesize = native.linesize(index)
+        if (linesize == 0) return 0
+        return linesize * native.height()
     }
 
-    public actual inner class FrameDataSegment(
+    public actual class FrameDataSegment(
         private val pointer: BytePointer,
         actual override val size: Int
     ) : AbstractList<UByte>() {
@@ -124,6 +144,10 @@ public actual class FrameData(private val native: NativeAVFrame) : AbstractList<
 
         public actual operator fun set(index: Int, value: UByte) {
             pointer.put(index.toLong(), value.toByte())
+        }
+
+        public actual fun put(bytes: ByteArray, offset: Int, length: Int) {
+            pointer.put(bytes, offset, length)
         }
     }
 }
