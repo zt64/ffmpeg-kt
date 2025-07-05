@@ -62,7 +62,7 @@ class EncodeAudioTest {
 
         // Write the buffer to a file
         buffer.use {
-            FileSystem.SYSTEM.write(outputDir.resolve("output.mp3")) {
+            FileSystem.SYSTEM.write(outputDir.resolve("encoded-audio.mp3")) {
                 writeAll(buffer)
             }
         }

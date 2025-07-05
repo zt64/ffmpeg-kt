@@ -9,6 +9,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core)
                 api(libs.kotlin.test)
                 api(libs.coroutines.test)
                 api(libs.resources.test)

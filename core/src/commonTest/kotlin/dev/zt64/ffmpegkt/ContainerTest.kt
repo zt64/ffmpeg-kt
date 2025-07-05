@@ -6,6 +6,7 @@ import dev.zt64.ffmpegkt.codec.VideoEncoder
 import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.stream.VideoStream
 import dev.zt64.ffmpegkt.test.TestResources
+import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import kotlin.test.*
@@ -13,7 +14,7 @@ import kotlin.test.*
 class ContainerTest {
     @Test
     fun testMetadataWrite() = runTest {
-        val path = "./build/test-output/metadata_test.mp4"
+        val path = TestUtil.resolvePath("metadata-test.mp4")
 
         val values = mapOf(
             "title" to "Test Metadata",
@@ -36,7 +37,7 @@ class ContainerTest {
 
     @Test
     fun testAddStreams() = runTest {
-        val path = "./build/test-output/streams-test.mp4"
+        val path = TestUtil.resolvePath("streams-test.mp4")
 
         Container.openOutput(path).use { output ->
             // TODO: Simplify the stream/encoder creation process

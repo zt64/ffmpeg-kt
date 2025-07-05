@@ -68,7 +68,7 @@ class EncodeVideoTest {
 
         assertTrue(buffer.size > 0, "Encoded buffer should not be empty")
 
-        val outputFile = outputDir.resolve("output.mp4")
+        val outputFile = outputDir.resolve("encoded-video.mp4")
         buffer.use {
             FileSystem.SYSTEM.write(outputFile) {
                 writeAll(buffer)
