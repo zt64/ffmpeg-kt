@@ -122,9 +122,6 @@ public actual class FrameData(private val native: NativeAVFrame) : AbstractList<
         if (index !in 0..<size) throw IndexOutOfBoundsException("Index: $index, Size: $size")
 
         val segment = get(index)
-        if (value.size != segment.size) {
-            throw IllegalArgumentException("Value size (${value.size}) does not match segment size (${segment.size})")
-        }
         segment.put(value, 0, value.size)
     }
 
