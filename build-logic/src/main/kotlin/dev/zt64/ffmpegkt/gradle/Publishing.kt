@@ -2,7 +2,6 @@ package dev.zt64.ffmpegkt.gradle
 
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import com.vanniktech.maven.publish.SonatypeHost
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
@@ -11,7 +10,7 @@ fun Project.publishing() {
     apply(plugin = "com.vanniktech.maven.publish")
 
     configure<MavenPublishBaseExtension> {
-        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+        publishToMavenCentral()
         signAllPublications()
         coordinates("dev.zt64.ffmpeg-kt", "ffmpeg-kt", "$version")
         configure(KotlinMultiplatform(sourcesJar = true))
