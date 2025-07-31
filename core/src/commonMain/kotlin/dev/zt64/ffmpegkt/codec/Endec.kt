@@ -1,6 +1,7 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 
 /**
  * Base class for audio codec contexts, containing common properties for audio encoding and decoding.
@@ -30,7 +31,7 @@ public expect sealed class AudioCodecContext(codec: Codec) : CodecContext {
  * @property mbDecision The macroblock decision algorithm to use.
  * @property framerate The frame rate of the video.
  */
-public expect sealed class VideoCodecContext(codec: Codec) : CodecContext {
+public expect sealed class VideoCodecContext(codec: Codec, hwAccel: HWDeviceContext? = null) : CodecContext {
     public var pixFmt: PixelFormat
     public var width: Int
     public var height: Int

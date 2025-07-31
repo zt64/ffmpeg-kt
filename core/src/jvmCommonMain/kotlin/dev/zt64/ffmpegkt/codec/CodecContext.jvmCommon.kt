@@ -1,20 +1,23 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
+import dev.zt64.ffmpegkt.avutil.hw.HWFrameContext
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
+import org.bytedeco.ffmpeg.avcodec.AVCodecContext
 import org.bytedeco.ffmpeg.global.avcodec.*
-import org.bytedeco.ffmpeg.global.avutil.av_channel_layout_copy
+import org.bytedeco.ffmpeg.global.avutil.*
+import org.bytedeco.javacpp.IntPointer
 
-private typealias NativeCodecContext = org.bytedeco.ffmpeg.avcodec.AVCodecContext
+private typealias NativeCodecContext = AVCodecContext
 
 public actual abstract class CodecContext protected constructor(
     public val native: NativeCodecContext,
-    internal actual val codec: Codec
+    internal actual val codec: Codec,
+    hwAccel: HWDeviceContext? = null
 ) : AutoCloseable {
-    protected val packet: Packet = Packet() // Shared packet for encoders
-
-    public actual constructor(codec: Codec) : this(avcodec_alloc_context3(codec.native), codec)
+    public actual constructor(codec: Codec, hwAccel: HWDeviceContext?) : this(avcodec_alloc_context3(codec.native), codec, hwAccel)
 
     public actual inline var codecTag: Int
         get() = native.codec_tag()
@@ -64,6 +67,12 @@ public actual abstract class CodecContext protected constructor(
             native.thread_count(value)
         }
 
+    public actual inline var threadType: Int
+        get() = native.thread_type()
+        set(value) {
+            native.thread_type(value)
+        }
+
     public actual inline var frameNum: Long
         get() = native.frame_num()
         set(value) {
@@ -72,6 +81,11 @@ public actual abstract class CodecContext protected constructor(
 
     public actual inline val isOpen: Boolean
         get() = avcodec_is_open(native).checkTrue()
+
+    init {
+        threadCount = 0
+        threadType = 0x02
+    }
 
     public actual fun open(options: Dictionary?) {
         avcodec_open2(native, codec.native, options?.toNative()).checkError()
@@ -158,17 +172,22 @@ public actual sealed class AudioCodecContext protected actual constructor(
 }
 
 public actual sealed class VideoCodecContext protected actual constructor(
-    codec: Codec
-) : CodecContext(avcodec_alloc_context3(codec.native), codec) {
+    codec: Codec,
+    hwAccel: HWDeviceContext?
+) : CodecContext(codec, hwAccel) {
     public actual var pixFmt: PixelFormat
         get() = PixelFormat(native.pix_fmt())
         set(value) {
             native.pix_fmt(value.num)
         }
 
+    @PublishedApi
+    internal var _width: Int = native.width()
+
     public actual var width: Int
-        get() = native.width()
+        inline get() = _width
         set(value) {
+            _width = value
             native.width(value)
         }
 
@@ -201,6 +220,39 @@ public actual sealed class VideoCodecContext protected actual constructor(
         set(value) {
             native.framerate(value.toNative())
         }
+
+    public var hwFramesContext: HWFrameContext? = null
+        set(value) {
+            // native.hw_frames_ctx(av_buffer_ref(value?.native))
+        }
+
+    init {
+        if (hwAccel != null) {
+            hwAccel.init(codec)
+            native.hwaccel_context(hwAccel.native)
+            native.hw_device_ctx(av_buffer_ref(hwAccel.native))
+            native.pix_fmt(hwAccel.config!!.pixelFormat.num)
+            native.get_format(object : AVCodecContext.Get_format_AVCodecContext_IntPointer() {
+                override fun call(s: AVCodecContext?, fmt: IntPointer?): Int {
+                    if (fmt == null) return AV_PIX_FMT_NONE
+
+                    var i = 0
+                    while (true) {
+                        val currentPixFmt = fmt.get(i.toLong())
+                        if (currentPixFmt == AV_PIX_FMT_NONE) {
+                            break
+                        }
+                        if (currentPixFmt == hwAccel.config!!.pixelFormat.num) {
+                            return i
+                        }
+                        i++
+                    }
+
+                    return AV_PIX_FMT_NONE
+                }
+            })
+        }
+    }
 
     actual override fun decode(): VideoFrame? {
         val frame = VideoFrame()

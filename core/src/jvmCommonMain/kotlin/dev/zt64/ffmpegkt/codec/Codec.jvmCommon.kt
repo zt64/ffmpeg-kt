@@ -3,8 +3,12 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.AVHWDeviceType
+import dev.zt64.ffmpegkt.avutil.hw.HWConfig
 import dev.zt64.ffmpegkt.toList
 import org.bytedeco.ffmpeg.global.avcodec.*
+import org.bytedeco.javacpp.Pointer
+import org.bytedeco.javacpp.PointerPointer
 
 internal actual typealias NativeAVCodec = org.bytedeco.ffmpeg.avcodec.AVCodec
 
@@ -61,6 +65,20 @@ public actual value class Codec(public val native: NativeAVCodec) {
             transform = ::ChannelLayout
         )
 
+    public actual val hardwareConfigs: List<HWConfig>
+        get() = buildList {
+            for (i in 0..100) {
+                val config = avcodec_get_hw_config(native, i) ?: break
+                add(
+                    HWConfig(
+                        pixelFormat = PixelFormat(config.pix_fmt()),
+                        methods = config.methods(),
+                        deviceType = AVHWDeviceType(config.device_type())
+                    )
+                )
+            }
+        }
+
     public actual inline val wrapperName: String
         get() = native.wrapper_name().string
 
@@ -79,6 +97,22 @@ public actual value class Codec(public val native: NativeAVCodec) {
 
         public actual fun findDecoder(id: CodecID): Codec? {
             return avcodec_find_decoder(id.num)?.let(::Codec)
+        }
+
+        public actual fun getCodecs(): List<Codec> {
+            return buildList {
+                // Allocate a PointerPointer to pass a void** to the native function.
+                val opaque = PointerPointer<Pointer>(1L)
+
+                // The native function requires the state pointer to be initialized to NULL.
+                // We must explicitly set the pointer at index 0 to null before the first call.
+                opaque.put(null as Pointer?)
+
+                while (true) {
+                    val codec = av_codec_iterate(opaque) ?: break
+                    add(Codec(codec))
+                }
+            }
         }
     }
 }

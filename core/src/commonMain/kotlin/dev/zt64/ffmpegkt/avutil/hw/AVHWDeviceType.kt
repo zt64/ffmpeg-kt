@@ -3,7 +3,7 @@ package dev.zt64.ffmpegkt.avutil.hw
 import kotlin.jvm.JvmInline
 
 @JvmInline
-public value class AVHWDeviceType internal constructor(
+public value class AVHWDeviceType @PublishedApi internal constructor(
     @PublishedApi
     internal val num: Int
 ) {

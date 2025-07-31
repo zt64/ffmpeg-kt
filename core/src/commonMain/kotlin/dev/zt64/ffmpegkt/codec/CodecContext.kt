@@ -1,6 +1,7 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 
 internal const val ERROR_EOF = -541478725
 internal const val ERROR_AGAIN = -11
@@ -12,7 +13,7 @@ internal const val ERROR_AGAIN = -11
  *
  * @property codec The underlying [Codec] associated with this context.
  */
-public expect abstract class CodecContext(codec: Codec) : AutoCloseable {
+public expect abstract class CodecContext(codec: Codec, hwAccel: HWDeviceContext? = null) : AutoCloseable {
     internal val codec: Codec
 
     /** The codec tag. */
@@ -44,6 +45,10 @@ public expect abstract class CodecContext(codec: Codec) : AutoCloseable {
      * - For decoding, this is also set by the user.
      */
     public var threadCount: Int
+
+    /** The threading mode for the codec context.
+     */
+    public var threadType: Int
 
     /**
      * A counter for the number of frames processed.

@@ -1,11 +1,15 @@
 package dev.zt64.ffmpegkt.avfilter
 
+import dev.zt64.ffmpegkt.avutil.Frame
+
 public expect class AVFilterGraph
 
 public expect value class FilterGraph(private val native: AVFilterGraph) : AutoCloseable {
     public constructor()
 
-    public fun addFilter(filter: Filter)
+    internal fun addFilter(filter: Filter)
+
+    public fun filter(frame: Frame): Frame
 
     override fun close()
 }

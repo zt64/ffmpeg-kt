@@ -1,10 +1,10 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.AVHWDeviceType
+import dev.zt64.ffmpegkt.avutil.hw.HWConfig
 import ffmpeg.*
-import kotlinx.cinterop.get
-import kotlinx.cinterop.pointed
-import kotlinx.cinterop.toKString
+import kotlinx.cinterop.*
 
 internal actual typealias NativeAVCodec = AVCodec
 
@@ -39,7 +39,15 @@ public actual value class Codec(public val native: NativeAVCodec) {
             }
         }.orEmpty().toIntArray()
     public actual inline val sampleFormats: List<SampleFormat>
-        get() = emptyList()
+        get() = buildList {
+            var i = 0
+            while (true) {
+                val fmt = native.sample_fmts?.get(i)?.takeIf { it != AV_SAMPLE_FMT_NONE }
+                    ?.let(::SampleFormat) ?: break
+                add(fmt)
+                i++
+            }
+        }
     public actual inline val profiles: List<AVProfile>
         get() = emptyList()
     public actual inline val channelLayouts: List<ChannelLayout>
@@ -55,6 +63,20 @@ public actual value class Codec(public val native: NativeAVCodec) {
                 }
             }
         }
+    public actual inline val hardwareConfigs: List<HWConfig>
+        get() = buildList {
+            for (i in 0..100) {
+                val config = avcodec_get_hw_config(native.ptr, i)?.pointed ?: break
+                add(
+                    HWConfig(
+                        pixelFormat = PixelFormat(config.pix_fmt),
+                        methods = config.methods,
+                        deviceType = AVHWDeviceType(config.device_type.toInt())
+                    )
+                )
+            }
+        }
+
     public actual inline val wrapperName: String
         get() = native.wrapper_name?.toKString().orEmpty()
 
@@ -73,6 +95,19 @@ public actual value class Codec(public val native: NativeAVCodec) {
 
         public actual fun findDecoder(id: CodecID): Codec? {
             return avcodec_find_decoder(id.num.toUInt())?.let { Codec(it.pointed) }
+        }
+
+        public actual fun getCodecs(): List<Codec> {
+            return buildList {
+                memScoped {
+                    val opaque = alloc<CPointerVarOf<CPointer<*>>>().ptr
+
+                    while (true) {
+                        val codec = av_codec_iterate(opaque)?.pointed ?: break
+                        add(Codec(codec))
+                    }
+                }
+            }
         }
     }
 }

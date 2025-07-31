@@ -1,16 +1,19 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
 import kotlinx.cinterop.*
 
 public actual abstract class CodecContext protected constructor(
+    @PublishedApi
     internal val native: AVCodecContext,
-    internal actual val codec: Codec
+    internal actual val codec: Codec,
+    hwAccel: HWDeviceContext? = null
 ) : AutoCloseable {
-    public actual constructor(codec: Codec) : this(allocContext(codec), codec)
+    public actual constructor(codec: Codec, hwAccel: HWDeviceContext?) : this(allocContext(codec), codec, hwAccel)
 
     public actual var codecTag: Int
         get() = native.codec_tag.toInt()
@@ -52,6 +55,12 @@ public actual abstract class CodecContext protected constructor(
         get() = native.thread_count
         set(value) {
             native.thread_count = value
+        }
+
+    public actual var threadType: Int
+        get() = native.thread_type
+        set(value) {
+            native.thread_type = value
         }
 
     public actual var frameNum: Long
@@ -148,9 +157,10 @@ public actual sealed class AudioCodecContext protected actual constructor(codec:
     }
 }
 
-public actual sealed class VideoCodecContext protected actual constructor(codec: Codec) :
-    CodecContext(codec) {
-
+public actual sealed class VideoCodecContext protected actual constructor(
+    codec: Codec,
+    hwAccel: HWDeviceContext?
+) : CodecContext(codec, hwAccel) {
     public actual var pixFmt: PixelFormat
         get() = PixelFormat(native.pix_fmt)
         set(value) {
@@ -186,6 +196,29 @@ public actual sealed class VideoCodecContext protected actual constructor(codec:
         set(value) {
             value.asNative().readValue().place(native.framerate.ptr)
         }
+
+    init {
+        if (hwAccel != null) {
+            hwAccel.init(codec)
+            native.hwaccel_context = hwAccel.native!!.ptr
+            native.hw_device_ctx = av_buffer_ref(hwAccel.native!!.ptr)
+            native.pix_fmt = hwAccel.config!!.pixelFormat.num
+            native.get_format = staticCFunction { s, fmt ->
+                if (fmt == null) return@staticCFunction AV_PIX_FMT_NONE
+
+                val pixFmt = s!!.pointed.pix_fmt
+                var i = 0
+                while (true) {
+                    val currentPixFmt = fmt[i.toLong()]
+                    if (currentPixFmt == AV_PIX_FMT_NONE) break
+                    if (currentPixFmt == pixFmt) return@staticCFunction i
+                    i++
+                }
+
+                AV_PIX_FMT_NONE
+            }
+        }
+    }
 
     actual override fun decode(): VideoFrame? {
         val frame = VideoFrame()

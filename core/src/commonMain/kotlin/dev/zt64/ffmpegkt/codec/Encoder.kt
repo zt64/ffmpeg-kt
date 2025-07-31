@@ -1,6 +1,7 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 
 /**
  * A sealed interface representing an encoder that converts raw [Frame]s into compressed [Packet]s.
@@ -35,7 +36,7 @@ public class AudioEncoder(
     bitrate: Long = 0,
     sampleFmt: SampleFormat = codec.sampleFormats.first(),
     sampleRate: Int = 48000,
-    channelLayout: ChannelLayout = codec.channelLayouts.maxBy { it.nbChannels }
+    channelLayout: ChannelLayout = ChannelLayout.STEREO
 ) : AudioCodecContext(codec), Encoder {
     init {
         this.bitrate = bitrate
@@ -92,7 +93,7 @@ public class AudioEncoder(
  * @param codec The video [Codec] to use for encoding. It must be an encoder.
  * @constructor Creates a new video encoder with the specified codec.
  */
-public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
+public class VideoEncoder(codec: Codec, hwAccel: HWDeviceContext? = null) : VideoCodecContext(codec, hwAccel), Encoder {
 
     /**
      * Creates and configures a new video encoder by finding a registered encoder for the given [CodecID].
@@ -117,17 +118,19 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
         timeBase: Rational = Rational(1, framerate),
         gopSize: Int = 12,
         maxBFrames: Int = 2,
-        pixFmt: PixelFormat = PixelFormat.YUV420P
+        pixFmt: PixelFormat = PixelFormat.YUV420P,
+        hwAccel: HWDeviceContext? = null
     ) : this(
         codec = Codec.findEncoder(codec) ?: throw IllegalArgumentException("Codec not found: $codec"),
         bitrate = bitrate,
         width = width,
         height = height,
-        framerate = Rational(framerate, 1),
+        framerate = framerate,
         timeBase = timeBase,
         gopSize = gopSize,
         maxBFrames = maxBFrames,
-        pixFmt = pixFmt
+        pixFmt = pixFmt,
+        hwAccel = hwAccel
     )
 
     /**
@@ -145,20 +148,21 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
      */
     public constructor(
         codec: Codec,
-        bitrate: Long,
+        bitrate: Long = 0,
         width: Int,
         height: Int,
-        framerate: Rational,
-        timeBase: Rational,
+        framerate: Int,
+        timeBase: Rational = Rational(1, framerate),
         gopSize: Int = 12,
         maxBFrames: Int = 2,
-        pixFmt: PixelFormat = PixelFormat.YUV420P
-    ) : this(codec) {
+        pixFmt: PixelFormat = PixelFormat.YUV420P,
+        hwAccel: HWDeviceContext? = null
+    ) : this(codec, hwAccel) {
         this.bitrate = bitrate
         this.width = width
         this.height = height
         this.timeBase = timeBase
-        this.framerate = framerate
+        this.framerate = Rational(framerate, 1)
         this.gopSize = gopSize
         this.maxBFrames = maxBFrames
         this.pixFmt = pixFmt
@@ -177,8 +181,9 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
         codec: Codec,
         bitrate: Long,
         width: Int,
-        height: Int
-    ) : this(codec) {
+        height: Int,
+        hwAccel: HWDeviceContext? = null
+    ) : this(codec, hwAccel) {
         this.bitrate = bitrate
         this.width = width
         this.height = height
@@ -209,6 +214,6 @@ public class VideoEncoder(codec: Codec) : VideoCodecContext(codec), Encoder {
     public override fun createFrame(): VideoFrame = VideoFrame(
         width = width,
         height = height,
-        format = pixFmt
+        format = pixFmt,
     )
 }

@@ -1,6 +1,7 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.hw.HWConfig
 import dev.zt64.ffmpegkt.codec.Codec.Companion.findDecoder
 import dev.zt64.ffmpegkt.codec.Codec.Companion.findEncoder
 
@@ -76,6 +77,8 @@ public expect value class Codec internal constructor(internal val native: Native
      */
     public val channelLayouts: List<ChannelLayout>
 
+    public val hardwareConfigs: List<HWConfig>
+
     /**
      * The name of the wrapper for this codec.
      */
@@ -109,5 +112,7 @@ public expect value class Codec internal constructor(internal val native: Native
          * @return The [Codec] if found, otherwise null.
          */
         public fun findDecoder(id: CodecID): Codec?
+
+        public fun getCodecs(): List<Codec>
     }
 }
