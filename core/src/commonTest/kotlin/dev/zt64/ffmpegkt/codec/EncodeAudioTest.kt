@@ -23,7 +23,7 @@ class EncodeAudioTest {
         var t = 0.0
         var freq = 440.0
         val length = 2 // seconds
-        for (i in 0 until (encoder.sampleRate * length) / encoder.frameSize) {
+        repeat((encoder.sampleRate * length) / encoder.frameSize) {
             val tincr = 2 * PI * freq / encoder.sampleRate
 
             /* Loop over the number of samples in the frame */
@@ -49,10 +49,8 @@ class EncodeAudioTest {
             }
 
             encoder.encode(frame).forEach { packet ->
-                packet.use {
-                    println("Write packet (size=${packet.size})")
-                    buffer.write(packet.data)
-                }
+                println("Write packet (size=${packet.size})")
+                buffer.write(packet.data)
             }
         }
 
