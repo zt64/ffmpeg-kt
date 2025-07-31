@@ -14,7 +14,9 @@ object TestUtil {
      * @param path The relative path to resolve.
      * @return The full resolved path for the test output directory.
      */
-    fun resolvePath(path: String) = "$OUTPUT_BASE_PATH/$PLATFORM/$path"
+    fun resolvePath(path: String) = "$OUTPUT_BASE_PATH/$PLATFORM/$path".also {
+        FileSystem.SYSTEM.createDirectories(it.toPath().parent ?: error("Invalid path: $it"))
+    }
 
     /**
      * Returns the output path for test files.
