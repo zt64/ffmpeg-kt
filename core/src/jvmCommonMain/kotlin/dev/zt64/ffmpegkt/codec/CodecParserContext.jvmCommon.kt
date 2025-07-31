@@ -18,7 +18,7 @@ public actual class CodecParserContext(
         codec,
         av_parser_init(codec.native.codec_id())
     )
-    private val packet = Packet()
+    private val packet = AVPacket()
 
     public actual inline val parser: AVCodecParser
         get() = AVCodecParser(native.parser())
@@ -50,17 +50,16 @@ public actual class CodecParserContext(
                 /* pos = */ pos
             ).checkError()
 
-            val packet = Packet()
             val parsedSize = outputSizePointer.get()
 
             if (parsedSize > 0) {
                 // Allocate a new buffer owned by the packet
-                av_new_packet(packet.native, parsedSize).checkError()
+                av_new_packet(packet, parsedSize).checkError()
                 // Copy data from the parser's temporary buffer to the packet's buffer
-                Pointer.memcpy(packet.native.data(), outputPointer, parsedSize.toLong())
+                Pointer.memcpy(packet.data(), outputPointer, parsedSize.toLong())
             }
 
-            return ParsedPacket(packet, read)
+            return ParsedPacket(Packet(packet), read)
         } finally {
             inputPointer.deallocate()
             outputSizePointer.deallocate()
@@ -129,6 +128,6 @@ public actual class CodecParserContext(
 
     public actual override fun close() {
         av_parser_close(native)
-        packet.close()
+        av_packet_free(packet)
     }
 }

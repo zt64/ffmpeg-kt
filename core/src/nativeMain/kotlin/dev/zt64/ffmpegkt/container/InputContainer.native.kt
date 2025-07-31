@@ -8,6 +8,7 @@ import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import dev.zt64.ffmpegkt.codec.Packet
 import ffmpeg.*
 import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 
 public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx) {
@@ -24,17 +25,18 @@ public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx)
     }
 
     public actual fun demux(): List<Packet> {
-        val packets = mutableListOf<Packet>()
-        while (true) {
-            val packet = try {
-                Packet().apply { av_read_frame(this@InputContainer.native.ptr, native.ptr) }
-            } catch (e: Exception) {
-                break
+        return buildList {
+            while (true) {
+                try {
+                    val nativePacket = av_packet_alloc()!!.apply {
+                        av_read_frame(this@InputContainer.native.ptr, this)
+                    }
+                    add(Packet(nativePacket.pointed))
+                } catch (e: Exception) {
+                    break
+                }
             }
-
-            packets += packet
         }
-        return packets
     }
 
     public actual fun decode(): List<Frame> {

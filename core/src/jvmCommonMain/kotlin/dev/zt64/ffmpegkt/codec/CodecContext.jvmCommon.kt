@@ -86,7 +86,7 @@ public actual abstract class CodecContext protected constructor(
     }
 
     protected actual fun sendPacket(packet: Packet?) {
-        avcodec_send_packet(native, packet?.native).checkError()
+        avcodec_send_packet(native, packet?.toNative()).checkError()
     }
 
     protected actual fun receivePacket(): Packet? {

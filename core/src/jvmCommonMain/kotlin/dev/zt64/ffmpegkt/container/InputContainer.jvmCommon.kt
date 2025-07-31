@@ -4,6 +4,7 @@ import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import dev.zt64.ffmpegkt.codec.Packet
+import org.bytedeco.ffmpeg.avcodec.AVPacket
 import org.bytedeco.ffmpeg.avutil.AVDictionary
 import org.bytedeco.ffmpeg.global.avformat.*
 
@@ -21,17 +22,16 @@ public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx)
     }
 
     public actual fun demux(): List<Packet> {
-        val packets = mutableListOf<Packet>()
-        while (true) {
-            val packet = try {
-                Packet().apply { av_read_frame(this@InputContainer.native, native) }
-            } catch (e: Exception) {
-                break
+        return buildList {
+            while (true) {
+                try {
+                    val packet = Packet(AVPacket().apply { av_read_frame(this@InputContainer.native, this) })
+                    add(packet)
+                } catch (_: Exception) {
+                    break
+                }
             }
-
-            packets += packet
         }
-        return packets
     }
 
     public actual fun decode(): List<Frame> {

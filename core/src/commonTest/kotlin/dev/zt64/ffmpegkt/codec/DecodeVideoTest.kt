@@ -43,13 +43,12 @@ class DecodeVideoTest {
         decoder.open()
 
         // Create a packet with garbage data
-        val corruptedPacket = Packet(ByteArray(100))
+        val corruptedPacket = Packet(data = ByteArray(100))
         val frames = decoder.decode(corruptedPacket)
 
         // The decoder should handle the error gracefully, likely returning no frames
         assertEquals(0, frames.size, "Decoder should not produce frames from a corrupted packet")
 
-        corruptedPacket.close()
         decoder.close()
     }
 

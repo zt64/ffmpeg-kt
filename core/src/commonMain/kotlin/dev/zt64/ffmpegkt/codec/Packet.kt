@@ -5,96 +5,75 @@ import dev.zt64.ffmpegkt.avutil.Rational
 
 internal expect class NativeAVPacket
 
+public expect fun rescale(value: Long, source: Rational, destination: Rational): Long
+
 /**
  * A packet of compressed data, typically output from an encoder or read from a media container.
  *
- * This class is a wrapper around a native FFmpeg `AVPacket` and holds compressed data
- * for a single frame of a specific stream (e.g., video or audio). It is a resource
- * that must be closed to release underlying native memory.
- *
- * @property native The underlying native packet object.
+ * @param pts The presentation timestamp (PTS) of the packet in `timeBase` units.
+ * @param dts The decompression timestamp (DTS) of the packet in `timeBase` units.
+ * @param duration The duration of the packet's content in `timeBase` units.
+ * @param streamIndex The index of the stream to which this packet belongs within a media container.
+ * @param size The size of the packet's data in bytes.
+ * @param data The raw compressed data contained within this packet.
  */
-public expect value class Packet internal constructor(internal val native: NativeAVPacket) : AutoCloseable {
+public class Packet(
+    pts: Long = 0x80000000L,
+    dts: Long = 0x80000000L,
+    duration: Long = 0L,
+    public val streamIndex: Int = -1,
+    public val size: Int = 0,
+    public val data: ByteArray = byteArrayOf()
+) {
     /**
-     * Creates an empty packet.
-     * This is useful for allocating a packet that will be filled by a function like `av_read_frame`.
+     * The time base in which the packet's timestamps (PTS, DTS, duration) are expressed.
+     * This is typically set to the time base of the stream to which this packet belongs.
      */
-    public constructor()
-
-    /**
-     * Creates a packet and initializes it with the given data.
-     *
-     * @param data The raw data to populate the packet with.
-     */
-    public constructor(data: ByteArray)
-
-    /**
-     * The presentation timestamp (PTS) of the packet in `timeBase` units.
-     * This is the time at which the decoded frame should be presented to the user.
-     */
-    public val pts: Long
+    public var pts: Long = pts
+        private set
 
     /**
      * The decompression timestamp (DTS) of the packet in `timeBase` units.
-     * This is the time at which the packet should be decoded.
      */
-    public val dts: Long
-
-    /**
-     * The raw compressed data contained within this packet.
-     */
-    public val data: ByteArray
-
-    /**
-     * The size of the packet's data in bytes.
-     */
-    public val size: Int
-
-    /**
-     * The index of the stream to which this packet belongs within a media container.
-     */
-    public var streamIndex: Int
-
-    /**
-     * A collection of flags associated with the packet (e.g., indicating a keyframe).
-     */
-    public var flags: Int
+    public var dts: Long = dts
+        private set
 
     /**
      * The duration of the packet's content in `timeBase` units.
      */
-    public var duration: Long
+    public var duration: Long = duration
+        private set
 
-    /**
-     * The byte position of this packet within the stream, or -1 if unknown.
-     */
-    public var pos: Long
+    public fun rescaleTimestamp(source: Rational, destination: Rational) {
+        pts = rescale(pts, source, destination)
+        dts = rescale(dts, source, destination)
+        duration = rescale(duration, source, destination)
+    }
 
-    /**
-     * The time base in which the packet's timestamps (PTS, DTS, duration) are expressed.
-     */
-    public val timeBase: Rational
+    public fun decode(): Frame {
+        // This is a placeholder for the actual decoding logic.
+        // In a real implementation, this would find the appropriate decoder
+        // for the stream and decode the packet into a Frame.
+        throw NotImplementedError("Decoding not implemented")
+    }
 
-    /**
-     * Rescales the packet's timestamps (PTS, DTS, duration) from a source time base to a destination time base.
-     *
-     * @param src The source time base to convert from.
-     * @param dst The destination time base to convert to.
-     */
-    public fun rescaleTimestamp(src: Rational, dst: Rational)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
 
-    /**
-     * Decodes this packet into a raw [Frame].
-     *
-     * This is a high-level convenience function that finds the appropriate decoder
-     * for the packet's stream and performs the decoding.
-     *
-     * @return The decoded [Frame].
-     */
-    public fun decode(): Frame
+        other as Packet
 
-    /**
-     * Releases the native resources associated with this packet.
-     */
-    override fun close()
+        if (pts != other.pts) return false
+        if (dts != other.dts) return false
+        if (!data.contentEquals(other.data)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = pts.hashCode()
+        result = 31 * result + dts.hashCode()
+        result = 31 * result + data.contentHashCode()
+        return result
+    }
 }
