@@ -1,5 +1,6 @@
 package dev.zt64.ffmpegkt.codec
 
+import dev.zt64.ffmpegkt.FrameUtil.generateFrames
 import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.test.TestUtil
 import kotlinx.coroutines.test.runTest
@@ -13,8 +14,8 @@ class EncodeVideoTest {
 
     @Test
     fun encodeVideo() = runTest {
-        val frameRate = 25 // 25 frames per second
-        val frames = 250 // 10 seconds of video
+        val frameRate = 25
+        val frames = 250
         val width = 256
         val height = 256
 
@@ -26,41 +27,12 @@ class EncodeVideoTest {
         )
         c.open()
 
-        val frame = c.createFrame()
-
         val buffer = Buffer()
-        for (i in 0 until frames) {
-            val frameData = frame.data
 
-            val (linesize0, linesize1, linesize2) = frame.linesize
-
-            // Y
-            for (y in 0 until c.height) {
-                for (x in 0 until c.width) {
-                    frameData[0][y * linesize0 + x] = (x + y + i * 3).toUByte()
-                }
-            }
-
-            // Cb and Cr
-            for (y in 0 until c.height / 2) {
-                for (x in 0 until c.width / 2) {
-                    frameData[1][y * linesize1 + x] = (128 + y + i * 2).toUByte()
-                    frameData[2][y * linesize2 + x] = (64 + x + i * 5).toUByte()
-                }
-            }
-            frame.pts = i.toLong()
-
-            println("Send frame ${frame.pts}")
-
-            c.encode(frame).forEach { packet ->
-                packet.use {
-                    println("Write packet (size=${packet.size})")
-                    buffer.write(packet.data)
-                }
-            }
+        c.generateFrames(frames) { packet ->
+            println("Write packet (size=${packet.size})")
+            buffer.write(packet.data)
         }
-
-        frame.close()
 
         // Flush encoder
         c.encode(null)
@@ -78,9 +50,8 @@ class EncodeVideoTest {
         val input = Container.openInput(outputFile.toString())
         assertEquals(1, input.streams.size)
 
-        val videoStream = input.streams.video.first()
+        val videoStream = input.streams.video.single()
         assertEquals(CodecID.H264, videoStream.codecParameters.codecId)
-
         assertEquals(width, videoStream.codecParameters.width, "Width should match")
         assertEquals(height, videoStream.codecParameters.height, "Height should match")
     }

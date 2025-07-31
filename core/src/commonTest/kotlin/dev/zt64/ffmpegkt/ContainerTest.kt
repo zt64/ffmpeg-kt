@@ -1,9 +1,11 @@
 package dev.zt64.ffmpegkt
 
-import dev.zt64.ffmpegkt.codec.Codec
-import dev.zt64.ffmpegkt.codec.CodecID
-import dev.zt64.ffmpegkt.codec.VideoEncoder
+import dev.zt64.ffmpegkt.FrameUtil.generateFrames
+import dev.zt64.ffmpegkt.FrameUtil.generateSineWave
+import dev.zt64.ffmpegkt.avutil.ChannelLayout
+import dev.zt64.ffmpegkt.codec.*
 import dev.zt64.ffmpegkt.container.Container
+import dev.zt64.ffmpegkt.stream.AudioStream
 import dev.zt64.ffmpegkt.stream.VideoStream
 import dev.zt64.ffmpegkt.test.TestResources
 import dev.zt64.ffmpegkt.test.TestUtil
@@ -35,22 +37,26 @@ class ContainerTest {
         }
     }
 
+    // Tests the generation of video and audio streams in a container
     @Test
-    fun testAddStreams() = runTest {
+    fun testGenerateStreams() = runTest {
         val path = TestUtil.resolvePath("streams-test.mp4")
 
-        Container.openOutput(path).use { output ->
-            // TODO: Simplify the stream/encoder creation process
-            val videoStream = output.newStream<VideoStream>(Codec.findEncoder(CodecID.H264)!!)
+        val frameRate = 25 // 25 frames per second
+        val durationSeconds = 60
+        val frames = frameRate * durationSeconds
+        val width = 256
+        val height = 256
 
-            val frameRate = 25 // 25 frames per second
-            val durationSeconds = 10
-            val frames = frameRate * durationSeconds
-            val width = 256
-            val height = 256
+        Container.openOutput(path).use { output ->
+            // TODO: This kinda sucks, figure out a better way to handle this
+            val videoCodec = Codec.findEncoder(CodecID.H264)!!
+            val videoStream = output.newStream<VideoStream>(videoCodec)
+            val audioCodec = Codec.findEncoder(CodecID.MP3)!!
+            val audioStream = output.newStream<AudioStream>(audioCodec)
 
             val c = VideoEncoder(
-                codec = CodecID.H264,
+                codec = videoCodec,
                 width = width,
                 height = height,
                 framerate = frameRate
@@ -58,56 +64,33 @@ class ContainerTest {
             c.open()
 
             videoStream.timeBase = c.timeBase
-            val frame = c.createFrame()
 
-            for (i in 0 until frames) {
-                val frameData = frame.data
+            val audioEncoder = AudioEncoder(
+                codec = audioCodec,
+                sampleRate = 44100,
+                channelLayout = ChannelLayout.STEREO,
+                bitrate = 128_000
+            )
+            audioEncoder.open()
 
-                val (linesize0, linesize1, linesize2) = frame.linesize
-
-                // Y
-                for (y in 0 until c.height) {
-                    for (x in 0 until c.width) {
-                        frameData[0][y * linesize0 + x] = (x + y + i * 3).toUByte()
-                    }
-                }
-
-                // Cb and Cr
-                for (y in 0 until c.height / 2) {
-                    for (x in 0 until c.width / 2) {
-                        frameData[1][y * linesize1 + x] = (128 + y + i * 2).toUByte()
-                        frameData[2][y * linesize2 + x] = (64 + x + i * 5).toUByte()
-                    }
-                }
-                frame.pts = i.toLong()
-
-                println("Send frame ${frame.pts}")
-
-                c.encode(frame).forEach { packet ->
-                    packet.use {
-                        packet.rescaleTimestamp(c.timeBase, videoStream.timeBase)
-
-                        println("Write packet (size=${packet.size})")
-                        output.mux(packet)
-                    }
-                }
+            c.generateFrames(frames) { packet ->
+                println("Write packet (size=${packet.size})")
+                output.mux(packet, videoStream)
             }
-
-            frame.close()
-
-            c.encode(null).forEach { packet ->
-                packet.use {
-                    packet.rescaleTimestamp(c.timeBase, videoStream.timeBase)
-                    output.mux(packet)
-                }
-            }
+            c.encode(null).forEach { packet -> output.mux(packet, videoStream) }
             c.close()
+
+            audioEncoder.generateSineWave(durationSeconds) { packet ->
+                println("Write audio packet (size=${packet.size})")
+                output.mux(packet, audioStream)
+            }
+            audioEncoder.encode(null).forEach { packet -> output.mux(packet, audioStream) }
+            audioEncoder.close()
         }
 
         Container.openInput(path).use { input ->
-            assertEquals(1, input.streams.size, "Expected 1 stream in the container")
-            val videoStream = input.streams.video.firstOrNull()
-                ?: fail("video stream should be null at this point")
+            assertEquals(2, input.streams.size, "Expected 2 streams in the container")
+            val videoStream = input.streams.video.firstOrNull() ?: fail("video stream should be null at this point")
             assertEquals(CodecID.H264, videoStream.codecParameters.codecId, "Expected H.264 codec")
             assertEquals(256, videoStream.codecParameters.width, "Expected video width to be 256")
             assertEquals(256, videoStream.codecParameters.height, "Expected video height to be 256")
