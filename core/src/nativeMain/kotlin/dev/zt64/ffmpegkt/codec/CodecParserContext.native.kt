@@ -1,7 +1,9 @@
 package dev.zt64.ffmpegkt.codec
 
+import dev.zt64.ffmpegkt.avutil.util.checkError
 import ffmpeg.*
 import kotlinx.cinterop.*
+import platform.posix.memcpy
 
 public actual class CodecParserContext(
     public val codecContext: CodecContext,
@@ -10,7 +12,7 @@ public actual class CodecParserContext(
 ) : AutoCloseable {
     public actual constructor(codec: CodecContext) : this(codec, av_parser_init(codec.codecId.num)!!.pointed)
 
-    private val packet = Packet()
+    private val packet = av_packet_alloc()!!.pointed
 
     public actual val parser: AVCodecParser
         get() = AVCodecParser(native.parser!!.pointed)
@@ -40,10 +42,17 @@ public actual class CodecParserContext(
                 pos = pos
             )
 
-            packet.native.data = outputBuf.value
-            packet.native.size = outputSizeBuf.value
+            packet.data = outputBuf.value
+            packet.size = outputSizeBuf.value
 
-            ParsedPacket(packet, read)
+            if (read > 0) {
+                // Allocate a new buffer owned by the packet
+                av_new_packet(packet.ptr, read).checkError()
+                // Copy data from the parser's temporary buffer to the packet's buffer
+                memcpy(packet.data, outputBuf.ptr, read.toULong())
+            }
+
+            ParsedPacket(Packet(packet), read)
         }
     }
 

@@ -1,67 +1,48 @@
 package dev.zt64.ffmpegkt.codec
 
-import dev.zt64.ffmpegkt.avutil.Frame
 import dev.zt64.ffmpegkt.avutil.Rational
 import dev.zt64.ffmpegkt.avutil.asNative
 import ffmpeg.*
 import kotlinx.cinterop.*
+import platform.posix.memcpy
 
-public actual typealias NativeAVPacket = ffmpeg.AVPacket
+public actual typealias NativeAVPacket = AVPacket
 
-public actual value class Packet(public val native: NativeAVPacket) : AutoCloseable {
-    public actual constructor() : this(av_packet_alloc()!!.pointed)
+public actual fun rescale(
+    value: Long,
+    source: Rational,
+    destination: Rational
+): Long {
+    return av_rescale_q(value, source.asNative().readValue(), destination.asNative().readValue())
+}
 
-    public actual constructor(data: ByteArray) : this(av_packet_alloc()!!.pointed) {
-        av_packet_from_data(native.ptr, data.asUByteArray().refTo(0), data.size)
+internal fun Packet(native: NativeAVPacket): Packet {
+    val size = native.size
+    val byteArray = ByteArray(size)
+    if (size > 0) {
+        memcpy(byteArray.refTo(0), native.data!!, size.toULong())
     }
+    return Packet(
+        pts = native.pts,
+        dts = native.dts,
+        duration = native.duration,
+        streamIndex = native.stream_index,
+        size = size,
+        data = byteArray
+    )
+}
 
-    public actual inline val pts: Long
-        get() = native.pts
-
-    public actual inline val dts: Long
-        get() = native.dts
-
-    public actual inline val data: ByteArray
-        get() = native.data!!.readBytes(size)
-
-    public actual inline val size: Int
-        get() = native.size
-
-    public actual inline var streamIndex: Int
-        get() = native.stream_index
-        set(value) {
-            native.stream_index = value
-        }
-
-    public actual inline var flags: Int
-        get() = native.flags
-        set(value) {
-            native.flags = value
-        }
-
-    public actual inline var duration: Long
-        get() = native.duration
-        set(value) {
-            native.duration = value
-        }
-
-    public actual inline var pos: Long
-        get() = native.pos
-        set(value) {
-            native.pos = value
-        }
-    public actual inline val timeBase: Rational
-        get() = Rational(native.time_base)
-
-    public actual fun rescaleTimestamp(src: Rational, dst: Rational) {
-        av_packet_rescale_ts(native.ptr, src.asNative().readValue(), dst.asNative().readValue())
+internal fun Packet.toNative(): NativeAVPacket {
+    val packet = av_packet_alloc()!!.pointed
+    if (data.isNotEmpty()) {
+        // Create a packet that references the data, then make it writable to copy the data.
+        av_packet_from_data(packet.ptr, data.asUByteArray().refTo(0), data.size)
+        av_packet_make_writable(packet.ptr)
     }
-
-    public actual fun decode(): Frame {
-        TODO("Decode using streams codec")
-    }
-
-    public actual override fun close() {
-        av_packet_unref(native.ptr)
+    return packet.apply {
+        pts = this@toNative.pts
+        dts = this@toNative.dts
+        duration = this@toNative.duration
+        stream_index = this@toNative.streamIndex
     }
 }

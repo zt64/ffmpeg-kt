@@ -2,6 +2,7 @@ package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.util.FfmpegException
 import dev.zt64.ffmpegkt.avutil.util.checkError
+import org.bytedeco.ffmpeg.avcodec.AVPacket
 import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.IntPointer
