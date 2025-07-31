@@ -30,7 +30,7 @@ public actual open class Stream(public val native: AVStream, public actual val c
     override fun toString(): String = commonToString()
 }
 
-public actual class AudioStream(native: AVStream) : Stream(native) {
+public actual class AudioStream(native: AVStream, codecContext: CodecContext? = null) : Stream(native, codecContext) {
     public actual override var codecParameters: AudioCodecParameters
         get() = AudioCodecParameters(native.codecpar!!.pointed)
         set(value) {
@@ -38,7 +38,7 @@ public actual class AudioStream(native: AVStream) : Stream(native) {
         }
 }
 
-public actual class VideoStream(native: AVStream) : Stream(native) {
+public actual class VideoStream(native: AVStream, codecContext: CodecContext? = null) : Stream(native, codecContext) {
     public actual override var codecParameters: VideoCodecParameters
         get() = VideoCodecParameters(native.codecpar!!.pointed)
         set(value) {

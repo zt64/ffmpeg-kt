@@ -2,7 +2,6 @@ package dev.zt64.ffmpegkt.container
 
 import dev.zt64.ffmpegkt.avformat.Chapter
 import dev.zt64.ffmpegkt.avutil.Dictionary
-import dev.zt64.ffmpegkt.avutil.MediaType
 import dev.zt64.ffmpegkt.avutil.toNative
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.stream.AudioStream
@@ -17,20 +16,20 @@ public actual abstract class Container(@PublishedApi internal val native: Native
     public actual open val metadata: Map<String, String>
         get() = native.metadata?.let { Dictionary(it.pointed) }.orEmpty()
 
-    public actual inline val streams: StreamContainer
-        get() {
-            val streams = List(native.nb_streams.toInt()) {
-                val stream = native.streams!![it]!!.pointed
+    @Suppress("PropertyName")
+    @PublishedApi
+    internal val _streams: MutableList<Stream> = List(native.nb_streams.toInt()) { i ->
+        val stream = native.streams!![i]!!.pointed
 
-                when (MediaType(stream.codecpar!!.pointed.codec_type)) {
-                    MediaType.AUDIO -> AudioStream(stream)
-                    MediaType.VIDEO -> VideoStream(stream)
-                    else -> Stream(stream)
-                }
-            }
-
-            return StreamContainer(streams)
+        when (stream.codecpar!!.pointed.codec_type) {
+            AVMEDIA_TYPE_VIDEO -> VideoStream(stream)
+            AVMEDIA_TYPE_AUDIO -> AudioStream(stream)
+            else -> Stream(stream)
         }
+    }.toMutableList()
+
+    public actual inline val streams: StreamContainer
+        get() = StreamContainer(_streams)
 
     public actual inline val chapters: List<Chapter>
         get() = List(native.nb_chapters.toInt()) {

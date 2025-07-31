@@ -52,12 +52,12 @@ public expect class OutputContainer : Container {
     /**
      * Mux a packet into the container.
      */
-    public fun mux(packet: Packet)
+    public fun mux(packet: Packet, stream: Stream)
 
     /**
      * Mux multiple packets into the container.
      */
-    public fun mux(packets: List<Packet>)
+    public fun mux(packets: List<Packet>, stream: Stream)
 
     /**
      * Close the container and release resources.

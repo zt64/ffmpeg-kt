@@ -9,10 +9,9 @@ import dev.zt64.ffmpegkt.stream.Stream
 import dev.zt64.ffmpegkt.stream.VideoStream
 import org.bytedeco.ffmpeg.avformat.AVIOContext
 import org.bytedeco.ffmpeg.global.avcodec
-import org.bytedeco.ffmpeg.global.avcodec.avcodec_parameters_copy
-import org.bytedeco.ffmpeg.global.avcodec.avcodec_parameters_from_context
+import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.ffmpeg.global.avformat.*
-import org.bytedeco.ffmpeg.global.avutil
+import org.bytedeco.ffmpeg.global.avutil.av_dict_free
 import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.PointerPointer
 
@@ -47,7 +46,7 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
     private fun updateNativeMetadata() {
         // Free any existing metadata dictionary
         if (native.metadata() != null) {
-            avutil.av_dict_free(native.metadata())
+            av_dict_free(native.metadata())
         }
 
         // Create a new dictionary from current metadata
@@ -64,7 +63,12 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
         format: AVOutputFormat?,
         formatName: String?
     ) : this(NativeAVFormatContext2()) {
-        avformat_alloc_output_context2(native, format?.native, formatName, filename).checkError()
+        avformat_alloc_output_context2(
+            native,
+            format?.native,
+            formatName,
+            filename
+        ).checkError()
     }
 
     public actual fun <T : Stream> addStream(stream: T): T {
@@ -83,7 +87,7 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
     }
 
     public actual inline fun <reified T : Stream> newStream(codec: Codec, streamIndex: Int): T {
-        if (!avformat_query_codec(native.oformat(), codec.id.num, avcodec.FF_COMPLIANCE_NORMAL).checkTrue()) {
+        if (!avformat_query_codec(native.oformat(), codec.id.num, FF_COMPLIANCE_NORMAL).checkTrue()) {
             throw IllegalArgumentException("Codec ${codec.id} is not supported by the output format ${native.oformat().name()}")
         }
 
@@ -91,38 +95,31 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
             ?: throw IllegalStateException("Failed to create new stream")
 
         val codecContext = when (codec.type) {
-            MediaType.AUDIO -> AudioEncoder(codec)
-            MediaType.VIDEO -> VideoEncoder(codec)
+            MediaType.AUDIO -> AudioEncoder(codec).apply {
+                sampleFmt = SampleFormat(codec.native.sample_fmts().get(0))
+                bitrate = 50000
+                bitRateTolerance = 32000
+                sampleRate = 48000
+
+                avStream.time_base(timeBase.toNative())
+            }
+
+            MediaType.VIDEO -> VideoEncoder(codec).apply {
+                pixFmt = PixelFormat.YUV420P
+                width = 640
+                height = 480
+                bitrate = 50000
+                bitRateTolerance = 128000
+                framerate = Rational(25, 1)
+                timeBase = Rational(1, 25)
+
+                avStream.avg_frame_rate(framerate.toNative())
+                avStream.time_base(timeBase.toNative())
+            }
+
             else -> error("Unsupported codec type: ${codec.type}")
         }
-
-        when (codecContext) {
-            is AudioCodecContext -> {
-                codecContext.sampleFmt = SampleFormat(codec.native.sample_fmts().get(0))
-                codecContext.bitrate = 50000
-                codecContext.bitRateTolerance = 32000
-                codecContext.sampleRate = 48000
-
-                avStream.time_base(codecContext.timeBase.toNative())
-            }
-
-            is VideoCodecContext -> {
-                codecContext.pixFmt = PixelFormat.YUV420P
-                codecContext.width = 640
-                codecContext.height = 480
-                codecContext.bitrate = 50000
-                codecContext.bitRateTolerance = 128000
-                codecContext.framerate = Rational(30, 1)
-
-                avStream.avg_frame_rate(codecContext.framerate.toNative())
-                avStream.time_base(codecContext.timeBase.toNative())
-            }
-
-            else -> {
-                // For other codecs, we can just use the default context
-                avStream.time_base(codecContext.timeBase.toNative())
-            }
-        }
+        avStream.time_base(codecContext.timeBase.toNative())
 
         if ((native.oformat().flags() and AVFMT_GLOBALHEADER) != 0) {
             codecContext.flags = codecContext.flags or avcodec.AV_CODEC_FLAG_GLOBAL_HEADER
@@ -144,9 +141,7 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
         for (stream in streams) {
             val ctx = stream.codecContext ?: throw IllegalStateException("Stream ${stream.index} does not have a codec context")
 
-            if (!ctx.isOpen) {
-                ctx.open()
-            }
+            if (!ctx.isOpen) ctx.open()
 
             if (stream.native.time_base() == null) {
                 stream.native.time_base(ctx.timeBase.toNative())
@@ -167,7 +162,7 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
         avformat_write_header(native, metadata.toNative()).checkError()
     }
 
-    public actual fun mux(packet: Packet) {
+    public actual fun mux(packet: Packet, stream: Stream) {
         require(packet.streamIndex >= 0) { "Packet must have a valid stream index" }
 
         if (!started) {
@@ -175,11 +170,22 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
             started = true
         }
 
-        av_interleaved_write_frame(native, packet.native).checkError()
+        val nativePacket = packet.toNative()
+        try {
+            val codecContext = stream.codecContext
+                ?: throw IllegalStateException("Stream ${packet.streamIndex} does not have a codec context")
+
+            av_packet_rescale_ts(nativePacket, codecContext.timeBase.toNative(), stream.native.time_base())
+            nativePacket.stream_index(stream.index)
+
+            av_interleaved_write_frame(native, nativePacket).checkError()
+        } finally {
+            av_packet_free(nativePacket)
+        }
     }
 
-    public actual fun mux(packets: List<Packet>) {
-        packets.forEach { mux(it) }
+    public actual fun mux(packets: List<Packet>, stream: Stream) {
+        packets.forEach { mux(it, stream) }
     }
 
     actual override fun close() {
