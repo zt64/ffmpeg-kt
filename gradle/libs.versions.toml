@@ -7,7 +7,7 @@ coroutines = "1.10.2"
 okio = "3.10.2"
 
 # Maintenance
-compatibility = "0.17.0"
+compatibility = "0.18.1"
 kover = "0.9.1"
 publish = "0.33.0"
 ktx-resources = "0.10.0"
