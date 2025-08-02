@@ -32,21 +32,27 @@ public actual value class AVIOContext(
 
         private fun open(bytes: ByteArray): AVIOContext {
             val bufferPointer = BytePointer(*bytes)
-            val bufferSize = bytes.size
+            val dataSize = bytes.size
+            var position = 0
 
             val read = object : Read_packet_Pointer_BytePointer_int() {
                 override fun call(
-                    opaque: Pointer?,
-                    buf: BytePointer?,
-                    buf_size: Int
+                    opaque: Pointer,
+                    buf: BytePointer,
+                    requestedSize: Int
                 ): Int {
-                    val size = minOf(buf_size, bufferSize)
-                    buf?.put(size.toLong(), bufferPointer.get())
+                    val remaining = dataSize - position
+                    val size = minOf(requestedSize, remaining)
+
+                    memcpy(buf, bufferPointer.position(position.toLong()), size.toLong())
+
+                    position += size
                     return size
                 }
             }
 
-            val ctx = avio_alloc_context(bufferPointer, bufferSize, 0, null, read, null, null)
+            val avioBuffer = BytePointer(4096)
+            val ctx = avio_alloc_context(avioBuffer, 4096, 0, bufferPointer, read, null, null)
 
             return AVIOContext(ctx)
         }

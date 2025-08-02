@@ -46,6 +46,8 @@ public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx)
     }
 
     public actual override fun close() {
+        native.pb()?.opaque()?.deallocate()
+
         avformat_close_input(native)
     }
 }
