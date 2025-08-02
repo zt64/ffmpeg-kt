@@ -45,7 +45,7 @@ public actual class InputContainer(ctx: NativeAVFormatContext2) : Container(ctx)
         av_seek_frame(native, streamIndex, offset.toLong(), flags).checkError()
     }
 
-    actual override fun close() {
-        // avformat_close_input(native) // TODO: Why does this segfault?
+    public actual override fun close() {
+        avformat_close_input(native)
     }
 }

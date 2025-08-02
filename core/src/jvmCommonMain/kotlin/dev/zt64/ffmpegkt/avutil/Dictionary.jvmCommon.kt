@@ -15,8 +15,6 @@ public actual fun Dictionary(nativeDict: NativeAVDictionary): Dictionary {
         }
     }
 
-    av_dict_free(nativeDict)
-
     return dict
 }
 
