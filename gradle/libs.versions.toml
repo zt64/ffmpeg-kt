@@ -10,7 +10,7 @@ okio = "3.10.2"
 compatibility = "0.17.0"
 kover = "0.9.1"
 publish = "0.33.0"
-ktx-resources = "0.10.0"
+ktx-resources = "0.10.1"
 ktlintPlugin = "12.3.0"
 ktlint = "1.3.1"
 
