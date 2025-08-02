@@ -25,7 +25,8 @@ class ContainerTest {
 
         Container.openOutput(path).use { output ->
             output.metadata.putAll(values)
-            output.newStream<VideoStream>(Codec.findEncoder(CodecID.MPEG4)!!)
+            val stream = output.newStream<VideoStream>(Codec.findEncoder(CodecID.MPEG4)!!)
+            output.mux(Packet(), stream)
         }
 
         Container.openInput(path).use { input ->

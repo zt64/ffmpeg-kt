@@ -163,8 +163,6 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
     }
 
     public actual fun mux(packet: Packet, stream: Stream) {
-        require(packet.streamIndex >= 0) { "Packet must have a valid stream index" }
-
         if (!started) {
             writeHeader()
             started = true
@@ -188,7 +186,7 @@ public actual class OutputContainer(ctx: NativeAVFormatContext2) : Container(ctx
         packets.forEach { mux(it, stream) }
     }
 
-    actual override fun close() {
+    public actual override fun close() {
         if (!started) {
             throw IllegalStateException("Cannot close container without writing header first")
         }
