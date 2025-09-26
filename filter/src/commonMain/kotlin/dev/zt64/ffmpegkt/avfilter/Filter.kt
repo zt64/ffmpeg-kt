@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avfilter
 
-public expect class AVFilter
+internal expect class AVFilter
 
 public class Filter(public val name: String)
 

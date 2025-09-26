@@ -1,3 +1,5 @@
+@file:Suppress("ktlint")
+
 package dev.zt64.ffmpegkt.avfilter
 
-public actual class AVFilter
+internal actual class AVFilter
