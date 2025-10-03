@@ -14,7 +14,7 @@ public expect class HWDeviceContext public constructor(
     public val allowSoftwareFallback: Boolean
     public val options: Dictionary?
 
-    public fun init(codec: Codec)
+    internal fun init(codec: Codec)
 
     override fun close()
 }

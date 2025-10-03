@@ -5,7 +5,7 @@ import dev.zt64.ffmpegkt.avutil.Rational
 
 internal expect class NativeAVPacket
 
-public expect fun rescale(value: Long, source: Rational, destination: Rational): Long
+internal expect fun rescale(value: Long, source: Rational, destination: Rational): Long
 
 /**
  * A packet of compressed data, typically output from an encoder or read from a media container.

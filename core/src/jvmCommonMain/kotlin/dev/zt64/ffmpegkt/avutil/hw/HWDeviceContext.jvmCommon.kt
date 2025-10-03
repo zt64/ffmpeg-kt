@@ -22,7 +22,7 @@ public actual class HWDeviceContext actual constructor(
     public var config: HWConfig? = null
         private set
 
-    public actual fun init(codec: Codec) {
+    internal actual fun init(codec: Codec) {
         val config = codec.hardwareConfigs.find { config ->
             (config.methods and AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX) != 0 && config.deviceType.num == deviceType.num
         } ?: throw IllegalArgumentException(

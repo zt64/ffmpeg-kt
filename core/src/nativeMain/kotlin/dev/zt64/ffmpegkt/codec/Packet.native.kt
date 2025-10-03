@@ -8,7 +8,7 @@ import platform.posix.memcpy
 
 public actual typealias NativeAVPacket = AVPacket
 
-public actual fun rescale(
+internal actual fun rescale(
     value: Long,
     source: Rational,
     destination: Rational

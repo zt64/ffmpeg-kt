@@ -8,7 +8,7 @@ import org.bytedeco.ffmpeg.global.avutil.av_rescale_q
 
 internal actual typealias NativeAVPacket = org.bytedeco.ffmpeg.avcodec.AVPacket
 
-public actual fun rescale(value: Long, source: Rational, destination: Rational): Long {
+internal actual fun rescale(value: Long, source: Rational, destination: Rational): Long {
     return av_rescale_q(value, source.toNative(), destination.toNative())
 }
 

@@ -13,9 +13,7 @@ import dev.zt64.ffmpegkt.stream.VideoStream
  *
  * @property streams The complete list of all streams in the container.
  */
-public class StreamContainer(
-    public val streams: List<Stream>
-) : AbstractList<Stream>() {
+public class StreamContainer @PublishedApi internal constructor(public val streams: List<Stream>) : AbstractList<Stream>() {
     /**
      * The total number of streams in the container.
      */
@@ -40,5 +38,5 @@ public class StreamContainer(
      * @return The [Stream] at the given index.
      * @throws IndexOutOfBoundsException if the index is out of bounds.
      */
-    override fun get(index: Int): Stream = streams[index]
+    override operator fun get(index: Int): Stream = streams[index]
 }
