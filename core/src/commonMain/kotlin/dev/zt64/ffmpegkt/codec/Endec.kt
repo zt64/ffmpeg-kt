@@ -1,7 +1,10 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 
 /**
  * Base class for audio codec contexts, containing common properties for audio encoding and decoding.

@@ -17,7 +17,7 @@ public expect class CodecParserContext : AutoCloseable {
     /**
      * The underlying FFmpeg codec parser instance.
      */
-    public val parser: AVCodecParser
+    public val parser: CodecParser
 
     /**
      * The byte offset of the parsed frame in the input stream.

@@ -1,7 +1,10 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.hw.HWConfig
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import dev.zt64.ffmpegkt.codec.Codec.Companion.findDecoder
 import dev.zt64.ffmpegkt.codec.Codec.Companion.findEncoder
 
@@ -70,7 +73,7 @@ public expect value class Codec internal constructor(internal val native: Native
     /**
      * A list of supported profiles.
      */
-    public val profiles: List<AVProfile>
+    public val profiles: List<Profile>
 
     /**
      * A list of supported channel layouts.

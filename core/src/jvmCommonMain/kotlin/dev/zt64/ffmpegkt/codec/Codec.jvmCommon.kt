@@ -3,8 +3,11 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.hw.AVHWDeviceType
 import dev.zt64.ffmpegkt.avutil.hw.HWConfig
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import dev.zt64.ffmpegkt.toList
 import org.bytedeco.ffmpeg.global.avcodec.*
 import org.bytedeco.javacpp.Pointer
@@ -53,10 +56,10 @@ public actual value class Codec(public val native: NativeAVCodec) {
             transform = ::SampleFormat
         )
 
-    public actual inline val profiles: List<AVProfile>
+    public actual inline val profiles: List<Profile>
         get() = native.profiles().toList(
-            isTerminator = { it.profile() == AVProfileType.UNKNOWN },
-            transform = { AVProfile(it.profile(), it.name().string) }
+            isTerminator = { it.profile() == ProfileType.UNKNOWN },
+            transform = { Profile(it.profile(), it.name().string) }
         )
 
     public actual inline val channelLayouts: List<ChannelLayout>

@@ -1,6 +1,8 @@
 package dev.zt64.ffmpegkt.avutil
 
 import dev.zt64.ffmpegkt.FfmpegLibrary
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 
 /**
  * A wrapper object for the FFmpeg libavutil library.

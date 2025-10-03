@@ -1,5 +1,8 @@
 package dev.zt64.ffmpegkt.avutil
 
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import ffmpeg.*
 import kotlinx.cinterop.*
 import platform.posix.memcpy

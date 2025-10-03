@@ -23,7 +23,7 @@ public expect class OutputContainer : Container {
      */
     public constructor(
         filename: String,
-        format: AVOutputFormat? = null,
+        format: OutputFormat? = null,
         formatName: String? = null
     )
 

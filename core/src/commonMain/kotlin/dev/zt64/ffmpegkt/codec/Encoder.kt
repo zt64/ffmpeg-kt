@@ -1,7 +1,10 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 
 /**
  * A sealed interface representing an encoder that converts raw [Frame]s into compressed [Packet]s.
@@ -214,6 +217,6 @@ public class VideoEncoder(codec: Codec, hwAccel: HWDeviceContext? = null) : Vide
     public override fun createFrame(): VideoFrame = VideoFrame(
         width = width,
         height = height,
-        format = pixFmt,
+        format = pixFmt
     )
 }

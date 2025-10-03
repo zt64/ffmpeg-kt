@@ -1,6 +1,11 @@
 package dev.zt64.ffmpegkt
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
+import dev.zt64.ffmpegkt.avutil.audio.altSampleFmt
+import dev.zt64.ffmpegkt.avutil.audio.bytesPerSample
+import dev.zt64.ffmpegkt.avutil.audio.isPlanar
+import dev.zt64.ffmpegkt.avutil.audio.name
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

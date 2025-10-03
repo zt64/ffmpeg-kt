@@ -1,8 +1,10 @@
 package dev.zt64.ffmpegkt.container
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import dev.zt64.ffmpegkt.codec.*
 import dev.zt64.ffmpegkt.stream.AudioStream
 import dev.zt64.ffmpegkt.stream.Stream
@@ -46,7 +48,7 @@ public actual class OutputContainer(native: NativeAVFormatContext2) : Container(
 
     public actual constructor(
         filename: String,
-        format: AVOutputFormat?,
+        format: OutputFormat?,
         formatName: String?
     ) : this(
         memScoped {

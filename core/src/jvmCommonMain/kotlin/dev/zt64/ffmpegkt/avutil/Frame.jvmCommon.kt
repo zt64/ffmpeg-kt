@@ -1,5 +1,8 @@
 package dev.zt64.ffmpegkt.avutil
 
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import org.bytedeco.ffmpeg.avutil.AVFrame.AV_NUM_DATA_POINTERS
 import org.bytedeco.ffmpeg.global.avutil.*
 import org.bytedeco.javacpp.BytePointer

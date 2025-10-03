@@ -1,6 +1,9 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import ffmpeg.AVCodecParameters
 
 public actual open class CodecParameters(public val native: AVCodecParameters) {

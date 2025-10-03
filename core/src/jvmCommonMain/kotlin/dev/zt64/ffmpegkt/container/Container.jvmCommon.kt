@@ -55,7 +55,7 @@ public actual abstract class Container(@PublishedApi internal val native: Native
     public actual companion object {
         public actual fun openInput(
             url: String,
-            format: AVInputFormat?,
+            format: InputFormat?,
             options: Dictionary?
         ): InputContainer {
             val formatContext = avformat_alloc_context()
@@ -72,7 +72,7 @@ public actual abstract class Container(@PublishedApi internal val native: Native
 
         public actual fun openInput(
             byteArray: ByteArray,
-            format: AVInputFormat?,
+            format: InputFormat?,
             options: Dictionary?
         ): InputContainer {
             val formatContext = avformat_alloc_context()
@@ -105,14 +105,14 @@ public actual abstract class Container(@PublishedApi internal val native: Native
 
         public fun openInput(
             path: Path,
-            format: AVInputFormat? = null,
+            format: InputFormat? = null,
             options: Dictionary? = null
         ): InputContainer {
             return openInput(path.absolutePathString(), format, options)
         }
 
         public actual fun openOutput(
-            format: AVOutputFormat?,
+            format: OutputFormat?,
             formatName: String?,
             filename: String
         ): OutputContainer {

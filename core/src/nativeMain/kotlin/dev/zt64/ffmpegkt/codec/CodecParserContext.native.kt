@@ -14,8 +14,8 @@ public actual class CodecParserContext(
 
     private val packet = av_packet_alloc()!!.pointed
 
-    public actual val parser: AVCodecParser
-        get() = AVCodecParser(native.parser!!.pointed)
+    public actual val parser: CodecParser
+        get() = CodecParser(native.parser!!.pointed)
     public actual val frameOffset: Long
         get() = native.frame_offset
 

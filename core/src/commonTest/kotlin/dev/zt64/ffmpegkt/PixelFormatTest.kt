@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt
 
-import dev.zt64.ffmpegkt.avutil.PixelFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

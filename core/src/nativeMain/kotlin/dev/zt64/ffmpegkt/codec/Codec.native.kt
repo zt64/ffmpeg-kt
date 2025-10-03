@@ -1,8 +1,11 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.hw.AVHWDeviceType
 import dev.zt64.ffmpegkt.avutil.hw.HWConfig
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import ffmpeg.*
 import kotlinx.cinterop.*
 
@@ -48,7 +51,7 @@ public actual value class Codec(public val native: NativeAVCodec) {
                 i++
             }
         }
-    public actual inline val profiles: List<AVProfile>
+    public actual inline val profiles: List<Profile>
         get() = emptyList()
     public actual inline val channelLayouts: List<ChannelLayout>
         get() = native.ch_layouts!!.let { layouts ->

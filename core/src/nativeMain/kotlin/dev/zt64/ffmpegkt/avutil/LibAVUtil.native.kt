@@ -1,7 +1,9 @@
 package dev.zt64.ffmpegkt.avutil
 
 import dev.zt64.ffmpegkt.FfmpegLibrary
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.util.checkError
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import ffmpeg.*
 import kotlinx.cinterop.*
 

@@ -1,9 +1,12 @@
 package dev.zt64.ffmpegkt.codec
 
 import dev.zt64.ffmpegkt.avutil.*
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
 import dev.zt64.ffmpegkt.avutil.hw.HWDeviceContext
 import dev.zt64.ffmpegkt.avutil.util.checkError
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import ffmpeg.*
 import kotlinx.cinterop.*
 

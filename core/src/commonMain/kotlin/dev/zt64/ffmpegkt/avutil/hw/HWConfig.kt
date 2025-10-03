@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.avutil.hw
 
-import dev.zt64.ffmpegkt.avutil.PixelFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 
 /**
  * Hardware configuration

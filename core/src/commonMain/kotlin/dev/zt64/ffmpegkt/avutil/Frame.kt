@@ -1,5 +1,9 @@
 package dev.zt64.ffmpegkt.avutil
 
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.SampleFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
+
 internal expect class NativeAVFrame
 
 public expect open class Frame : AutoCloseable {

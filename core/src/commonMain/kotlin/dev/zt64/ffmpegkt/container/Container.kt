@@ -52,7 +52,7 @@ public expect abstract class Container : AutoCloseable {
          */
         public fun openInput(
             url: String,
-            format: AVInputFormat? = null,
+            format: InputFormat? = null,
             options: Dictionary? = null
         ): InputContainer
 
@@ -66,7 +66,7 @@ public expect abstract class Container : AutoCloseable {
          */
         public fun openInput(
             byteArray: ByteArray,
-            format: AVInputFormat? = null,
+            format: InputFormat? = null,
             options: Dictionary? = null
         ): InputContainer
 
@@ -79,7 +79,7 @@ public expect abstract class Container : AutoCloseable {
          * @return An [OutputContainer] instance for writing to the output.
          */
         public fun openOutput(
-            format: AVOutputFormat? = null,
+            format: OutputFormat? = null,
             formatName: String?,
             filename: String
         ): OutputContainer

@@ -49,7 +49,7 @@ public actual abstract class Container(@PublishedApi internal val native: Native
     public actual companion object {
         public actual fun openInput(
             url: String,
-            format: AVInputFormat?,
+            format: InputFormat?,
             options: Dictionary?
         ): InputContainer {
             val formatContext = avformat_alloc_context()!!
@@ -66,11 +66,11 @@ public actual abstract class Container(@PublishedApi internal val native: Native
 
         public actual fun openInput(
             byteArray: ByteArray,
-            format: AVInputFormat?,
+            format: InputFormat?,
             options: Dictionary?
         ): InputContainer {
             val formatContext = avformat_alloc_context()!!.pointed.apply {
-                pb = AVIOContext(byteArray).native.ptr
+                pb = IOContext(byteArray).native.ptr
             }
 
             formatContext.iformat = format?.native?.ptr ?: memScoped {
@@ -98,7 +98,7 @@ public actual abstract class Container(@PublishedApi internal val native: Native
         }
 
         public actual fun openOutput(
-            format: AVOutputFormat?,
+            format: OutputFormat?,
             formatName: String?,
             filename: String
         ): OutputContainer {

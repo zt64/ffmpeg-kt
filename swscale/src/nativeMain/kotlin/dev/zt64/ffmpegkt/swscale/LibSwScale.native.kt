@@ -1,7 +1,7 @@
 package dev.zt64.ffmpegkt.swscale
 
 import dev.zt64.ffmpegkt.FfmpegLibrary
-import dev.zt64.ffmpegkt.avutil.PixelFormat
+import dev.zt64.ffmpegkt.avutil.video.PixelFormat
 import dev.zt64.ffmpegkt.avutil.util.checkTrue
 import ffmpeg.*
 import kotlinx.cinterop.pointed

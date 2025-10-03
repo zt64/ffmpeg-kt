@@ -1,14 +1,14 @@
 package dev.zt64.ffmpegkt.avdevice
 
 import dev.zt64.ffmpegkt.FfmpegLibrary
-import dev.zt64.ffmpegkt.container.AVInputFormat
-import dev.zt64.ffmpegkt.container.AVOutputFormat
+import dev.zt64.ffmpegkt.container.InputFormat
+import dev.zt64.ffmpegkt.container.OutputFormat
 
 public expect object LibAVDevice : FfmpegLibrary {
-    public val audioInputDevices: List<AVInputFormat>
-    public val audioOutputDevices: List<AVOutputFormat>
-    public val videoInputDevices: List<AVInputFormat>
-    public val videoOutputDevices: List<AVOutputFormat>
+    public val audioInputDevices: List<InputFormat>
+    public val audioOutputDevices: List<OutputFormat>
+    public val videoInputDevices: List<InputFormat>
+    public val videoOutputDevices: List<OutputFormat>
 
     public override fun version(): Int
     public override fun configuration(): String

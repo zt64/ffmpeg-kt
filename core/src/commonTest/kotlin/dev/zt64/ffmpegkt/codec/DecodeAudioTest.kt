@@ -1,6 +1,6 @@
 package dev.zt64.ffmpegkt.codec
 
-import dev.zt64.ffmpegkt.avutil.bytesPerSample
+import dev.zt64.ffmpegkt.avutil.audio.bytesPerSample
 import dev.zt64.ffmpegkt.test.TestResources
 import kotlinx.coroutines.test.runTest
 import okio.Buffer

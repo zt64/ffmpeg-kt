@@ -2,7 +2,7 @@ package dev.zt64.ffmpegkt
 
 import dev.zt64.ffmpegkt.FrameUtil.generateFrames
 import dev.zt64.ffmpegkt.FrameUtil.generateSineWave
-import dev.zt64.ffmpegkt.avutil.ChannelLayout
+import dev.zt64.ffmpegkt.avutil.audio.ChannelLayout
 import dev.zt64.ffmpegkt.codec.*
 import dev.zt64.ffmpegkt.container.Container
 import dev.zt64.ffmpegkt.stream.AudioStream
