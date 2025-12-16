@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.20"
+kotlin = "2.3.0"
 android = "8.7.3"
 ffmpeg = "7.1-1.5.11"
 ksp = "2.1.21-2.0.1"
