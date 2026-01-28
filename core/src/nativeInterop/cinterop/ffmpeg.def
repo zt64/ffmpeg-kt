@@ -3,7 +3,7 @@ headers = libavutil/avutil.h libavutil/pixfmt.h libavutil/pixdesc.h libavutil/di
 headerFilter = libavutil/** libavcodec/** libavformat/**
 package = ffmpeg
 
-compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/ffmpeg
+compilerOpts.linux = -I/usr/include/ffmpeg4.4 -I/usr/include -I/usr/include/x86_64-linux-gnu
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lavutil -lavcodec -lavformat
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/usr/lib -lavutil -lavcodec -lavformat
 
