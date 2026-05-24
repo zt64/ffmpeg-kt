@@ -36,7 +36,6 @@ ffmpeg-kt-filter = { module = "dev.zt64:ffmpeg-kt-filter", version.ref = "ffmpeg
 ffmpeg-kt-device = { module = "dev.zt64:ffmpeg-kt-device", version.ref = "ffmpeg-kt" } # Multimedia device input/output
 ffmpeg-kt-swscale = { module = "dev.zt64:ffmpeg-kt-swscale", version.ref = "ffmpeg-kt" } # Image scaling and format conversion
 ffmpeg-kt-swresample = { module = "dev.zt64:ffmpeg-kt-swresample", version.ref = "ffmpeg-kt" } # Audio resampling
-ffmpeg-kt-postproc = { module = "dev.zt64:ffmpeg-kt-postproc", version.ref = "ffmpeg-kt" } # Post-processing
 ```
 
 </details>

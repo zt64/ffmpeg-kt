@@ -26,7 +26,6 @@ include(
     "core",
     "device",
     "filter",
-    "postproc",
     "swresample",
     "swscale",
     "testing"
