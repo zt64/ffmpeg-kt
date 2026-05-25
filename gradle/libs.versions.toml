@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.3.21"
-android = "9.0.1"
+android = "9.2.1"
 ffmpeg = "8.0.1-1.5.13"
 ksp = "2.3.8"
 coroutines = "1.11.0"
