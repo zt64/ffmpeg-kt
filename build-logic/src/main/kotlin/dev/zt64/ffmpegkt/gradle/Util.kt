@@ -14,7 +14,6 @@ fun KotlinMultiplatformExtension.native(configure: KotlinNativeTarget.() -> Unit
         )
 
         os.contains("mac") -> listOf(
-            macosX64(),
             macosArm64(),
             iosX64(),
             iosArm64(),
