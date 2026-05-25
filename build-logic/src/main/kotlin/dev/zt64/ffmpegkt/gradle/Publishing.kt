@@ -13,7 +13,7 @@ fun Project.publishing() {
         publishToMavenCentral()
         signAllPublications()
         coordinates("dev.zt64.ffmpeg-kt", "ffmpeg-kt", "$version")
-        configure(KotlinMultiplatform(sourcesJar = true))
+        configure(KotlinMultiplatform())
 
         pom {
             name = "ffmpeg-kt "
