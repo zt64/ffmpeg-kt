@@ -16,6 +16,9 @@ FFmpeg to make it easier to work with multimedia files. It is designed to be mod
 
 ## Setup
 
+> [!NOTE]
+> FFmpegKt is not yet published. Development is ongoing, but progress is currently slow due to limited free time.
+
 FFmpegKt is split up into multiple modules to keep modularization and dependencies clean.
 
 ### Gradle
