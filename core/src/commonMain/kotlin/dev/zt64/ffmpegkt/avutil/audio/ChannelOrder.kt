@@ -32,19 +32,6 @@ public value class ChannelOrder(internal val num: Int) {
          * component. Channels are ordered according to ACN (Ambisonic Channel
          * Number).
          *
-         * The channel with the index n in the stream contains the spherical
-         * harmonic of degree l and order m given by
-         * @code{.unparsed}
-         *   l   = floor(sqrt(n)),
-         *   m   = n - l * (l + 1).
-         * @endcode
-         *
-         * Conversely given a spherical harmonic of degree l and order m, the
-         * corresponding channel index n is given by
-         * @code{.unparsed}
-         *   n = l * (l + 1) + m.
-         * @endcode
-         *
          * Normalization is assumed to be SN3D (Schmidt Semi-Normalization)
          * as defined in AmbiX format $ 2.1.
          */

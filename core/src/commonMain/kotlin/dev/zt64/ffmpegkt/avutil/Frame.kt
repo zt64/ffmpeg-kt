@@ -24,6 +24,9 @@ public expect open class Frame : AutoCloseable {
      */
     public var pts: Long
 
+    /**
+     * The timebase of the frame.
+     */
     public var timeBase: Rational
 
     /**
@@ -44,8 +47,6 @@ public expect open class Frame : AutoCloseable {
 
 /**
  * Represents a frame of audio data.
- *
- * @property native
  */
 public expect class AudioFrame(
     nbSamples: Int,
@@ -62,8 +63,6 @@ public expect class AudioFrame(
 
 /**
  * Represents a frame of video data.
- *
- * @property native
  */
 public expect class VideoFrame() : Frame {
     public constructor(
